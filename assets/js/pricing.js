@@ -1,0 +1,2 @@
+export function calculateEstimate(invitation,selection,quantity){const base=Number(invitation.basePrice)||0;const format=Number(invitation.formatAdjustments[selection.format]||0);const paper=Number(invitation.paperAdjustments[selection.paper]||0);const custom=Number(invitation.customizationFees[selection.design]||0);const qty=Math.max(0,Number(quantity)||0);return Math.max(0,base+format+paper+custom)*qty;}
+export function money(n){return new Intl.NumberFormat("en-US",{style:"currency",currency:"USD"}).format(n);}
