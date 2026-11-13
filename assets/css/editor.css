@@ -6,3 +6,27 @@
   zoom: 0.16;
 }
 .thumb-label{font-size:9px;text-align:center;display:block;margin-top:5px}.large-preview-wrap{display:grid;grid-template-columns:35px 1fr 35px;gap:10px;align-items:center;background:#eee9df;padding:20px}.large-preview{min-height:440px;display:flex;justify-content:center;align-items:center;overflow:hidden}.large-preview .invitation-page{height:430px;width:auto;max-width:100%;aspect-ratio:2/3;box-shadow:0 8px 25px #0002}.large-preview-wrap button{border:0;background:transparent;font-size:30px;cursor:pointer;color:var(--navy)}.page-label{text-align:center;padding:12px}.spread-preview{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}.spread-preview .invitation-page{width:22%;min-width:80px;box-shadow:0 2px 8px #0001}.review-panel{margin-top:30px}.review-panel dl{display:grid;grid-template-columns:140px 1fr;gap:8px;font-size:12px}.review-panel dt{color:var(--muted)}.review-panel dd{margin:0;overflow-wrap:anywhere}.option-group{margin-bottom:14px}.option-group legend{font-size:11px;font-weight:700;margin-bottom:8px}.option-choice{display:inline-flex;align-items:center;gap:5px;margin:4px 10px 4px 0;font-size:11px}.option-choice input{width:auto;margin:0}.invitation-page{position:relative;overflow:hidden;background:white;flex-shrink:0}.invitation-page svg{display:block;width:100%;height:100%}.invitation-page.html-page{width:400px;height:600px}.invitation-page .svg-page{width:400px;height:600px}@media(max-width:900px){.editor-layout{grid-template-columns:1fr}.preview-panel{position:static}.large-preview{min-height:350px}.large-preview .invitation-page{height:340px}.editor-controls{order:2}.preview-panel{order:1}}
+
+/* HTML text currently being edited */
+.html-page .field-highlight {
+    outline: 2px solid #d49b35 !important;
+    outline-offset: 5px;
+    background-color: #ffdf8040 !important;
+    border-radius: 3px;
+    position: relative;
+}
+
+/* SVG rectangular highlight around the selected text */
+.svg-page .field-highlight-box {
+    fill: #ffdf8020;
+    stroke: #d49b35;
+    stroke-width: 3;
+    stroke-dasharray: 7 3;
+    vector-effect: non-scaling-stroke;
+    pointer-events: none;
+}
+
+/* Preserve line breaks in multiline HTML fields */
+.html-page [data-multiline="true"] {
+    white-space: pre-line;
+}
