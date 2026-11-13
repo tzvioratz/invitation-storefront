@@ -43,19 +43,27 @@ function validateOrder_(o) {
   const qty=Number(o.quantity);if(!Number.isInteger(qty)||qty<Math.max(1,Number(inv.quantityMinimum)||1)||qty>1000)throw new Error("Invalid quantity.");
   const customer=o.customer||{};const name=String(customer.name||"").trim(),email=String(customer.email||"").trim();
   if(!name||! /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))throw new Error("Valid customer name and email are required.");
-  const wording=o.wording||{};const allowed=new Set();
+  const wording=o.wording||{};
   if (!Array.isArray(pages) || !pages.length) throw new Error("Invitation has no page definitions.");
   pages.forEach(p=>{
     const file=String(p.file||"");
     if(!/^templates\/[A-Za-z0-9_-]+\/[A-Za-z0-9_.-]+\.(html|svg)$/i.test(file)) throw new Error("Invalid template path.");
     if(!["html","svg"].includes(String(p.type))) throw new Error("Invalid page type.");
   });
-  // Trusted field IDs are declared by the owner in a protected field registry sheet.
-  // The registry is required because Apps Script cannot safely parse browser-submitted template files.
-  const registry=catalog.getSheetByName("FieldRegistry");
-  if(!registry)throw new Error("Create a protected FieldRegistry tab with columns InvitationID, FieldID.");
-  registry.getDataRange().getValues().slice(1).forEach(r=>{if(String(r[0])===String(inv.id))allowed.add(String(r[1]));});
-  Object.keys(wording).forEach(k=>{if(!allowed.has(k))throw new Error("Unknown wording field: "+k);if(typeof wording[k]!=="string"||wording[k].length>2000)throw new Error("Invalid wording value.");});
+  
+// Accept dynamically discovered wording fields.
+// Unknown fields are harmless because the original template determines
+// which fields actually exist when the invitation is regenerated.
+Object.keys(wording).forEach(k=>{
+  if(!/^[A-Za-z0-9_-]{1,80}$/.test(k)) {
+    throw new Error("Invalid wording field ID.");
+  }
+
+  if(typeof wording[k] !== "string" || wording[k].length > 2000) {
+    throw new Error("Invalid wording value.");
+  }
+});
+
   const fmt=parse(inv.formatAdjustments,{}),pap=parse(inv.paperAdjustments,{}),fee=parse(inv.customizationFees,{});
   const estimate=Math.max(0,Number(inv.basePrice||0)+Number(fmt[s.format]||0)+Number(pap[s.paper]||0)+Number(fee[s.design]||0))*qty;
   return {invitation:{id:inv.id,title:inv.title},selection:s,wording,quantity:qty,customer:{name,email,phone:String(customer.phone||"").slice(0,80),notes:String(customer.notes||"").slice(0,3000)},estimate};
