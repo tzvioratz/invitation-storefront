@@ -82,8 +82,28 @@ function buildFields() {
     const container = $("#fieldControls");
     container.replaceChildren();
 
+    const sections = invitation.pages.map(page => {
+        const section = document.createElement("div");
+        section.className = "field-page-section";
+
+        const heading = document.createElement("h3");
+        heading.textContent = page.label;
+
+        section.appendChild(heading);
+        container.appendChild(section);
+
+        return section;
+    });
+
     rendered.fields.forEach(f => {
+        const pageIndex = f.occurrences[0]?.pageIndex ?? 0;
+        const section = sections[pageIndex];
+
+        const fieldWrap = document.createElement("div");
+        fieldWrap.className = "field-control-wrap";
+
         const label = document.createElement("label");
+        label.className = "field-control";
         label.textContent = f.label + (f.required ? " *" : "");
 
         const input = f.multiline
@@ -96,13 +116,10 @@ function buildFields() {
 
         if (f.required) input.required = true;
 
-        // Show the template's existing wording in the input.
         input.value = wording[f.id] ?? f.defaultValue ?? "";
 
-        // Clicking or tabbing into a field switches the preview.
         input.addEventListener("focus", () => activateField(f.id));
 
-        // Update the wording and redraw the preview.
         const updateField = () => {
             wording[f.id] = input.value;
             updateRenderedWording(rendered, wording);
@@ -112,22 +129,152 @@ function buildFields() {
         input.addEventListener("input", updateField);
         input.addEventListener("blur", updateField);
 
-        label.append(input);
+        label.appendChild(input);
 
-        const hint = document.createElement("small");
-        hint.className = "field-help";
-        hint.textContent =
-            `Appears on: ${[...new Set(
-                f.occurrences.map(o => invitation.pages[o.pageIndex].label)
-            )].join(", ")}`;
+        // Input and Hebrew keyboard button.
+        const inputRow = document.createElement("div");
+        inputRow.className = "field-input-row";
 
-        container.append(label, hint);
+        const keyboardButton = document.createElement("button");
+        keyboardButton.type = "button";
+        keyboardButton.className = "hebrew-keyboard-toggle";
+        keyboardButton.textContent = "⌨";
+        keyboardButton.title = "Open Hebrew keyboard";
+        keyboardButton.setAttribute("aria-label", "Open Hebrew keyboard");
+
+        inputRow.append(input, keyboardButton);
+
+        // Keyboard container, initially hidden.
+        const keyboard = createHebrewKeyboard(input, updateField);
+
+        keyboardButton.addEventListener("click", () => {
+            const shouldOpen = keyboard.hidden;
+
+            // Close other open keyboards.
+            container.querySelectorAll(".hebrew-keyboard").forEach(kb => {
+                kb.hidden = true;
+            });
+
+            container.querySelectorAll(".hebrew-keyboard-toggle").forEach(btn => {
+                btn.classList.remove("active");
+            });
+
+            keyboard.hidden = !shouldOpen;
+
+            if (shouldOpen) {
+                keyboardButton.classList.add("active");
+                input.focus();
+            }
+        });
+
+        fieldWrap.append(label, inputRow, keyboard);
+        section.appendChild(fieldWrap);
     });
 
     if (!rendered.fields.length) {
         container.textContent =
             "This design has no editable wording fields.";
     }
+}
+
+function createHebrewKeyboard(input, updateField) {
+    const keyboard = document.createElement("div");
+    keyboard.className = "hebrew-keyboard";
+    keyboard.hidden = true;
+
+    const rows = [
+        ["ק", "ר", "א", "ט", "ו", "ן", "ם", "פ"],
+        ["ש", "ד", "ג", "כ", "ע", "י", "ח", "ל", "ך", "ף"],
+        ["ז", "ס", "ב", "ה", "נ", "מ", "צ", "ת", "ץ"],
+        [".", ",", "?", "!", ":", ";", "'", "\"", "־", "׳", "״"]
+    ];
+
+    function insertText(text) {
+        input.focus();
+
+        const start = input.selectionStart ?? input.value.length;
+        const end = input.selectionEnd ?? start;
+
+        const newValue =
+            input.value.slice(0, start) +
+            text +
+            input.value.slice(end);
+
+        if (newValue.length > input.maxLength) return;
+
+        input.setRangeText(
+            text,
+            start,
+            end,
+            "end"
+        );
+
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+        updateField();
+    }
+
+    rows.forEach(chars => {
+        const row = document.createElement("div");
+        row.className = "hebrew-keyboard-row";
+
+        chars.forEach(char => {
+            const key = document.createElement("button");
+            key.type = "button";
+            key.className = "hebrew-key";
+            key.textContent = char;
+
+            key.addEventListener("mousedown", e => e.preventDefault());
+            key.addEventListener("click", () => insertText(char));
+
+            row.appendChild(key);
+        });
+
+        keyboard.appendChild(row);
+    });
+
+    // Special keys.
+    const specialRow = document.createElement("div");
+    specialRow.className = "hebrew-keyboard-row special-keys";
+
+    function addSpecialKey(text, className, action, title) {
+        const key = document.createElement("button");
+        key.type = "button";
+        key.className = "hebrew-key " + className;
+        key.textContent = text;
+        key.title = title || text;
+
+        key.addEventListener("mousedown", e => e.preventDefault());
+        key.addEventListener("click", action);
+
+        specialRow.appendChild(key);
+    }
+
+    addSpecialKey("Space", "space-key", () => insertText(" "), "Insert space");
+
+    addSpecialKey("⌫", "backspace-key", () => {
+        input.focus();
+
+        let start = input.selectionStart ?? input.value.length;
+        let end = input.selectionEnd ?? start;
+
+        if (start === end && start > 0) {
+            start--;
+        }
+
+        input.setRangeText("", start, end, "end");
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+        updateField();
+    }, "Backspace");
+
+    addSpecialKey("↵ Enter", "enter-key", () => {
+        // A single-line input cannot contain a newline.
+        // In that case Enter inserts a space instead.
+        insertText(input.tagName === "TEXTAREA" ? "\n" : " ");
+    }, "Insert newline");
+
+    keyboard.appendChild(specialRow);
+
+    return keyboard;
 }
 
 
@@ -175,7 +322,6 @@ function highlightActiveField(activeElement) {
 function drawPages() {
     const thumbs = $("#pageThumbs");
     const large = $("#largePreview");
-    const spread = $("#spreadPreview");
 
     if (!rendered || !rendered.pages.length) return;
 
@@ -186,7 +332,6 @@ function drawPages() {
 
     thumbs.replaceChildren();
     large.replaceChildren();
-    spread.replaceChildren();
 
     rendered.pages.forEach((p, i) => {
         const b = document.createElement("button");
@@ -195,14 +340,15 @@ function drawPages() {
 
         const thumbFrame = document.createElement("div");
         thumbFrame.className = "thumb-frame";
-
         thumbFrame.append(p.element.cloneNode(true));
+
         b.append(thumbFrame);
 
-        const l = document.createElement("span");
-        l.className = "thumb-label";
-        l.textContent = p.page.label;
-        b.append(l);
+        const label = document.createElement("span");
+        label.className = "thumb-label";
+        label.textContent = p.page.label;
+
+        b.append(label);
 
         b.addEventListener("click", () => {
             activePage = i;
@@ -210,17 +356,14 @@ function drawPages() {
         });
 
         thumbs.append(b);
-
-        spread.append(p.element.cloneNode(true));
     });
 
-    // Add the selected page to the large preview.
+    // Display only the selected page in the large preview.
     const activeElement =
         rendered.pages[activePage].element.cloneNode(true);
 
     large.append(activeElement);
 
-    // Highlight the selected field if it appears on this page.
     if (activeFieldId) {
         highlightActiveField(activeElement);
     }

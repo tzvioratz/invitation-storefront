@@ -30,3 +30,143 @@
 .html-page [data-multiline="true"] {
     white-space: pre-line;
 }
+
+.field-page-section {
+    margin-bottom: 28px;
+}
+
+.field-page-section h3 {
+    font-family: var(--font-heading, Georgia, serif);
+    font-size: 1.15rem;
+    font-weight: 600;
+    padding-bottom: 10px;
+    margin: 0 0 16px;
+    border-bottom: 1px solid var(--border, #ddd);
+}
+
+.field-page-section .field-control {
+    display: block;
+    margin-bottom: 16px;
+}
+
+/* Field input and keyboard button */
+.field-control-wrap {
+    margin-bottom: 22px;
+}
+
+.field-input-row {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+}
+
+.field-input-row input,
+.field-input-row textarea {
+    flex: 1;
+    min-width: 0;
+}
+
+.hebrew-keyboard-toggle {
+    flex: 0 0 42px;
+    border: 1px solid #d6d0c5;
+    border-radius: 6px;
+    background: #f7f5f0;
+    color: #26384d;
+    font-size: 21px;
+    cursor: pointer;
+}
+
+.hebrew-keyboard-toggle:hover,
+.hebrew-keyboard-toggle.active {
+    background: #26384d;
+    color: white;
+}
+
+/* Keyboard panel */
+.hebrew-keyboard {
+    margin-top: 10px;
+    padding: 12px;
+    background: #f4f2ed;
+    border: 1px solid #ded9cf;
+    border-radius: 9px;
+    direction: rtl;
+}
+
+.hebrew-keyboard[hidden] {
+    display: none;
+}
+
+.hebrew-keyboard-row {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin-bottom: 6px;
+}
+
+.hebrew-keyboard-row:last-child {
+    margin-bottom: 0;
+}
+
+.hebrew-key {
+    min-width: 32px;
+    min-height: 40px;
+    padding: 5px 8px;
+    border: 1px solid #d5d0c7;
+    border-radius: 5px;
+    background: white;
+    color: #26384d;
+    font-size: 19px;
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+.hebrew-key:hover {
+    background: #e8e4dc;
+}
+
+.hebrew-key:active {
+    background: #d9d3c8;
+}
+
+.special-keys {
+    direction: ltr;
+    margin-top: 10px;
+}
+
+.special-keys .hebrew-key {
+    font-size: 14px;
+}
+
+.space-key {
+    flex: 1;
+    max-width: 180px;
+}
+
+.backspace-key {
+    min-width: 55px;
+}
+
+.enter-key {
+    min-width: 85px;
+}
+
+@media (max-width: 480px) {
+    .hebrew-keyboard {
+        padding: 7px;
+    }
+
+    .hebrew-keyboard-row {
+        gap: 3px;
+    }
+
+    .hebrew-key {
+        min-width: 0;
+        flex: 1;
+        padding: 5px 3px;
+        font-size: 17px;
+    }
+
+    .special-keys .hebrew-key {
+        font-size: 13px;
+    }
+}

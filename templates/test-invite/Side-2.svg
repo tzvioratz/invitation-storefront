@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 700" width="500" height="700">
+  <defs>
+    <style>
+      500;700&family=Heebo:wght@400;500&display=swap');
+      .heb-small {
+        font-family: 'Frank Ruhl Libre', 'David', 'Times New Roman', serif;
+        font-size: 13.5px;
+        fill: #222222;
+        text-anchor: middle;
+      }
+      .heb-medium {
+        font-family: 'Frank Ruhl Libre', 'David', 'Times New Roman', serif;
+        font-size: 14.5px;
+        fill: #222222;
+        text-anchor: middle;
+      }
+      .heb-title {
+        font-family: 'Frank Ruhl Libre', 'David', 'Times New Roman', serif;
+        font-size: 12px;
+        fill: #222222;
+      }
+      .heb-name {
+        font-family: 'Frank Ruhl Libre', 'David', 'Times New Roman', serif;
+        font-size: 30px;
+        font-weight: 500;
+        fill: #1a1a1a;
+        text-anchor: middle;
+      }
+      .heb-honorific {
+        font-family: 'Frank Ruhl Libre', 'David', 'Times New Roman', serif;
+        font-size: 10px;
+        fill: #222222;
+      }
+      .heb-parents-header {
+        font-family: 'Frank Ruhl Libre', 'David', 'Times New Roman', serif;
+        font-size: 12.5px;
+        font-weight: 500;
+        fill: #222222;
+        text-anchor: middle;
+      }
+      .heb-parents-name {
+        font-family: 'Frank Ruhl Libre', 'David', 'Times New Roman', serif;
+        font-size: 13.5px;
+        fill: #222222;
+        text-anchor: middle;
+      }
+    </style>
+  </defs>
+
+  <!-- Card Background -->
+  <rect width="500" height="700" fill="#ffffff" />
+
+  <!-- Top Blessing & Verses -->
+  <g>
+    <text x="250" y="88" class="heb-small">בעזהשי"ת</text>
+    <text x="250" y="122" class="heb-medium">
+      <tspan x="250" dy="0">נעלה את ירושלים על ראש שמחתנו</tspan>
+      <tspan x="250" dy="26">קול ששון   וקול שמחה   קול חתן   וקול כלה</tspan>
+    </text>
+  </g>
+
+  <!-- Invitation Intro (Grouped Multiline) -->
+  <g>
+    <text x="250" y="185" class="heb-medium">
+      <tspan x="250" dy="0">ברוב שבח והודאה להשי"ת</tspan>
+      <tspan x="250" dy="25">מתכבדים אנו להזמין את קרובינו וידידינו</tspan>
+      <tspan x="250" dy="25">להשתתף בשמחת כלולת בנינו היקרים</tspan>
+    </text>
+  </g>
+
+  <!-- Couple Names Block -->
+  <g>
+    <!-- Groom -->
+    <g transform="translate(250, 305)">
+      <text x="28" y="0" class="heb-title" text-anchor="start">החתן</text>
+      <text x="-8" y="0" class="heb-name">אריה</text>
+      <text x="-42" y="-2" class="heb-honorific" text-anchor="end">נ"י</text>
+    </g>
+
+    <!-- Connector -->
+    <text x="250" y="332" class="heb-small">עב"ג</text>
+
+    <!-- Bride -->
+    <g transform="translate(250, 375)">
+      <text x="64" y="0" class="heb-title" text-anchor="start">הכלה</text>
+      <text x="-4" y="0" class="heb-name">חיה מרים</text>
+      <text x="-74" y="-2" class="heb-honorific" text-anchor="end">תחי'</text>
+    </g>
+  </g>
+
+  <!-- Date & Schedule Block (Grouped Multiline) -->
+  <g>
+    <text x="250" y="432" class="heb-medium">
+      <tspan x="250" dy="0">שתתקיים אי"ה בשעה טובה ומוצלחת</tspan>
+      <tspan x="250" dy="26">ביום שני לפרשת שופטים, כ"ז אב תשפ"ד</tspan>
+      <tspan x="250" dy="26">קבלת פנים בשעה שש וחצי   החופה בשעה שבע וחצי</tspan>
+      <tspan x="250" dy="26">שמחת חתן וכלה בשעה עשר</tspan>
+    </text>
+  </g>
+
+  <!-- Venue Block (Grouped Multiline) -->
+  <g>
+    <text x="250" y="546" class="heb-medium">
+      <tspan x="250" dy="0">באולם ליק טערעס</tspan>
+      <tspan x="250" dy="26">ליקוואוד, נוא דזערזי</tspan>
+    </text>
+  </g>
+
+  <!-- Parents Footer (Two Grouped Columns) -->
+  <g>
+    <!-- Left Column: Bride's Parents -->
+    <g>
+      <text x="155" y="620" class="heb-parents-header">הורי הכלה</text>
+      <text x="155" y="642" class="heb-parents-name">בנימין וחיה רחל פרידמאן</text>
+    </g>
+
+    <!-- Right Column: Groom's Parents -->
+    <g>
+      <text x="345" y="620" class="heb-parents-header">הורי החתן</text>
+      <text x="345" y="642" class="heb-parents-name">יוסף ודבורה קליין</text>
+    </g>
+  </g>
+</svg>

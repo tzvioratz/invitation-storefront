@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 500 700"
+   width="500"
+   height="700"
+   version="1.1"
+   id="svg15"
+   sodipodi:docname="gemini-svg.svg"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview15"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="1.1528571"
+     inkscape:cx="250.24783"
+     inkscape:cy="350"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="1592"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg15" />
+  <defs
+     id="defs1">
+    <style
+       id="style1">
+      500=Cormorant+Garamond:wght@400;500;600=Great+Vibes=swap');
+      .header-text {
+        font-family: 'Cormorant Garamond', 'Cinzel', Georgia, serif;
+        font-size: 11px;
+        font-weight: 500;
+        fill: #222222;
+        letter-spacing: 1.2px;
+        text-anchor: middle;
+      }
+      .script-name {
+        font-family: 'Great Vibes', 'Snell Roundhand', 'Edwardian Script ITC', cursive;
+        font-size: 56px;
+        fill: #1a1a1a;
+        text-anchor: middle;
+      }
+      .and-text {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-size: 10px;
+        font-weight: 600;
+        fill: #222222;
+        letter-spacing: 1.5px;
+        text-anchor: middle;
+      }
+      .details-text {
+        font-family: 'Cormorant Garamond', 'Cinzel', Georgia, serif;
+        font-size: 11px;
+        font-weight: 500;
+        fill: #222222;
+        letter-spacing: 1.2px;
+        text-anchor: middle;
+      }
+      .venue-text {
+        font-family: 'Cormorant Garamond', 'Cinzel', Georgia, serif;
+        font-size: 11px;
+        font-weight: 500;
+        fill: #222222;
+        letter-spacing: 1.2px;
+        text-anchor: middle;
+      }
+    </style>
+  </defs>
+  <!-- Card Background -->
+  <rect
+     width="500"
+     height="700"
+     fill="#ffffff"
+     id="rect1" />
+  <!-- Top Header Block (Grouped Multiline) -->
+  <g
+     id="g5"
+     transform="translate(-120)">
+    <text
+       x="250"
+       y="95"
+       class="header-text"
+       id="text5"><tspan
+         x="250"
+         dy="0"
+         id="tspan1">WITH GRATITUDE TO HASHEM</tspan><tspan
+         x="250"
+         dy="25"
+         id="tspan2">MR. AND MRS. YOSEF KLEIN</tspan><tspan
+         x="250"
+         dy="25"
+         id="tspan3">MR. AND MRS. BINYOMIN FRIEDMAN</tspan><tspan
+         x="250"
+         dy="25"
+         id="tspan4">REQUEST THE HONOR OF YOUR PRESENCE</tspan><tspan
+         x="250"
+         dy="25"
+         id="tspan5">AT THE MARRIAGE OF THEIR CHILDREN</tspan></text>
+  </g>
+  <!-- Center Names & Flourishes -->
+  <g
+     transform="translate(0, 10)"
+     id="g8">
+    <path
+       d="M 185 245 C 160 235, 135 255, 155 270 C 175 285, 220 265, 240 275"
+       fill="none"
+       stroke="#1a1a1a"
+       stroke-width="0.9"
+       stroke-linecap="round"
+       id="path5" />
+    <path
+       d="M 195 275 C 170 285, 195 305, 235 305 C 275 305, 310 315, 320 335"
+       fill="none"
+       stroke="#1a1a1a"
+       stroke-width="0.9"
+       stroke-linecap="round"
+       id="path6" />
+    <text
+       x="235"
+       y="280"
+       class="script-name"
+       id="text6">Miriam</text>
+    <text
+       x="220"
+       y="298"
+       class="and-text"
+       id="text7">AND</text>
+    <text
+       x="275"
+       y="345"
+       class="script-name"
+       id="text8">Aryeh</text>
+    <path
+       d="M 225 348 C 205 345, 195 360, 210 368 C 225 375, 250 355, 275 368 C 300 380, 325 385, 335 370"
+       fill="none"
+       stroke="#1a1a1a"
+       stroke-width="0.9"
+       stroke-linecap="round"
+       id="path8" />
+  </g>
+  <!-- Event Details Block (Grouped Multiline) -->
+  <g
+     id="g12">
+    <text
+       x="250"
+       y="445"
+       class="details-text"
+       id="text12"><tspan
+         x="250"
+         dy="0"
+         id="tspan8">MONDAY, THE SEVENTEENTH OF AUGUST</tspan><tspan
+         x="250"
+         dy="25"
+         id="tspan9">TWO THOUSAND TWENTY-FOUR</tspan><tspan
+         x="250"
+         dy="25"
+         id="tspan10">RECEPTION AT SIX-THIRTY IN THE EVENING</tspan><tspan
+         x="250"
+         dy="25"
+         id="tspan11">CHUPAH AT SEVEN-THIRTY</tspan><tspan
+         x="250"
+         dy="25"
+         id="tspan12">SIMCHAS CHOSSON V'KALLAH AT TEN O'CLOCK</tspan></text>
+  </g>
+  <!-- Venue Block (Grouped Multiline) -->
+  <g
+     id="g15">
+    <text
+       x="250"
+       y="585"
+       class="venue-text"
+       id="text15"><tspan
+         x="250"
+         dy="0"
+         id="tspan13">LAKE TERRACE</tspan><tspan
+         x="250"
+         dy="25"
+         id="tspan14">1690 OAK STREET</tspan><tspan
+         x="250"
+         dy="25"
+         id="tspan15">LAKEWOOD, NEW JERSEY</tspan></text>
+  </g>
+</svg>
