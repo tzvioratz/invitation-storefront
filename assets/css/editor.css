@@ -243,3 +243,33 @@
 .dropdown-price.price-neutral {
     color: #777;
 }
+.quantity-section {
+  margin-bottom: 30px;
+  padding: 20px;
+  background: #f8f7f4;
+  border: 1px solid #e5e1d9;
+  border-radius: 8px;
+}
+
+.quantity-section h3,
+.customization-section h3 {
+  margin: 0 0 8px;
+}
+
+.quantity-section p {
+  margin: 0 0 16px;
+}
+
+.quantity-section label {
+  display: block;
+  margin-bottom: 7px;
+  font-weight: 600;
+}
+
+.quantity-section select {
+  width: 100%;
+}
+
+.customization-section {
+  margin-bottom: 30px;
+}
