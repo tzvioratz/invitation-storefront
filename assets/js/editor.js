@@ -1,6 +1,6 @@
 import { getStoreData, getInvitation } from "./data.js";
 import { renderInvitation, updateRenderedWording } from "./template-renderer.js";
-import { calculateEstimate, money } from "./pricing.js";
+import {calculateEstimate, calculateEffectiveUnitPrice, getQuantityOptions, validatePricing, money } from "./pricing.js";
 import { CONFIG } from "./config.js";
 const $ = (s) => document.querySelector(s),
     params = new URLSearchParams(location.search),
@@ -17,14 +17,19 @@ try {
     if (!invitation) throw new Error("This invitation is not available.");
     $("#editorTitle").textContent = invitation.title;
     $("#returnLink").href = "../invitation/?id=" + encodeURIComponent(id);
-    selection = {
-        format: invitation.formats[0],
-        paper: invitation.papers[0],
-        font: invitation.fonts[0],
-        color: invitation.colors[0],
-        design: invitation.designOptions[0]
-    };
-    buildOptions();
+// Make sure the invitation's pricing configuration is valid.
+validatePricing(invitation);
+
+selection = {
+    format: invitation.formats[0],
+    paper: invitation.papers[0],
+    font: invitation.fonts[0],
+    color: invitation.colors[0],
+    design: invitation.designOptions[0]
+};
+
+buildQuantityOptions();
+buildOptions();
     rendered = await renderInvitation({
         invitation,
         target: document.createElement("div"),
@@ -53,6 +58,52 @@ function activateField(fieldId) {
     drawPages();
 }
 
+
+
+
+
+
+
+function updateOptionPrice(key, values, priceElement) {
+    const selectedValue = selection[key];
+
+    // First option is the baseline/default option.
+    const defaultAdjustment = getOptionAdjustment(key, values[0]);
+    const selectedAdjustment = getOptionAdjustment(key, selectedValue);
+
+    const difference = selectedAdjustment - defaultAdjustment;
+
+    priceElement.className = "option-price";
+
+    if (difference > 0.000001) {
+        priceElement.textContent =
+            `+${money(difference)} per invitation`;
+        priceElement.classList.add("price-increase");
+    } else if (difference < -0.000001) {
+        priceElement.textContent =
+            `−${money(Math.abs(difference))} per invitation`;
+        priceElement.classList.add("price-decrease");
+    } else {
+        priceElement.textContent = "No price change";
+        priceElement.classList.add("price-neutral");
+    }
+}
+
+
+function getOptionAdjustment(key, value) {
+    if (key === "format")
+        return Number(invitation.formatAdjustments?.[value] || 0);
+
+    if (key === "paper")
+        return Number(invitation.paperAdjustments?.[value] || 0);
+
+    if (key === "design")
+        return Number(invitation.customizationFees?.[value] || 0);
+
+    return 0;
+}
+
+
 function buildOptions() {
     const groups = [
         ["format", "Card format", invitation.formats],
@@ -61,23 +112,143 @@ function buildOptions() {
         ["color", "Color", invitation.colors],
         ["design", "Design option", invitation.designOptions]
     ];
-    $("#optionControls").innerHTML = groups
-        .filter((g) => g[2].length)
-        .map(
-            ([key, label, values]) =>
-                `<label>${label}<select data-choice="${key}">${values.map((v) => `<option>${esc(v)}</option>`).join("")}</select></label>`
-        )
-        .join("");
-    $("#optionControls")
-        .querySelectorAll("select")
-        .forEach((el) =>
-            el.addEventListener("change", () => {
-                selection[el.dataset.choice] = el.value;
-                refresh();
-            })
-        );
+
+    const container = $("#optionControls");
+    container.replaceChildren();
+
+    groups.filter(g => g[2].length).forEach(([key, label, values]) => {
+        const wrapper = document.createElement("div");
+        wrapper.className = "option-price-group";
+
+        const heading = document.createElement("label");
+        heading.textContent = label;
+
+        const dropdown = document.createElement("div");
+        dropdown.className = "custom-price-dropdown";
+
+        const trigger = document.createElement("button");
+        trigger.type = "button";
+        trigger.className = "custom-price-trigger";
+        trigger.setAttribute("aria-expanded", "false");
+
+        const menu = document.createElement("div");
+        menu.className = "custom-price-menu";
+        menu.hidden = true;
+
+        function updateMenu() {
+            menu.replaceChildren();
+
+            // Compare every option against the CURRENT selection.
+            const currentAdjustment =
+                getOptionAdjustment(key, selection[key]);
+
+            values.forEach(value => {
+                const difference =
+                    getOptionAdjustment(key, value) - currentAdjustment;
+
+                const option = document.createElement("button");
+                option.type = "button";
+                option.className = "custom-price-option";
+
+                const name = document.createElement("span");
+                name.textContent = value;
+
+                const price = document.createElement("span");
+                price.className = "dropdown-price " +
+                    (difference > 0.000001 ? "price-increase" :
+                     difference < -0.000001 ? "price-decrease" :
+                     "price-neutral");
+
+                price.textContent = formatAdjustment(difference);
+
+                option.append(name, price);
+
+                option.addEventListener("click", () => {
+                    selection[key] = value;
+                    updateTrigger();
+                    updateMenu();
+                    closeMenu();
+                    refresh();
+                });
+
+                menu.appendChild(option);
+            });
+        }
+
+        function updateTrigger() {
+            trigger.replaceChildren();
+
+            const name = document.createElement("span");
+            name.textContent = selection[key];
+
+            const price = document.createElement("span");
+            price.className = "dropdown-price price-neutral";
+            price.textContent = "";
+
+            trigger.append(name, price);
+        }
+
+        function closeMenu() {
+            menu.hidden = true;
+            trigger.setAttribute("aria-expanded", "false");
+        }
+
+        trigger.addEventListener("click", () => {
+            const opening = menu.hidden;
+
+            if (opening) updateMenu();
+
+            menu.hidden = !opening;
+            trigger.setAttribute("aria-expanded", String(opening));
+        });
+
+        updateTrigger();
+        updateMenu();
+
+        dropdown.append(trigger, menu);
+        document.addEventListener("click", (event) => {
+    if (!dropdown.contains(event.target)) {
+        closeMenu();
+    }
+});
+        heading.appendChild(dropdown);
+        wrapper.appendChild(heading);
+        container.appendChild(wrapper);
+    });
 }
 
+
+function formatAdjustment(amount) {
+    if (amount > 0.000001)
+        return `+${money(amount)} / invitation`;
+
+    if (amount < -0.000001)
+        return `−${money(Math.abs(amount))} / invitation`;
+
+    return "";
+}
+
+
+
+
+function buildQuantityOptions() {
+    const select = $("#quantity");
+    const quantities = getQuantityOptions(invitation);
+
+    select.replaceChildren();
+
+    quantities.forEach(qty => {
+        select.add(new Option(qty.toString(), qty.toString()));
+    });
+
+    if (quantities.length) {
+        select.value = quantities.includes(50)
+            ? "50"
+            : String(quantities[0]);
+    }
+
+    select.addEventListener("change", updatePrice);
+}
 function buildFields() {
     const container = $("#fieldControls");
     container.replaceChildren();
@@ -385,9 +556,30 @@ function refresh() {
     });
 }
 function updatePrice() {
-    const qty = Number($("#quantity").value) || 0;
-    $("#estimate").textContent = "Estimated subtotal: " + money(calculateEstimate(invitation, selection, qty));
+    if (!invitation) return;
+
+    const qty = Number($("#quantity").value);
+
+    if (!getQuantityOptions(invitation).includes(qty)) {
+        $("#estimate").textContent = "Estimated order total: —";
+        $("#unitEstimate").textContent = "";
+        return;
+    }
+
+    const total = calculateEstimate(invitation, selection, qty);
+    const perInvitation = calculateEffectiveUnitPrice(
+        invitation,
+        selection,
+        qty
+    );
+
+    $("#estimate").textContent =
+        "Estimated order total: " + money(total);
+
+    $("#unitEstimate").textContent =
+        money(perInvitation) + " per invitation";
 }
+
 $("#prevPage").addEventListener("click", () => {
     activePage = Math.max(0, activePage - 1);
     drawPages();
@@ -396,24 +588,24 @@ $("#nextPage").addEventListener("click", () => {
     activePage = Math.min(rendered.pages.length - 1, activePage + 1);
     drawPages();
 });
-$("#quantity").addEventListener("input", updatePrice);
 $("#reviewButton").addEventListener("click", () => {
     const name = $("#customerName").value.trim(),
         email = $("#customerEmail").value.trim(),
         qty = Number($("#quantity").value);
-    if (
-        !name ||
-        !email ||
-        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
-        !Number.isInteger(qty) ||
-        qty < Number(invitation.quantityMinimum || 1) ||
-        qty > 1000
-    ) {
-        alert(
-            "Enter your name, a valid email, and a valid quantity (minimum " + (invitation.quantityMinimum || 1) + ")."
-        );
-        return;
-    }
+    const validQuantities = getQuantityOptions(invitation);
+
+if (
+    !name ||
+    !email ||
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
+    !Number.isInteger(qty) ||
+    !validQuantities.includes(qty)
+) {
+    alert(
+        "Enter your name, a valid email, and select one of the available quantities."
+    );
+    return;
+}
     const summary = {
         Invitation: invitation.title,
         Format: selection.format,
