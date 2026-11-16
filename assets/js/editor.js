@@ -618,7 +618,6 @@ if (
         Email: email,
         Phone: $("#customerPhone").value,
         Notes: $("#orderNotes").value,
-        Wording: JSON.stringify(wording),
         Estimate: $("#estimate").textContent
     };
     window.pendingOrder = {
@@ -653,7 +652,11 @@ $("#submitOrder").addEventListener("click", async () => {
         const result = await response.json();
         if (!result.success || !result.reference)
             throw new Error(result.error || "The server did not confirm the order.");
-        status.textContent = `Order request received. Reference: ${result.reference}. We will prepare a proof for your approval. Printing begins only after approval.`;
+        status.style.whiteSpace = "pre-line";
+        status.textContent = `Order request received. 
+        Reference: ${result.reference}. 
+        We will prepare a proof for your approval. 
+        Printing begins only after approval.`;
     } catch (e) {
         status.textContent = `We could not confirm your order: ${e.message}. Please try again or contact the business. Do not assume your request was received.`;
     } finally {

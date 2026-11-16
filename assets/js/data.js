@@ -10,6 +10,16 @@ const sampleInvitations=[
 ];
 const sampleOptions={occasions:["Wedding","Bar Mitzvah","Birthday","Anniversary","Bris","Kiddush"],styles:["Modern","Traditional","Classic","Elegant","Minimalist","Floral"],formats:["Flat 5x7","Flat 4x6","Folded 5x7"],papers:["Smooth Matte","Cotton","Linen"],fonts:["Cormorant","Garamond","DM Sans"],colors:["Navy","Sage","Terracotta","Burgundy"]};
 
+function parseNumber(value) {
+  if (value === null || value === undefined || value === "") return 0;
+
+  const number = Number(
+    String(value).replace(/[$,\s]/g, "")
+  );
+
+  return Number.isFinite(number) ? number : 0;
+}
+
 function normalizeInvitation(r) {
   return {
     ...r,
@@ -30,21 +40,13 @@ function normalizeInvitation(r) {
     paperAdjustments: parseJSON(r.paperAdjustments, {}),
     customizationFees: parseJSON(r.customizationFees, {}),
 
-    // Temporary sample pricing for all invitations.
-    // These can later come from the Google Sheets columns.
-    baseCharge: Number(r.baseCharge || 232),
-    unitPrice: Number(r.unitPrice || .50),
-    intermediatePremium: Number(r.intermediatePremium || 5),
+    // New pricing fields from Google Sheets
+baseCharge: parseNumber(r.baseCharge),
+unitPrice: parseNumber(r.unitPrice),
+intermediatePremium: parseNumber(r.intermediatePremium),
 
-    standardQuantities: parseJSON(
-      r.standardQuantities,
-      [100, 200, 300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000]
-    ).map(Number),
-
-    intermediateQuantities: parseJSON(
-      r.intermediateQuantities,
-      []
-    ).map(Number)
+standardQuantities: parseJSON(r.standardQuantities, []).map(Number),
+intermediateQuantities: parseJSON(r.intermediateQuantities, []).map(Number)
   };
 }
 
