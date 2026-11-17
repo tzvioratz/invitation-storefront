@@ -229,26 +229,46 @@ function buildOptions() {
     });
 }
 
+
 async function buildAddOnControls() {
     const container = $("#addOnControls");
     container.replaceChildren();
+    selectedAddOns = {};
+
     const compatibleAddOns = availableAddOns.filter(addOn =>
         isAddOnAvailableForInvitation(addOn, id)
     );
 
     if (!compatibleAddOns.length) {
-        container.innerHTML =
-            '<p class="muted">No optional add-ons are currently available.</p>';
+        container.textContent =
+            "No optional add-ons are currently available.";
         return;
     }
 
     const invitationQty = Number($("#quantity").value);
+    const invitationQuantities = getQuantityOptions(invitation);
 
     for (const addOn of compatibleAddOns) {
-        const defaultQty = Math.max(
-            addOn.quantityMinimum,
-            Math.min(invitationQty, addOn.quantityMaximum)
+        const min = addOn.quantityMinimum;
+        const max = addOn.quantityMaximum;
+        const step = Math.max(1, addOn.quantityStep);
+
+        // Use the same quantity choices as the invitation,
+        // filtered by this add-on's allowed range and step.
+        const quantities = invitationQuantities.filter(qty =>
+            qty >= min &&
+            qty <= max &&
+            Number.isInteger((qty - min) / step)
         );
+
+        const defaultQty = quantities.includes(invitationQty)
+            ? invitationQty
+            : quantities.length
+                ? quantities.reduce((best, qty) =>
+                    Math.abs(qty - invitationQty) <
+                    Math.abs(best - invitationQty) ? qty : best
+                  )
+                : min;
 
         const state = {
             enabled: false,
@@ -263,61 +283,88 @@ async function buildAddOnControls() {
         const wrapper = document.createElement("div");
         wrapper.className = "addon-card";
 
-        // Product heading and description.
+        // Heading.
         const heading = document.createElement("div");
         heading.className = "addon-heading";
 
-        const checkboxLabel = document.createElement("label");
-        checkboxLabel.className = "addon-toggle";
-
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-
         const title = document.createElement("strong");
         title.textContent = addOn.title;
-
-        checkboxLabel.append(checkbox, title);
 
         const description = document.createElement("p");
         description.className = "muted";
         description.textContent = addOn.description;
 
-        heading.append(checkboxLabel, description);
+        heading.append(title, description);
 
-        // Product configuration, hidden until selected.
+        // Yes / No toggle.
+        const toggle = document.createElement("div");
+        toggle.className = "addon-yes-no";
+        toggle.setAttribute("role", "group");
+        toggle.setAttribute("aria-label", `Include ${addOn.title}?`);
+
+        const yesButton = document.createElement("button");
+        yesButton.type = "button";
+        yesButton.className = "addon-choice-button";
+        yesButton.textContent = "Yes";
+
+        const noButton = document.createElement("button");
+        noButton.type = "button";
+        noButton.className = "addon-choice-button active";
+        noButton.textContent = "No";
+
+        function setEnabled(enabled) {
+            state.enabled = enabled;
+
+            yesButton.classList.toggle("active", enabled);
+            noButton.classList.toggle("active", !enabled);
+
+            yesButton.setAttribute("aria-pressed", String(enabled));
+            noButton.setAttribute("aria-pressed", String(!enabled));
+
+            configuration.hidden = !enabled;
+            updatePrice();
+        }
+
+        yesButton.addEventListener("click", () => setEnabled(true));
+        noButton.addEventListener("click", () => setEnabled(false));
+
+        toggle.append(yesButton, noButton);
+
+        // Configuration, hidden until Yes is selected.
         const configuration = document.createElement("div");
         configuration.className = "addon-configuration";
         configuration.hidden = true;
 
-        // Quantity.
+        // Quantity dropdown.
         const quantityLabel = document.createElement("label");
         quantityLabel.textContent = "Quantity";
 
-        const quantityInput = document.createElement("input");
-        quantityInput.type = "number";
-        quantityInput.min = addOn.quantityMinimum;
-        quantityInput.max = addOn.quantityMaximum;
-        quantityInput.step = addOn.quantityStep;
-        quantityInput.value = defaultQty;
+        const quantitySelect = document.createElement("select");
+        quantitySelect.className = "addon-quantity";
 
-        quantityInput.addEventListener("change", () => {
-            let qty = Number(quantityInput.value);
-
-            if (!Number.isInteger(qty)) {
-                qty = defaultQty;
-            }
-
-            qty = Math.max(
-                addOn.quantityMinimum,
-                Math.min(qty, addOn.quantityMaximum)
+        quantities.forEach(qty => {
+            quantitySelect.add(
+                new Option(qty.toString(), qty.toString())
             );
+        });
 
-            quantityInput.value = qty;
-            state.quantity = qty;
+        if (quantities.length) {
+            quantitySelect.value = String(defaultQty);
+        } else {
+            quantitySelect.disabled = true;
+            quantityLabel.append(
+                document.createTextNode(
+                    " No matching quantities are available."
+                )
+            );
+        }
+
+        quantitySelect.addEventListener("change", () => {
+            state.quantity = Number(quantitySelect.value);
             updatePrice();
         });
 
-        quantityLabel.appendChild(quantityInput);
+        quantityLabel.appendChild(quantitySelect);
 
         // Design choices.
         const designHeading = document.createElement("h4");
@@ -362,25 +409,12 @@ async function buildAddOnControls() {
                 if (!radio.checked) return;
 
                 state.design = design.id;
-                refresh();
                 updatePrice();
             });
 
-            designLabel.append(
-                radio,
-                designTitle,
-                preview
-            );
-
+            designLabel.append(radio, designTitle, preview);
             designsContainer.appendChild(designLabel);
         }
-
-        // Enable / disable this add-on.
-        checkbox.addEventListener("change", () => {
-            state.enabled = checkbox.checked;
-            configuration.hidden = !state.enabled;
-            updatePrice();
-        });
 
         configuration.append(
             quantityLabel,
@@ -388,10 +422,11 @@ async function buildAddOnControls() {
             designsContainer
         );
 
-        wrapper.append(heading, configuration);
+        wrapper.append(heading, toggle, configuration);
         container.appendChild(wrapper);
     }
 }
+
 
 function formatAdjustment(amount) {
     if (amount > 0.000001)
@@ -730,6 +765,38 @@ function refresh() {
         updatePrice();
     });
 }
+
+function calculateAddOnTotal(addOn, state) {
+    if (!state.enabled) return 0;
+
+    const qty = state.quantity;
+
+    // Find the applicable per-unit price tier.
+    const tier = addOn.quantityPricing.find(t =>
+        qty >= t.min && qty <= t.max
+    );
+
+    const unitPrice = tier ? tier.unitPrice : 0;
+
+    // One-time base charge plus quantity-based charge.
+    let total = addOn.baseCharge + (unitPrice * qty);
+
+    // Add the selected design's price adjustment.
+    const design = addOn.designs.find(d =>
+        d.id === state.design
+    );
+
+    if (design) {
+        if (design.priceAdjustmentType === "perUnit") {
+            total += design.priceAdjustment * qty;
+        } else {
+            total += design.priceAdjustment;
+        }
+    }
+
+    return total;
+}
+
 function updatePrice() {
     if (!invitation) return;
 
@@ -741,19 +808,32 @@ function updatePrice() {
         return;
     }
 
-    const total = calculateEstimate(invitation, selection, qty);
-    const perInvitation = calculateEffectiveUnitPrice(
+    const invitationTotal = calculateEstimate(
         invitation,
         selection,
         qty
     );
 
+    let addOnTotal = 0;
+
+    for (const [addOnId, state] of Object.entries(selectedAddOns)) {
+        if (!state.enabled) continue;
+
+        const addOn = availableAddOns.find(a => a.id === addOnId);
+        if (!addOn) continue;
+
+        addOnTotal += calculateAddOnTotal(addOn, state);
+    }
+
+    const total = invitationTotal + addOnTotal;
+
     $("#estimate").textContent =
         "Estimated order total: " + money(total);
 
     $("#unitEstimate").textContent =
-        money(perInvitation) + " per invitation";
+        money(total / qty) + " average per invitation, including add-ons";
 }
+
 
 $("#prevPage").addEventListener("click", () => {
     activePage = Math.max(0, activePage - 1);

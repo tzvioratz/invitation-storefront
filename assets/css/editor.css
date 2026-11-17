@@ -340,3 +340,47 @@
     max-width: 100%;
     margin: 0 auto;
 }
+
+.addon-yes-no {
+    display: inline-flex;
+    border: 1px solid #cbd1d8;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 8px;
+}
+
+.addon-choice-button {
+    border: 0;
+    border-radius: 0;
+    background: #fff;
+    color: #26384d;
+    padding: 9px 25px;
+    cursor: pointer;
+    font: inherit;
+    transition: background 0.15s, color 0.15s;
+}
+
+.addon-choice-button + .addon-choice-button {
+    border-left: 1px solid #cbd1d8;
+}
+
+.addon-choice-button.active {
+    background: #26384d;
+    color: #fff;
+}
+
+.addon-choice-button:focus-visible {
+    outline: 2px solid #788b78;
+    outline-offset: -3px;
+}
+
+.addon-quantity {
+    display: block;
+    width: 100%;
+    max-width: 220px;
+    margin-top: 6px;
+    padding: 9px;
+    border: 1px solid #cbd1d8;
+    border-radius: 6px;
+    background: #fff;
+}
