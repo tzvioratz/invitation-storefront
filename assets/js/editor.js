@@ -334,34 +334,112 @@ async function buildAddOnControls() {
 
         toggle.append(yesButton, noButton);
 
-        // Quantity
-        const quantityLabel = document.createElement("label");
-        quantityLabel.textContent = "Quantity";
+// Quantity dropdown.
+// Custom quantity dropdown with price differences.
+const quantityLabel = document.createElement("label");
+quantityLabel.className = "addon-quantity-label";
+quantityLabel.textContent = "Quantity";
 
-        const quantitySelect = document.createElement("select");
-        quantitySelect.className = "addon-quantity";
+const quantityDropdown = document.createElement("div");
+quantityDropdown.className = "custom-price-dropdown";
 
-        quantities.forEach(qty => {
-            quantitySelect.add(
-                new Option(qty.toString(), qty.toString())
-            );
-        });
+const quantityTrigger = document.createElement("button");
+quantityTrigger.type = "button";
+quantityTrigger.className = "custom-price-trigger";
 
-        if (quantities.length) {
-            quantitySelect.value = String(defaultQty);
-        } else {
-            quantitySelect.disabled = true;
-            quantityLabel.append(
-                document.createTextNode(" No matching quantities are available.")
-            );
-        }
+const quantityMenu = document.createElement("div");
+quantityMenu.className = "custom-price-menu";
+quantityMenu.hidden = true;
 
-        quantitySelect.addEventListener("change", () => {
-            state.quantity = Number(quantitySelect.value);
+const quantityPrice = document.createElement("span");
+quantityPrice.className = "addon-current-price";
+
+function updateQuantityMenu() {
+    quantityMenu.replaceChildren();
+
+    const currentDesign = addOn.designs.find(
+        d => d.id === state.design
+    );
+
+    const currentTotal = calculateAddOnTotal(
+        addOn,
+        currentDesign,
+        state.quantity
+    );
+
+    quantities.forEach(qty => {
+        const candidateTotal = calculateAddOnTotal(
+            addOn,
+            currentDesign,
+            qty
+        );
+
+        const difference = candidateTotal - currentTotal;
+
+        const option = document.createElement("button");
+        option.type = "button";
+        option.className = "custom-price-option";
+
+        const name = document.createElement("span");
+        name.textContent = qty;
+
+        const price = document.createElement("span");
+        price.className =
+            "dropdown-price " +
+            (difference > 0.000001 ? "price-increase" :
+             difference < -0.000001 ? "price-decrease" :
+             "price-neutral");
+
+        price.textContent = formatPriceDifference(difference);
+
+        option.append(name, price);
+
+        option.addEventListener("click", () => {
+            state.quantity = qty;
+            updateQuantityTrigger();
+            updateAddOnPriceDisplays();
             updatePrice();
+
+            quantityMenu.hidden = true;
+            quantityTrigger.setAttribute("aria-expanded", "false");
         });
 
-        quantityLabel.appendChild(quantitySelect);
+        quantityMenu.appendChild(option);
+    });
+}
+
+function updateQuantityTrigger() {
+    quantityTrigger.replaceChildren();
+
+    const name = document.createElement("span");
+    name.textContent = state.quantity;
+
+    quantityTrigger.append(name, quantityPrice);
+
+    const currentDesign = addOn.designs.find(
+        d => d.id === state.design
+    );
+
+    const total = calculateAddOnTotal(
+        addOn,
+        currentDesign,
+        state.quantity
+    );
+
+    quantityPrice.textContent = `Adds ${money(total)}`;
+}
+
+quantityTrigger.addEventListener("click", () => {
+    const opening = quantityMenu.hidden;
+
+    if (opening) updateQuantityMenu();
+
+    quantityMenu.hidden = !opening;
+    quantityTrigger.setAttribute("aria-expanded", String(opening));
+});
+
+quantityDropdown.append(quantityTrigger, quantityMenu);
+quantityLabel.appendChild(quantityDropdown);
 
         // Design choices
         const designHeading = document.createElement("h4");
@@ -382,7 +460,10 @@ async function buildAddOnControls() {
 
             const designTitle = document.createElement("span");
             designTitle.textContent = design.title;
-
+            
+            const designPrice = document.createElement("span");
+designPrice.className = "addon-design-price dropdown-price";
+            
             const preview = document.createElement("div");
             preview.className = "addon-design-preview";
 
@@ -411,11 +492,11 @@ async function buildAddOnControls() {
                     selectedPreview,
                     fieldsContainer
                 );
-
+                updateAddOnPriceDisplays();
                 updatePrice();
             });
 
-            designLabel.append(radio, designTitle, preview);
+            designLabel.append(radio, designTitle, designPrice, preview);
             designsContainer.appendChild(designLabel);
         }
 
@@ -438,7 +519,42 @@ async function buildAddOnControls() {
         customFieldsContainer.className = "addon-custom-fields";
 
         buildAddOnCustomFields(addOn, state, customFieldsContainer);
+function updateAddOnPriceDisplays() {
+    updateQuantityTrigger();
+    updateQuantityMenu();
 
+    const currentDesign = addOn.designs.find(
+        d => d.id === state.design
+    );
+
+    const currentTotal = calculateAddOnTotal(
+        addOn,
+        currentDesign,
+        state.quantity
+    );
+
+    for (const label of designsContainer.children) {
+        const radio = label.querySelector("input");
+        const priceElement = label.querySelector(".addon-design-price");
+
+        const candidateDesign = addOn.designs.find(
+            d => d.id === radio.value
+        );
+
+        const candidateTotal = calculateAddOnTotal(
+            addOn,
+            candidateDesign,
+            state.quantity
+        );
+
+        setPriceDifference(
+            priceElement,
+            candidateTotal - currentTotal
+        );
+    }
+}
+
+updateAddOnPriceDisplays();
         configuration.append(
             quantityLabel,
             designHeading,
@@ -611,7 +727,31 @@ function formatAdjustment(amount) {
 }
 
 
+function formatPriceDifference(amount) {
+    if (amount > 0.000001)
+        return `+$${amount.toFixed(2)}`;
 
+    if (amount < -0.000001)
+        return `−$${Math.abs(amount).toFixed(2)}`;
+
+    return "No price change";
+}
+
+function setPriceDifference(element, amount) {
+    element.textContent = formatPriceDifference(amount);
+
+    element.classList.remove(
+        "price-increase",
+        "price-decrease",
+        "price-neutral"
+    );
+
+    element.classList.add(
+        amount > 0.000001 ? "price-increase" :
+        amount < -0.000001 ? "price-decrease" :
+        "price-neutral"
+    );
+}
 
 function buildQuantityOptions() {
     const select = $("#quantity");
@@ -976,12 +1116,16 @@ function updatePrice() {
     }
 
     const total = invitationTotal + addOnTotal;
+    const liveTotal = document.getElementById("liveOrderTotalAmount");
 
+if (liveTotal) {
+    liveTotal.textContent = money(total);
+}
     $("#estimate").textContent =
         "Estimated order total: " + money(total);
 
     $("#unitEstimate").textContent =
-        money(total / qty) + " average per invitation, including add-ons";
+        money(invitationTotal  / qty) + " average per invitation, not including add-ons";
 }
 
 

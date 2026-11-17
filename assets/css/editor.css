@@ -437,3 +437,62 @@
 .addon-configuration > h4 {
     margin-top: 24px;
 }
+.addon-quantity-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.addon-current-price {
+    font-weight: 600;
+    color: #334155;
+}
+
+.addon-design-price {
+    margin-left: auto;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+.addon-quantity-label {
+    display: block;
+    margin-bottom: 14px;
+}
+
+.addon-quantity-label .custom-price-dropdown {
+    max-width: 220px;
+}
+.live-order-total {
+    position: fixed;
+    top: 60px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px 12px;
+    background: white;
+    border: 1px solid #dedbd4;
+    border-radius: 8px;
+    box-shadow: 0 3px 14px rgba(0,0,0,.12);
+    min-width: 125px;
+}
+
+.live-order-total-label {
+    font-size: .7rem;
+    font-weight: 600;
+    color: #777;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+#liveOrderTotalAmount {
+    font-size: 1.25rem;
+    color: #16803c;
+    font-weight: 700;
+}
+
+.live-order-total-note {
+    font-size: .7rem;
+    color: #888;
+}

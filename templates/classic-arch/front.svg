@@ -1,1 +1,31 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 900"><rect width="600" height="900" fill="#fffdf8"/><path d="M90 770V300Q90 110 300 110Q510 110 510 300V770Z" fill="none" stroke="#b49a68" stroke-width="2"/><path d="M110 750V300Q110 130 300 130Q490 130 490 300V750Z" fill="none" stroke="#d8c9ad"/><text x="300" y="265" text-anchor="middle" font-family="serif" font-size="18" letter-spacing="4" fill="#8b795b">TOGETHER WITH THEIR FAMILIES</text><text data-field="names" data-label="Names" x="300" y="390" text-anchor="middle" font-family="serif" font-size="62" fill="#26384d">Sarah &amp; David</text><text x="300" y="445" text-anchor="middle" font-family="serif" font-size="22" font-style="italic" fill="#8b795b">request the pleasure of your company</text><text data-field="event" data-label="Event" x="300" y="540" text-anchor="middle" font-family="serif" font-size="25" fill="#26384d">at their wedding</text><text data-field="date" data-label="Date and time" x="300" y="615" text-anchor="middle" font-family="serif" font-size="22" fill="#26384d">Saturday, June 14, 2027</text><text data-field="location" data-label="Venue" x="300" y="675" text-anchor="middle" font-family="serif" font-size="18" fill="#26384d">The Garden Estate · Baltimore</text><text x="300" y="725" text-anchor="middle" font-family="serif" font-size="12" letter-spacing="3" fill="#b49a68">CELEBRATE WITH US</text></svg>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 26.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 600 900" style="enable-background:new 0 0 600 900;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#FFFDF8;}
+	.st1{fill:none;stroke:#B49A68;stroke-width:2;}
+	.st2{fill:none;stroke:#D8C9AD;}
+	.st3{fill:#8B795B;}
+	.st4{font-family:'TimesNewRomanPSMT';}
+	.st5{font-size:18px;}
+	.st6{letter-spacing:3;}
+	.st7{fill:#26384D;}
+	.st8{font-size:62px;}
+	.st9{font-family:'TimesNewRomanPS-ItalicMT';}
+	.st10{font-size:22px;}
+	.st11{font-size:25px;}
+	.st12{fill:#B49A68;}
+	.st13{font-size:12px;}
+</style>
+<rect class="st0" width="600" height="900"/>
+<path class="st1" d="M90,770V300c0-126.7,70-190,210-190s210,63.3,210,190v470H90z"/>
+<path class="st2" d="M110,750V300c0-113.3,63.3-170,190-170s190,56.7,190,170v450H110z"/>
+<text transform="matrix(1 0 0 1 99.4287 265)" class="st3 st4 st5 st6">TOGETHER WITH THEIR FAMILIES</text>
+<text transform="matrix(1 0 0 1 114.0454 390)" class="st7 st4 st8">Sarah &amp; David</text>
+<text transform="matrix(1 0 0 1 134.9355 445)" class="st3 st9 st10">request the pleasure of your company</text>
+<text transform="matrix(1 0 0 1 218.7744 540)" class="st7 st4 st11">at their wedding</text>
+<text transform="matrix(1 0 0 1 194.6997 615)" class="st7 st4 st10">Saturday, June 14, 2027</text>
+<text transform="matrix(1 0 0 1 189.5435 675)" class="st7 st4 st5">The Garden Estate · Baltimore</text>
+<text transform="matrix(1 0 0 1 214.2803 725)" class="st12 st4 st13 st6">CELEBRATE WITH US</text>
+</svg>
