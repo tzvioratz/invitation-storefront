@@ -115,3 +115,90 @@ export function money(n) {
     currency: "USD"
   }).format(Number(n) || 0);
 }
+
+/**
+ * Gets the per-unit price for an add-on at a given quantity.
+ *
+ * quantityPricing example:
+ * [
+ *   { min: 1, max: 50, unitPrice: 0.50 },
+ *   { min: 51, max: 100, unitPrice: 0.40 },
+ *   { min: 101, max: null, unitPrice: 0.35 }
+ * ]
+ */
+export function getAddOnUnitPrice(addOn, quantity) {
+  const qty = Number(quantity);
+
+  if (!Number.isInteger(qty) || qty <= 0) return 0;
+
+  const pricing = Array.isArray(addOn.quantityPricing)
+    ? addOn.quantityPricing
+    : [];
+
+  const tier = pricing.find(tier => {
+    const min = Number(tier.min);
+    const max = tier.max === "" || tier.max == null
+      ? Infinity
+      : Number(tier.max);
+
+    return qty >= min && qty <= max;
+  });
+
+  return Number(tier?.unitPrice ?? 0);
+}
+
+
+/**
+ * Calculates the price of one selected add-on.
+ */
+export function calculateAddOnTotal(addOn, design, quantity) {
+  const qty = Number(quantity);
+
+  if (!Number.isInteger(qty) || qty <= 0) return 0;
+
+  // Fixed charge for selecting the add-on.
+  const baseCharge = Number(addOn.baseCharge || 0);
+
+  // Quantity-based price.
+  const unitPrice = getAddOnUnitPrice(addOn, qty);
+  const quantityTotal = unitPrice * qty;
+
+  // Selected design adjustment.
+  const adjustment = Number(design?.priceAdjustment || 0);
+
+  let designTotal = 0;
+
+  if (design?.priceAdjustmentType === "perUnit") {
+    designTotal = adjustment * qty;
+  } else if (design?.priceAdjustmentType === "perOrder") {
+    designTotal = adjustment;
+  }
+
+  return Math.max(0, baseCharge + quantityTotal + designTotal);
+}
+
+
+/**
+ * Calculates the combined total of all enabled add-ons.
+ */
+export function calculateAllAddOnsTotal(addOns, selectedAddOns) {
+  let total = 0;
+
+  for (const addOn of addOns) {
+    const state = selectedAddOns[addOn.id];
+
+    if (!state?.enabled) continue;
+
+    const design = addOn.designs?.find(
+      design => design.id === state.design
+    );
+
+    total += calculateAddOnTotal(
+      addOn,
+      design,
+      state.quantity
+    );
+  }
+
+  return total;
+}

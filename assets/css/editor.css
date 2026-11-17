@@ -384,3 +384,56 @@
     border-radius: 6px;
     background: #fff;
 }
+
+/* Add-on selected design preview */
+.addon-selected-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: 16px 0 24px;
+    padding: 16px;
+    background: #f7f6f3;
+    border: 1px solid #e4e0d8;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.addon-selected-preview .invitation-page {
+    width: 100%;
+    max-width: 420px;
+    height: auto;
+    margin: 0 auto;
+}
+
+.addon-selected-preview .invitation-page svg {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.addon-selected-preview .invitation-page.html-page {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+}
+
+.addon-field-controls,
+.addon-custom-fields {
+    display: grid;
+    gap: 14px;
+    margin: 12px 0 20px;
+}
+
+.addon-field-controls input,
+.addon-field-controls textarea,
+.addon-custom-fields input,
+.addon-custom-fields textarea {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 6px;
+}
+
+.addon-configuration > h4 {
+    margin-top: 24px;
+}

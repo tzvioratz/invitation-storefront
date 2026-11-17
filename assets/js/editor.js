@@ -1,6 +1,6 @@
 import { getStoreData, getInvitation } from "./data.js";
 import { renderInvitation, updateRenderedWording } from "./template-renderer.js";
-import {calculateEstimate, calculateEffectiveUnitPrice, getQuantityOptions, validatePricing, money } from "./pricing.js";
+import {calculateEstimate, calculateEffectiveUnitPrice, getQuantityOptions, validatePricing, money,calculateAllAddOnsTotal, calculateAddOnTotal } from "./pricing.js";
 import { CONFIG } from "./config.js";
 import {getActiveAddOns, isAddOnAvailableForInvitation} from "./addons-data.js";
 const $ = (s) => document.querySelector(s),
@@ -230,6 +230,7 @@ function buildOptions() {
 }
 
 
+
 async function buildAddOnControls() {
     const container = $("#addOnControls");
     container.replaceChildren();
@@ -246,20 +247,17 @@ async function buildAddOnControls() {
     }
 
     const invitationQty = Number($("#quantity").value);
-    const invitationQuantities = getQuantityOptions(invitation);
 
     for (const addOn of compatibleAddOns) {
         const min = addOn.quantityMinimum;
         const max = addOn.quantityMaximum;
         const step = Math.max(1, addOn.quantityStep);
 
-        // Use the same quantity choices as the invitation,
-        // filtered by this add-on's allowed range and step.
-        const quantities = invitationQuantities.filter(qty =>
-            qty >= min &&
-            qty <= max &&
-            Number.isInteger((qty - min) / step)
-        );
+        const quantities = [];
+
+        for (let qty = min; qty <= max; qty += step) {
+            quantities.push(qty);
+        }
 
         const defaultQty = quantities.includes(invitationQty)
             ? invitationQty
@@ -274,7 +272,8 @@ async function buildAddOnControls() {
             enabled: false,
             quantity: defaultQty,
             design: addOn.designs[0]?.id || "",
-            wording: {},
+            wordingByDesign: {},
+            customInfo: {},
             rendered: null
         };
 
@@ -283,7 +282,7 @@ async function buildAddOnControls() {
         const wrapper = document.createElement("div");
         wrapper.className = "addon-card";
 
-        // Heading.
+        // Heading
         const heading = document.createElement("div");
         heading.className = "addon-heading";
 
@@ -296,7 +295,7 @@ async function buildAddOnControls() {
 
         heading.append(title, description);
 
-        // Yes / No toggle.
+        // Yes / No toggle
         const toggle = document.createElement("div");
         toggle.className = "addon-yes-no";
         toggle.setAttribute("role", "group");
@@ -311,6 +310,11 @@ async function buildAddOnControls() {
         noButton.type = "button";
         noButton.className = "addon-choice-button active";
         noButton.textContent = "No";
+
+        // Configuration area
+        const configuration = document.createElement("div");
+        configuration.className = "addon-configuration";
+        configuration.hidden = true;
 
         function setEnabled(enabled) {
             state.enabled = enabled;
@@ -330,12 +334,7 @@ async function buildAddOnControls() {
 
         toggle.append(yesButton, noButton);
 
-        // Configuration, hidden until Yes is selected.
-        const configuration = document.createElement("div");
-        configuration.className = "addon-configuration";
-        configuration.hidden = true;
-
-        // Quantity dropdown.
+        // Quantity
         const quantityLabel = document.createElement("label");
         quantityLabel.textContent = "Quantity";
 
@@ -353,9 +352,7 @@ async function buildAddOnControls() {
         } else {
             quantitySelect.disabled = true;
             quantityLabel.append(
-                document.createTextNode(
-                    " No matching quantities are available."
-                )
+                document.createTextNode(" No matching quantities are available.")
             );
         }
 
@@ -366,7 +363,7 @@ async function buildAddOnControls() {
 
         quantityLabel.appendChild(quantitySelect);
 
-        // Design choices.
+        // Design choices
         const designHeading = document.createElement("h4");
         designHeading.textContent = "Choose a design";
 
@@ -399,16 +396,22 @@ async function buildAddOnControls() {
                 });
             } catch (error) {
                 preview.textContent = "Preview unavailable";
-                console.warn(
-                    `Could not preview add-on design ${design.id}:`,
-                    error
-                );
+                console.warn(error);
             }
 
-            radio.addEventListener("change", () => {
+            radio.addEventListener("change", async () => {
                 if (!radio.checked) return;
 
                 state.design = design.id;
+
+                // Render the newly selected design and its editable fields.
+                await renderAddOnSelection(
+                    addOn,
+                    state,
+                    selectedPreview,
+                    fieldsContainer
+                );
+
                 updatePrice();
             });
 
@@ -416,16 +419,185 @@ async function buildAddOnControls() {
             designsContainer.appendChild(designLabel);
         }
 
+        // Full preview of the selected design
+        const selectedPreviewHeading = document.createElement("h4");
+        selectedPreviewHeading.textContent = "Selected design preview";
+
+        const selectedPreview = document.createElement("div");
+        selectedPreview.className = "addon-selected-preview";
+
+        // Editable wording fields discovered from the template
+        const fieldsHeading = document.createElement("h4");
+        fieldsHeading.textContent = "Personalize this add-on";
+
+        const fieldsContainer = document.createElement("div");
+        fieldsContainer.className = "addon-field-controls";
+
+        // Extra information not printed in the template
+        const customFieldsContainer = document.createElement("div");
+        customFieldsContainer.className = "addon-custom-fields";
+
+        buildAddOnCustomFields(addOn, state, customFieldsContainer);
+
         configuration.append(
             quantityLabel,
             designHeading,
-            designsContainer
+            designsContainer,
+            selectedPreviewHeading,
+            selectedPreview,
+            fieldsHeading,
+            fieldsContainer,
+            customFieldsContainer
         );
 
         wrapper.append(heading, toggle, configuration);
         container.appendChild(wrapper);
+
+        // Render the initially selected design.
+        if (state.design) {
+            await renderAddOnSelection(
+                addOn,
+                state,
+                selectedPreview,
+                fieldsContainer
+            );
+        } else {
+            selectedPreview.textContent = "No design available.";
+        }
     }
 }
+
+async function renderAddOnSelection(
+    addOn,
+    state,
+    previewContainer,
+    fieldsContainer
+) {
+    const design = addOn.designs.find(d => d.id === state.design);
+
+    previewContainer.replaceChildren();
+    fieldsContainer.replaceChildren();
+
+    if (!design || !design.pages?.length) {
+        previewContainer.textContent = "No preview available.";
+        fieldsContainer.textContent = "Nothing to personalize ";
+        state.rendered = null;
+        return;
+    }
+
+    // Keep wording separate for each design.
+    if (!state.wordingByDesign[state.design]) {
+        state.wordingByDesign[state.design] = {};
+    }
+
+    const wording = state.wordingByDesign[state.design];
+
+    try {
+        state.rendered = await renderInvitation({
+            invitation: { pages: design.pages },
+            target: previewContainer,
+            wording,
+            options: {}
+        });
+
+        buildAddOnWordingFields(
+            state.rendered,
+            wording,
+            fieldsContainer
+        );
+
+    } catch (error) {
+        previewContainer.textContent = "Preview unavailable.";
+        console.error(
+            `Could not render ${addOn.title}:`,
+            error
+        );
+    }
+}
+
+
+function buildAddOnWordingFields(
+    rendered,
+    wording,
+    container
+) {
+    container.replaceChildren();
+
+    if (!rendered?.fields?.length) {
+        container.textContent =
+            "This design has no editable wording fields.";
+        return;
+    }
+
+    rendered.fields.forEach(field => {
+        const fieldWrap = document.createElement("div");
+        fieldWrap.className = "field-control-wrap";
+
+        const label = document.createElement("label");
+        label.className = "field-control";
+        label.textContent =
+            field.label + (field.required ? " *" : "");
+
+        const input = field.multiline
+            ? document.createElement("textarea")
+            : document.createElement("input");
+
+        input.dataset.field = field.id;
+        input.placeholder = field.placeholder;
+        input.maxLength = field.maxLength;
+        input.value = wording[field.id] ?? field.defaultValue ?? "";
+
+        if (field.required) input.required = true;
+
+        input.addEventListener("input", () => {
+            wording[field.id] = input.value;
+
+            updateRenderedWording(rendered, wording);
+        });
+
+        label.appendChild(input);
+        fieldWrap.appendChild(label);
+        container.appendChild(fieldWrap);
+    });
+}
+
+
+function buildAddOnCustomFields(addOn, state, container) {
+    container.replaceChildren();
+
+    const customFields = Array.isArray(addOn.customFields)
+        ? addOn.customFields
+        : [];
+
+    customFields.forEach(field => {
+        const wrapper = document.createElement("div");
+        wrapper.className = "field-control-wrap";
+
+        const label = document.createElement("label");
+        label.className = "field-control";
+        label.textContent =
+            field.label + (field.required ? " *" : "");
+
+        const input = field.type === "textarea"
+            ? document.createElement("textarea")
+            : document.createElement("input");
+
+        input.dataset.customField = field.id;
+        input.placeholder = field.placeholder || "";
+        input.value = state.customInfo[field.id] || "";
+
+        if (field.required) input.required = true;
+
+        input.addEventListener("input", () => {
+            state.customInfo[field.id] = input.value;
+        });
+
+        label.appendChild(input);
+        wrapper.appendChild(label);
+        container.appendChild(wrapper);
+    });
+}
+
 
 
 function formatAdjustment(amount) {
@@ -766,36 +938,6 @@ function refresh() {
     });
 }
 
-function calculateAddOnTotal(addOn, state) {
-    if (!state.enabled) return 0;
-
-    const qty = state.quantity;
-
-    // Find the applicable per-unit price tier.
-    const tier = addOn.quantityPricing.find(t =>
-        qty >= t.min && qty <= t.max
-    );
-
-    const unitPrice = tier ? tier.unitPrice : 0;
-
-    // One-time base charge plus quantity-based charge.
-    let total = addOn.baseCharge + (unitPrice * qty);
-
-    // Add the selected design's price adjustment.
-    const design = addOn.designs.find(d =>
-        d.id === state.design
-    );
-
-    if (design) {
-        if (design.priceAdjustmentType === "perUnit") {
-            total += design.priceAdjustment * qty;
-        } else {
-            total += design.priceAdjustment;
-        }
-    }
-
-    return total;
-}
 
 function updatePrice() {
     if (!invitation) return;
@@ -822,7 +964,15 @@ function updatePrice() {
         const addOn = availableAddOns.find(a => a.id === addOnId);
         if (!addOn) continue;
 
-        addOnTotal += calculateAddOnTotal(addOn, state);
+        const design = addOn.designs?.find(
+            d => d.id === state.design
+        );
+
+        addOnTotal += calculateAddOnTotal(
+            addOn,
+            design,
+            state.quantity
+        );
     }
 
     const total = invitationTotal + addOnTotal;
@@ -835,6 +985,7 @@ function updatePrice() {
 }
 
 
+
 $("#prevPage").addEventListener("click", () => {
     activePage = Math.max(0, activePage - 1);
     drawPages();
@@ -843,24 +994,77 @@ $("#nextPage").addEventListener("click", () => {
     activePage = Math.min(rendered.pages.length - 1, activePage + 1);
     drawPages();
 });
+
 $("#reviewButton").addEventListener("click", () => {
-    const name = $("#customerName").value.trim(),
-        email = $("#customerEmail").value.trim(),
-        qty = Number($("#quantity").value);
+    const name = $("#customerName").value.trim();
+    const email = $("#customerEmail").value.trim();
+    const qty = Number($("#quantity").value);
+
     const validQuantities = getQuantityOptions(invitation);
 
-if (
-    !name ||
-    !email ||
-    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
-    !Number.isInteger(qty) ||
-    !validQuantities.includes(qty)
-) {
-    alert(
-        "Enter your name, a valid email, and select one of the available quantities."
-    );
-    return;
-}
+    if (
+        !name ||
+        !email ||
+        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
+        !Number.isInteger(qty) ||
+        !validQuantities.includes(qty)
+    ) {
+        alert(
+            "Enter your name, a valid email, and select one of the available quantities."
+        );
+        return;
+    }
+
+    // Validate enabled add-ons.
+    for (const [addOnId, state] of Object.entries(selectedAddOns)) {
+        if (!state.enabled) continue;
+
+        const addOn = availableAddOns.find(a => a.id === addOnId);
+        if (!addOn) continue;
+
+        const wording = state.wordingByDesign?.[state.design] || {};
+
+        // Validate required template wording.
+        if (state.rendered) {
+            for (const field of state.rendered.fields) {
+                if (!field.required) continue;
+
+                const value = wording[field.id] ?? field.defaultValue ?? "";
+
+                if (!String(value).trim()) {
+                    alert(
+                        `Please complete "${field.label}" for ${addOn.title}.`
+                    );
+                    return;
+                }
+            }
+        }
+
+        // Validate extra information, such as a return address.
+        for (const field of addOn.customFields || []) {
+            if (!field.required) continue;
+
+            if (!String(state.customInfo?.[field.id] || "").trim()) {
+                alert(
+                    `Please enter "${field.label}" for ${addOn.title}.`
+                );
+                return;
+            }
+        }
+    }
+
+    // Collect selected add-ons BEFORE building the summary.
+    const orderAddOns = Object.entries(selectedAddOns)
+        .filter(([addOnId, state]) => state.enabled)
+        .map(([addOnId, state]) => ({
+            addOnId,
+            quantity: Number(state.quantity),
+            designId: state.design,
+            wording: state.wordingByDesign?.[state.design] || {},
+            customInfo: { ...(state.customInfo || {}) }
+        }));
+
+    // Build order summary.
     const summary = {
         Invitation: invitation.title,
         Format: selection.format,
@@ -875,22 +1079,47 @@ if (
         Notes: $("#orderNotes").value,
         Estimate: $("#estimate").textContent
     };
+
+    summary["Add-ons"] = orderAddOns.length
+        ? orderAddOns.map(addOn => {
+            const definition = availableAddOns.find(
+                a => a.id === addOn.addOnId
+            );
+
+            const design = definition?.designs.find(
+                d => d.id === addOn.designId
+            );
+
+            return `${definition?.title || addOn.addOnId} — ${design?.title || ""} — Quantity: ${addOn.quantity}`;
+        }).join("; ")
+        : "None";
+
+    // Save pending order.
     window.pendingOrder = {
         invitationId: id,
         selection,
         wording,
         quantity: qty,
-        customer: { name, email, phone: $("#customerPhone").value, notes: $("#orderNotes").value }
+        addOns: orderAddOns,
+        customer: {
+            name,
+            email,
+            phone: $("#customerPhone").value,
+            notes: $("#orderNotes").value
+        }
     };
+
     $("#reviewSummary").innerHTML =
         "<dl>" +
         Object.entries(summary)
             .map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`)
             .join("") +
         "</dl>";
+
     $("#reviewPanel").hidden = false;
     $("#reviewPanel").scrollIntoView({ behavior: "smooth" });
 });
+
 $("#editOrder").addEventListener("click", () => ($("#reviewPanel").hidden = true));
 $("#submitOrder").addEventListener("click", async () => {
     const status = $("#submitStatus");

@@ -104,7 +104,9 @@ function normalizeAddOn(row) {
 
     sortOrder: numberValue(row.sortOrder, 0),
 
-    designs: []
+    designs: [],
+      
+    customFields: parseJSONField(row.customFields, [])
   };
 
   return addOn;

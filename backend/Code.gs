@@ -36,6 +36,36 @@ const ORDER_HEADERS = [
   "Effective Price Per Invitation"
 ];
 
+
+const ADDONS_TAB = "AddOns";
+const ADDON_DESIGNS_TAB = "AddOnDesigns";
+
+const ADDON_HEADERS = [
+  "id",
+  "title",
+  "description",
+  "active",
+  "availableInvitationIds",
+  "quantityMinimum",
+  "quantityMaximum",
+  "quantityStep",
+  "defaultQuantity",
+  "baseCharge",
+  "quantityPricing",
+  "sortOrder"
+];
+
+const ADDON_DESIGN_HEADERS = [
+  "id",
+  "addOnId",
+  "title",
+  "active",
+  "pages",
+  "priceAdjustmentType",
+  "priceAdjustment",
+  "sortOrder"
+];
+
 function doPost(e) {
   try {
     const order = JSON.parse(
@@ -610,4 +640,578 @@ function formatHeader_(sheet, columnCount) {
     .setWrap(true);
 
   sheet.setRowHeight(1, 40);
+}
+
+
+function populateInvitationCatalog() {
+  const catalogId = requiredProp_("CATALOG_SPREADSHEET_ID");
+  const ss = SpreadsheetApp.openById(catalogId);
+
+  const invitationsSheet = ss.getSheetByName("Invitations");
+  const optionsSheet = ss.getSheetByName("Options");
+
+  if (!invitationsSheet || !optionsSheet) {
+    throw new Error("Catalog tabs are missing. Run backend setup first.");
+  }
+
+  // Do not accidentally overwrite existing invitation records.
+  if (invitationsSheet.getLastRow() > 1) {
+    throw new Error(
+      "The Invitations tab already contains records. " +
+      "Import cancelled to protect existing data."
+    );
+  }
+
+  if (optionsSheet.getLastRow() > 1) {
+    throw new Error(
+      "The Options tab already contains records. " +
+      "Import cancelled to protect existing data."
+    );
+  }
+
+  const standardQuantities = [50, 100, 150];
+  const intermediateQuantities = [75, 125];
+
+  const pricing = {
+    baseCharge: 50,
+    unitPrice: 1.50,
+    intermediatePremium: 5
+  };
+
+  // Helper for constructing invitation records.
+  function invitation(data) {
+    return {
+      id: data.id,
+      title: data.title,
+      active: true,
+      description: data.description,
+      occasion: data.occasion.join(";"),
+      style: data.style.join(";"),
+      pages: JSON.stringify(data.pages),
+      formats: JSON.stringify(data.formats),
+      papers: JSON.stringify(data.papers),
+      fonts: JSON.stringify(data.fonts),
+      colors: JSON.stringify(data.colors),
+      designOptions: JSON.stringify(data.designOptions),
+      formatAdjustments: JSON.stringify(data.formatAdjustments),
+      paperAdjustments: JSON.stringify(data.paperAdjustments),
+      customizationFees: JSON.stringify(data.customizationFees),
+
+      baseCharge: pricing.baseCharge,
+      unitPrice: pricing.unitPrice,
+      intermediatePremium: pricing.intermediatePremium,
+      standardQuantities: JSON.stringify(standardQuantities),
+      intermediateQuantities: JSON.stringify(intermediateQuantities)
+    };
+  }
+
+  // ==========================================
+  // INVITATION DEFINITIONS
+  // ==========================================
+
+  const invitations = [
+
+    invitation({
+      id: "classic-arch",
+      title: "The Classic Arch",
+      description:
+        "A timeless formal invitation with a softly arched frame and restrained botanical details.",
+
+      occasion: ["Wedding", "Anniversary"],
+      style: ["Classic", "Elegant"],
+
+      pages: [
+        {
+          label: "Front",
+          file: "templates/classic-arch/front.svg",
+          type: "svg"
+        }
+      ],
+
+      formats: ["Flat 5x7"],
+      papers: ["Smooth Matte", "Cotton"],
+      fonts: ["Cormorant", "Garamond"],
+      colors: ["Navy", "Sage"],
+      designOptions: ["Gold accent", "No accent"],
+
+      formatAdjustments: {
+        "Flat 5x7": 0
+      },
+
+      paperAdjustments: {
+        "Smooth Matte": 0,
+        "Cotton": 0.35
+      },
+
+      customizationFees: {}
+    }),
+
+    invitation({
+      id: "garden-celebration",
+      title: "Garden Celebration",
+      description:
+        "A romantic garden-inspired folded invitation with a coordinating interior.",
+
+      occasion: ["Wedding", "Bris", "Kiddush"],
+      style: ["Floral", "Elegant"],
+
+      pages: [
+        {
+          label: "Front",
+          file: "templates/garden-celebration/front.svg",
+          type: "svg"
+        },
+        {
+          label: "Inside Left",
+          file: "templates/garden-celebration/inside-left.html",
+          type: "html"
+        },
+        {
+          label: "Inside Right",
+          file: "templates/garden-celebration/inside-right.svg",
+          type: "svg"
+        },
+        {
+          label: "Back",
+          file: "templates/garden-celebration/back.svg",
+          type: "svg"
+        }
+      ],
+
+      formats: ["Folded 5x7"],
+      papers: ["Smooth Matte", "Linen"],
+      fonts: ["Cormorant", "DM Sans"],
+      colors: ["Sage", "Navy"],
+      designOptions: ["Botanical border", "Simple border"],
+
+      formatAdjustments: {
+        "Folded 5x7": 0
+      },
+
+      paperAdjustments: {
+        "Smooth Matte": 0,
+        "Linen": 0.45
+      },
+
+      customizationFees: {}
+    }),
+
+    invitation({
+      id: "modern-moment",
+      title: "Modern Moment",
+      description:
+        "Crisp typography and generous space for a contemporary celebration.",
+
+      occasion: ["Bar Mitzvah", "Birthday", "Kiddush"],
+      style: ["Modern", "Minimalist"],
+
+      pages: [
+        {
+          label: "Front",
+          file: "templates/modern-moment/front.html",
+          type: "html"
+        },
+        {
+          label: "Back",
+          file: "templates/modern-moment/back.html",
+          type: "html"
+        }
+      ],
+
+      formats: ["Flat 5x7", "Flat 4x6"],
+      papers: ["Smooth Matte"],
+      fonts: ["DM Sans", "Cormorant"],
+      colors: ["Navy", "Terracotta"],
+      designOptions: ["Rule line", "No rule line"],
+
+      formatAdjustments: {
+        "Flat 5x7": 0,
+        "Flat 4x6": -0.15
+      },
+
+      paperAdjustments: {
+        "Smooth Matte": 0
+      },
+
+      customizationFees: {}
+    }),
+
+    invitation({
+      id: "heritage-fold",
+      title: "Heritage Fold",
+      description:
+        "A formal four-panel folded design inspired by traditional engraved stationery.",
+
+      occasion: ["Bar Mitzvah", "Bris", "Kiddush"],
+      style: ["Traditional", "Classic"],
+
+      pages: [
+        {
+          label: "Front",
+          file: "templates/heritage-fold/front.svg",
+          type: "svg"
+        },
+        {
+          label: "Inside Left",
+          file: "templates/heritage-fold/inside-left.svg",
+          type: "svg"
+        },
+        {
+          label: "Inside Right",
+          file: "templates/heritage-fold/inside-right.svg",
+          type: "svg"
+        },
+        {
+          label: "Back",
+          file: "templates/heritage-fold/back.svg",
+          type: "svg"
+        }
+      ],
+
+      formats: ["Folded 5x7"],
+      papers: ["Cotton", "Linen"],
+      fonts: ["Cormorant"],
+      colors: ["Navy", "Burgundy"],
+      designOptions: ["Ornament", "No ornament"],
+
+      formatAdjustments: {
+        "Folded 5x7": 0
+      },
+
+      paperAdjustments: {
+        "Cotton": 0.50,
+        "Linen": 0.30
+      },
+
+      customizationFees: {}
+    }),
+
+    invitation({
+      id: "test-invite",
+      title: "test invite",
+      description: "testing testing 123",
+
+      occasion: ["Wedding"],
+      style: ["Traditional", "Classic", "Minimalist"],
+
+      pages: [
+        {
+          label: "Side 1",
+          file: "templates/test-invite/Side-1.svg",
+          type: "svg"
+        },
+        {
+          label: "Side 2",
+          file: "templates/test-invite/Side-2.svg",
+          type: "svg"
+        }
+      ],
+
+      formats: ["Flat 5x7", "Flat 4x6"],
+      papers: ["Smooth Matte", "Cotton", "Linen"],
+      fonts: ["Cormorant", "Garamond", "DM Sans"],
+      colors: ["Navy", "Sage", "Terracotta", "Burgundy"],
+      designOptions: ["Gold accent", "No accent"],
+
+      formatAdjustments: {
+        "Flat 5x7": 0,
+        "Flat 4x6": 0
+      },
+
+      paperAdjustments: {
+        "Smooth Matte": 0,
+        "Cotton": 0,
+        "Linen": 0
+      },
+
+      customizationFees: {}
+    })
+
+  ];
+
+  // ==========================================
+  // WRITE INVITATIONS TAB
+  // ==========================================
+
+  const invitationHeaders = [
+    "id",
+    "title",
+    "active",
+    "description",
+    "occasion",
+    "style",
+    "pages",
+    "formats",
+    "papers",
+    "fonts",
+    "colors",
+    "designOptions",
+    "formatAdjustments",
+    "paperAdjustments",
+    "customizationFees",
+    "baseCharge",
+    "unitPrice",
+    "intermediatePremium",
+    "standardQuantities",
+    "intermediateQuantities"
+  ];
+
+  invitationsSheet.clearContents();
+
+  invitationsSheet
+    .getRange(1, 1, 1, invitationHeaders.length)
+    .setValues([invitationHeaders]);
+
+  const invitationRows = invitations.map(record =>
+    invitationHeaders.map(header => record[header] ?? "")
+  );
+
+  invitationsSheet
+    .getRange(2, 1, invitationRows.length, invitationHeaders.length)
+    .setValues(invitationRows);
+
+  // ==========================================
+  // WRITE OPTIONS TAB
+  // ==========================================
+
+  const optionHeaders = ["optionType", "optionValue"];
+
+  const optionGroups = {
+    occasions: [
+      "Wedding",
+      "Bar Mitzvah",
+      "Birthday",
+      "Anniversary",
+      "Bris",
+      "Kiddush"
+    ],
+
+    styles: [
+      "Modern",
+      "Traditional",
+      "Classic",
+      "Elegant",
+      "Minimalist",
+      "Floral"
+    ],
+
+    formats: [
+      "Flat 5x7",
+      "Flat 4x6",
+      "Folded 5x7"
+    ],
+
+    papers: [
+      "Smooth Matte",
+      "Cotton",
+      "Linen"
+    ],
+
+    fonts: [
+      "Cormorant",
+      "Garamond",
+      "DM Sans"
+    ],
+
+    colors: [
+      "Navy",
+      "Sage",
+      "Terracotta",
+      "Burgundy"
+    ]
+  };
+
+  const optionRows = [];
+
+  Object.entries(optionGroups).forEach(([type, values]) => {
+    values.forEach(value => {
+      optionRows.push([type, value]);
+    });
+  });
+
+  optionsSheet.clearContents();
+
+  optionsSheet
+    .getRange(1, 1, 1, optionHeaders.length)
+    .setValues([optionHeaders]);
+
+  optionsSheet
+    .getRange(2, 1, optionRows.length, optionHeaders.length)
+    .setValues(optionRows);
+
+  // ==========================================
+  // FORMATTING
+  // ==========================================
+
+  formatHeader_(invitationsSheet, invitationHeaders.length);
+  formatHeader_(optionsSheet, optionHeaders.length);
+
+  invitationsSheet.setFrozenRows(1);
+  optionsSheet.setFrozenRows(1);
+
+  invitationsSheet.setColumnWidths(1, invitationHeaders.length, 160);
+  invitationsSheet.setColumnWidth(4, 350);
+  invitationsSheet.setColumnWidth(7, 450);
+  invitationsSheet.setColumnWidth(12, 250);
+  invitationsSheet.setColumnWidth(13, 220);
+  invitationsSheet.setColumnWidth(14, 220);
+  invitationsSheet.setColumnWidth(15, 220);
+
+  invitationsSheet.getRange("P:R")
+    .setNumberFormat("$#,##0.00");
+
+  optionsSheet.setColumnWidth(1, 150);
+  optionsSheet.setColumnWidth(2, 200);
+
+  SpreadsheetApp.flush();
+
+  Logger.log("CATALOG POPULATED SUCCESSFULLY");
+  Logger.log("Catalog URL: " + ss.getUrl());
+  Logger.log("Invitations imported: " + invitations.length);
+  Logger.log("Options imported: " + optionRows.length);
+}
+
+function requiredProp_(key) {
+  const value = PropertiesService
+    .getScriptProperties()
+    .getProperty(key);
+
+  if (!value) {
+    throw new Error("Missing Script Property: " + key);
+  }
+
+  return value;
+}
+
+function json_(obj) {
+  return ContentService
+    .createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+
+/**
+ * Creates the add-on catalog tabs if they don't exist.
+ *
+ * Safe to run multiple times.
+ * Does not overwrite existing catalog records.
+ */
+function setupAddOnCatalogTabs() {
+
+  const catalogId = requiredProp_("CATALOG_SPREADSHEET_ID");
+
+  const ss = SpreadsheetApp.openById(catalogId);
+
+  // ==========================================
+  // ADDONS TAB
+  // ==========================================
+
+  let addonsSheet = ss.getSheetByName(ADDONS_TAB);
+
+  if (!addonsSheet) {
+    addonsSheet = ss.insertSheet(ADDONS_TAB);
+  }
+
+  initializeCatalogTab_(
+    addonsSheet,
+    ADDON_HEADERS
+  );
+
+  addonsSheet.setColumnWidths(
+    1,
+    ADDON_HEADERS.length,
+    160
+  );
+
+  addonsSheet.setColumnWidth(3, 300);
+  addonsSheet.setColumnWidth(11, 450);
+
+  addonsSheet.getRange("J:J")
+    .setNumberFormat("$#,##0.00");
+
+  addonsSheet.getRange("K:K")
+    .setWrap(true);
+
+
+  // ==========================================
+  // ADDON DESIGNS TAB
+  // ==========================================
+
+  let designsSheet = ss.getSheetByName(ADDON_DESIGNS_TAB);
+
+  if (!designsSheet) {
+    designsSheet = ss.insertSheet(ADDON_DESIGNS_TAB);
+  }
+
+  initializeCatalogTab_(
+    designsSheet,
+    ADDON_DESIGN_HEADERS
+  );
+
+  designsSheet.setColumnWidths(
+    1,
+    ADDON_DESIGN_HEADERS.length,
+    160
+  );
+
+  designsSheet.setColumnWidth(5, 450);
+
+  designsSheet.getRange("E:E")
+    .setWrap(true);
+
+  designsSheet.getRange("G:G")
+    .setNumberFormat("$#,##0.00");
+
+
+  SpreadsheetApp.flush();
+
+  Logger.log("Add-on catalog tabs initialized.");
+  Logger.log("Catalog: " + ss.getUrl());
+
+}
+
+
+/**
+ * Initialize a catalog tab without overwriting existing records.
+ */
+function initializeCatalogTab_(sheet, headers) {
+
+  if (sheet.getLastRow() === 0) {
+
+    sheet.getRange(
+      1,
+      1,
+      1,
+      headers.length
+    ).setValues([headers]);
+
+    formatHeader_(sheet, headers.length);
+
+    sheet.setFrozenRows(1);
+
+    return;
+  }
+
+  // Verify existing headers rather than silently replacing them.
+  const existing = sheet.getRange(
+    1,
+    1,
+    1,
+    headers.length
+  ).getValues()[0].map(String);
+
+  const matches = headers.every(
+    (header, index) => existing[index] === header
+  );
+
+  if (!matches) {
+    throw new Error(
+      "Unexpected headers in tab '" +
+      sheet.getName() +
+      "'. Existing data was not changed."
+    );
+  }
+
+  sheet.setFrozenRows(1);
+
 }
