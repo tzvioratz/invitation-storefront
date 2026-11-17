@@ -273,3 +273,70 @@
 .customization-section {
   margin-bottom: 30px;
 }
+
+.addon-card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 16px;
+    margin: 16px 0;
+}
+
+.addon-heading {
+    margin-bottom: 8px;
+}
+
+.addon-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.addon-configuration {
+    border-top: 1px solid #eee;
+    margin-top: 14px;
+    padding-top: 14px;
+}
+
+.addon-configuration > label {
+    display: block;
+    max-width: 180px;
+}
+
+.addon-configuration input[type="number"] {
+    display: block;
+    width: 100%;
+    margin-top: 6px;
+}
+
+.addon-design-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.addon-design-option {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.addon-design-option:has(input:checked) {
+    border-color: #26384d;
+    background: #f5f7fa;
+}
+
+.addon-design-preview {
+    overflow: hidden;
+    width: 100%;
+}
+
+.addon-design-preview .invitation-page {
+    max-width: 100%;
+    margin: 0 auto;
+}

@@ -2,6 +2,7 @@ import { getStoreData, getInvitation } from "./data.js";
 import { renderInvitation, updateRenderedWording } from "./template-renderer.js";
 import {calculateEstimate, calculateEffectiveUnitPrice, getQuantityOptions, validatePricing, money } from "./pricing.js";
 import { CONFIG } from "./config.js";
+import {getActiveAddOns, isAddOnAvailableForInvitation} from "./addons-data.js";
 const $ = (s) => document.querySelector(s),
     params = new URLSearchParams(location.search),
     id = params.get("id");
@@ -11,6 +12,8 @@ let invitation,
     selection = {},
     activePage = 0,
     activeFieldId=null;
+let availableAddOns = [];
+let selectedAddOns = {};
 try {
     const data = await getStoreData();
     invitation = getInvitation(data, id);
@@ -30,12 +33,22 @@ selection = {
 
 buildQuantityOptions();
 buildOptions();
-    rendered = await renderInvitation({
-        invitation,
-        target: document.createElement("div"),
-        wording,
-        options: selection
-    });
+
+// Load and display optional add-ons.
+availableAddOns = await getActiveAddOns();
+
+console.log("Add-ons loaded:", availableAddOns);
+
+await buildAddOnControls();
+
+console.log("Add-on controls built.");
+
+rendered = await renderInvitation({
+    invitation,
+    target: document.createElement("div"),
+    wording,
+    options: selection
+});
     buildFields();
     drawPages();
     updatePrice();
@@ -102,7 +115,6 @@ function getOptionAdjustment(key, value) {
 
     return 0;
 }
-
 
 function buildOptions() {
     const groups = [
@@ -217,6 +229,169 @@ function buildOptions() {
     });
 }
 
+async function buildAddOnControls() {
+    const container = $("#addOnControls");
+    container.replaceChildren();
+    const compatibleAddOns = availableAddOns.filter(addOn =>
+        isAddOnAvailableForInvitation(addOn, id)
+    );
+
+    if (!compatibleAddOns.length) {
+        container.innerHTML =
+            '<p class="muted">No optional add-ons are currently available.</p>';
+        return;
+    }
+
+    const invitationQty = Number($("#quantity").value);
+
+    for (const addOn of compatibleAddOns) {
+        const defaultQty = Math.max(
+            addOn.quantityMinimum,
+            Math.min(invitationQty, addOn.quantityMaximum)
+        );
+
+        const state = {
+            enabled: false,
+            quantity: defaultQty,
+            design: addOn.designs[0]?.id || "",
+            wording: {},
+            rendered: null
+        };
+
+        selectedAddOns[addOn.id] = state;
+
+        const wrapper = document.createElement("div");
+        wrapper.className = "addon-card";
+
+        // Product heading and description.
+        const heading = document.createElement("div");
+        heading.className = "addon-heading";
+
+        const checkboxLabel = document.createElement("label");
+        checkboxLabel.className = "addon-toggle";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+
+        const title = document.createElement("strong");
+        title.textContent = addOn.title;
+
+        checkboxLabel.append(checkbox, title);
+
+        const description = document.createElement("p");
+        description.className = "muted";
+        description.textContent = addOn.description;
+
+        heading.append(checkboxLabel, description);
+
+        // Product configuration, hidden until selected.
+        const configuration = document.createElement("div");
+        configuration.className = "addon-configuration";
+        configuration.hidden = true;
+
+        // Quantity.
+        const quantityLabel = document.createElement("label");
+        quantityLabel.textContent = "Quantity";
+
+        const quantityInput = document.createElement("input");
+        quantityInput.type = "number";
+        quantityInput.min = addOn.quantityMinimum;
+        quantityInput.max = addOn.quantityMaximum;
+        quantityInput.step = addOn.quantityStep;
+        quantityInput.value = defaultQty;
+
+        quantityInput.addEventListener("change", () => {
+            let qty = Number(quantityInput.value);
+
+            if (!Number.isInteger(qty)) {
+                qty = defaultQty;
+            }
+
+            qty = Math.max(
+                addOn.quantityMinimum,
+                Math.min(qty, addOn.quantityMaximum)
+            );
+
+            quantityInput.value = qty;
+            state.quantity = qty;
+            updatePrice();
+        });
+
+        quantityLabel.appendChild(quantityInput);
+
+        // Design choices.
+        const designHeading = document.createElement("h4");
+        designHeading.textContent = "Choose a design";
+
+        const designsContainer = document.createElement("div");
+        designsContainer.className = "addon-design-options";
+
+        for (const design of addOn.designs) {
+            const designLabel = document.createElement("label");
+            designLabel.className = "addon-design-option";
+
+            const radio = document.createElement("input");
+            radio.type = "radio";
+            radio.name = `addon-design-${addOn.id}`;
+            radio.value = design.id;
+            radio.checked = design.id === state.design;
+
+            const designTitle = document.createElement("span");
+            designTitle.textContent = design.title;
+
+            const preview = document.createElement("div");
+            preview.className = "addon-design-preview";
+
+            try {
+                await renderInvitation({
+                    invitation: { pages: design.pages },
+                    target: preview,
+                    wording: {},
+                    options: {},
+                    size: "thumb"
+                });
+            } catch (error) {
+                preview.textContent = "Preview unavailable";
+                console.warn(
+                    `Could not preview add-on design ${design.id}:`,
+                    error
+                );
+            }
+
+            radio.addEventListener("change", () => {
+                if (!radio.checked) return;
+
+                state.design = design.id;
+                refresh();
+                updatePrice();
+            });
+
+            designLabel.append(
+                radio,
+                designTitle,
+                preview
+            );
+
+            designsContainer.appendChild(designLabel);
+        }
+
+        // Enable / disable this add-on.
+        checkbox.addEventListener("change", () => {
+            state.enabled = checkbox.checked;
+            configuration.hidden = !state.enabled;
+            updatePrice();
+        });
+
+        configuration.append(
+            quantityLabel,
+            designHeading,
+            designsContainer
+        );
+
+        wrapper.append(heading, configuration);
+        container.appendChild(wrapper);
+    }
+}
 
 function formatAdjustment(amount) {
     if (amount > 0.000001)
@@ -669,3 +844,4 @@ function esc(s) {
         (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]
     );
 }
+
