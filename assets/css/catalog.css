@@ -23,70 +23,221 @@
 .catalog-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 28px;
-    margin-top: 25px;
+    gap: 32px;
+    margin-top: 35px;
 }
+
 .catalog-card {
     background: #fffefa;
-    padding: 14px;
-    border: 1px solid var(--line);
+    border: 1px solid #e9e4da;
+    padding: 12px;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
-.catalog-art {
-    height: 310px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: #eee9df;
-    overflow: hidden;
+
+.catalog-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.06);
 }
-.catalog-art .invitation-page {
-    height: 92%;
-    width: auto;
-    max-width: 90%;
-    aspect-ratio: 2/3;
-    box-shadow: 0 5px 18px #0001;
-}
+
 .catalog-info {
-    padding: 17px 4px 4px;
+    padding: 20px 8px 12px;
 }
+
 .catalog-info h2 {
-    font-size: 27px;
-    margin: 0 0 5px;
+    font-size: 25px;
+    font-weight: 500;
+    margin: 9px 0;
 }
+
 .catalog-info p {
-    font-size: 11px;
+    font-size: 13px;
     color: var(--muted);
-    margin: 4px 0;
+    margin: 5px 0;
 }
+
 .catalog-info .button {
-    margin-top: 13px;
+    display: inline-block;
+    margin-top: 16px;
 }
+
 .format-label {
-    font-size: 9px;
+    font-size: 10px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: #8b795b;
 }
+
 @media (max-width: 850px) {
     .catalog-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
+
 @media (max-width: 560px) {
     .catalog-grid {
         grid-template-columns: 1fr;
-    }
-    .filters {
-        display: block;
-    }
-    .filters label {
-        margin-bottom: 8px;
+        gap: 22px;
     }
 }
-/* HTML invitation thumbnails */
-.catalog-art .invitation-page.html-page {
-    width: 400px !important;
-    height: 600px !important;
-    zoom: 0.46;
+/* =========================================
+   CATALOG INVITATION PREVIEWS
+========================================= */
+/* =====================================
+   MULTI-PAGE CATALOG PREVIEW
+===================================== */
+
+.catalog-art {
+    height: 390px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: #f3f0e9;
+    position: relative;
+}
+
+.catalog-page-stack {
+    --page-width: 210px;
+    --page-height: 315px;
+
+    position: relative;
+    width: 300px;
+    height: 350px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Individual invitation pages */
+
+.catalog-preview-page {
+    position: absolute;
+    width: var(--page-width);
+    height: var(--page-height);
+    left: 0;
+    top: 0;
+
+    overflow: hidden;
+    background: white;
+
+    box-shadow: 0 5px 16px rgba(0,0,0,.13);
+
+    transform: translate(
+        var(--page-offset),
+        var(--page-offset)
+    );
+
+    z-index: calc(100 - var(--page-index));
+}
+
+/* SVG artwork */
+
+.catalog-preview-page.svg-page > svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* HTML artwork */
+
+.catalog-preview-page.html-page {
     flex-shrink: 0;
+}
+
+/* Mobile */
+
+@media (max-width: 560px) {
+    .catalog-art {
+        height: 420px;
+    }
+
+    .catalog-page-stack {
+        transform: scale(.95);
+    }
+}
+
+/* Invitation preview carousel */
+
+.catalog-art {
+    position: relative;
+}
+
+/* Selected page moves to the front */
+.catalog-preview-page.is-active {
+    transform: translate(0, 0);
+    z-index: 200 !important;
+}
+
+/* Navigation arrows */
+.preview-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 300;
+
+    width: 34px;
+    height: 42px;
+
+    border: 1px solid rgba(221, 213, 200, 0.10);
+    border-radius: 1px;
+
+    background: rgba(255, 254, 250, 0.20);
+    color: #66583f;
+
+    font-size: 27px;
+    line-height: 1;
+
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.preview-arrow:hover {
+    background: white;
+    color: #241f18;
+}
+
+.preview-prev {
+    left: 8px;
+}
+
+.preview-next {
+    right: 8px;
+}
+
+/* Page indicator dots */
+.preview-dots {
+    position: absolute;
+    bottom: 9px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 300;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    padding: 6px 10px;
+    background: rgba(255, 254, 250, 0.9);
+    border-radius: 20px;
+}
+
+.preview-dot {
+    width: 7px;
+    height: 7px;
+    padding: 0;
+
+    border: none;
+    border-radius: 50%;
+
+    background: #c8c0b3;
+    cursor: pointer;
+}
+
+.preview-dot.is-active {
+    background: #806b49;
+    transform: scale(1.3);
 }

@@ -316,45 +316,36 @@ export async function renderInvitation({
 
     applyWording(fields, wording);
 
-    const pagesToDisplay =
-        size === "thumb"
-            ? getCatalogPreviewPages(pages)
-            : pages;
+    if (size === "thumb") {
 
-    pagesToDisplay.forEach(p => {
+        // Create one stack containing every invitation page.
+        const stack = document.createElement("div");
+        stack.className = "catalog-page-stack";
 
-        if (size === "thumb") {
-            p.element.style.width = "100%";
-            p.element.style.height = "auto";
-        }
+        pages.forEach((p, index) => {
 
-        target.appendChild(p.element);
-    });
+            p.element.classList.add("catalog-preview-page");
+
+            p.element.style.setProperty("--page-index", index);
+            p.element.style.setProperty("--page-count", pages.length);
+            p.element.style.setProperty("--page-offset", `${index * 100}px`);
+
+            stack.appendChild(p.element);
+        });
+
+        target.appendChild(stack);
+
+    } else {
+
+        // Normal full-size rendering.
+        pages.forEach(p => {
+            target.appendChild(p.element);
+        });
+    }
 
     return { pages, fields };
 }
 
-
-// --------------------------------------------------
-// CATALOG PREVIEW
-// --------------------------------------------------
-
-function getCatalogPreviewPages(pages) {
-
-    if (pages.length <= 1) return pages;
-
-    const insidePages = pages.filter(p =>
-        /^inside\b/i.test((p.page.label || "").trim())
-    );
-
-    if (insidePages.length) return insidePages;
-
-    const frontPage = pages.find(p =>
-        /^front$/i.test((p.page.label || "").trim())
-    );
-
-    return [frontPage || pages[0]];
-}
 
 
 // --------------------------------------------------
