@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Print an Order</title>
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/editor.css">
+<link rel="stylesheet" href="../assets/css/print-order.css">
+<style id="pageSizeStyle"></style>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="../index.html">THE INVITATION STUDIO</a>
+  <nav><a href="../catalog/">Collection</a></nav>
+</header>
+
+<main class="page-wrap">
+  <p class="eyebrow">ORDER PRODUCTION</p>
+  <h1>Print an order</h1>
+  <p class="muted">Paste a row from the Orders sheet to rebuild the invitation. Fix any wording, then arrange the pages on a sheet and print.</p>
+
+  <div class="editor-layout">
+    <section class="editor-controls">
+
+      <div class="control-section">
+        <h2>Order row</h2>
+        <label>Paste the row (with or without the header row)
+          <textarea id="orderPaste" class="paste-box" rows="4" spellcheck="false"></textarea>
+        </label>
+        <button id="loadOrder" class="button" type="button" disabled>Load order</button>
+        <label id="orderPickerWrap" hidden>Rows found
+          <select id="orderPicker"></select>
+        </label>
+        <p id="loadStatus" class="muted" role="status">Loading catalog…</p>
+      </div>
+
+      <div id="orderBody" hidden>
+
+        <div class="control-section">
+          <h2>Order</h2>
+          <dl id="orderSummary" class="order-summary"></dl>
+        </div>
+
+        <div class="control-section">
+          <h2>Options</h2>
+          <label>Invitation quantity
+            <input id="orderQuantity" type="number" min="0" step="1">
+          </label>
+          <div id="optionControls"></div>
+        </div>
+
+        <div class="control-section">
+          <h2>Wording</h2>
+          <div id="fieldControls"></div>
+          <div class="copy-row">
+            <button id="copyWording" class="text-button" type="button">Copy corrected Wording JSON</button>
+            <button id="copyAddOns" class="text-button" type="button">Copy corrected Add-ons JSON</button>
+          </div>
+          <p class="field-help">Paste these back into the Orders sheet to keep it in sync. Add-on prices are not recalculated.</p>
+        </div>
+
+        <div class="control-section">
+          <h2>Print layout</h2>
+
+          <div class="settings-grid">
+            <label>Sheet size
+              <select id="sheetSize">
+                <option value="Letter">Letter (8.5 × 11 in)</option>
+                <option value="Legal">Legal (8.5 × 14 in)</option>
+                <option value="Tabloid">Tabloid (11 × 17 in)</option>
+                <option value="A4">A4</option>
+                <option value="A3">A3</option>
+                <option value="Custom">Custom…</option>
+              </select>
+            </label>
+            <label>Orientation
+              <select id="sheetOrientation">
+                <option value="portrait">Portrait</option>
+                <option value="landscape">Landscape</option>
+              </select>
+            </label>
+            <label class="custom-size" hidden>Sheet width (in)
+              <input id="sheetW" type="number" min="1" step="0.01" value="8.5">
+            </label>
+            <label class="custom-size" hidden>Sheet height (in)
+              <input id="sheetH" type="number" min="1" step="0.01" value="11">
+            </label>
+            <label>Cards per sheet
+              <select id="upMode">
+                <option value="auto">Use card size below</option>
+                <option value="1">1-up</option>
+                <option value="2">2-up</option>
+                <option value="4">4-up</option>
+              </select>
+            </label>
+            <label>Card width (in)
+              <input id="cardW" type="number" min="0.5" step="0.01" value="5">
+            </label>
+            <label>Card height (in)
+              <input id="cardH" type="number" min="0.5" step="0.01" value="7">
+            </label>
+            <label>Artwork fit
+              <select id="cardFit">
+                <option value="fit">Fit (keep proportions)</option>
+                <option value="stretch">Stretch to card size</option>
+              </select>
+            </label>
+            <label>Sheet margin (in)
+              <input id="sheetMargin" type="number" min="0" step="0.01" value="0.25">
+            </label>
+            <label>Gap between cards (in)
+              <input id="cardGap" type="number" min="0" step="0.01" value="0.25">
+            </label>
+            <label>Mode
+              <select id="printMode">
+                <option value="production">Production (copies of each page)</option>
+                <option value="proof">Proof sheet (one of each page)</option>
+              </select>
+            </label>
+            <label>Extra copies per page
+              <input id="extraCopies" type="number" min="0" step="1" value="0">
+            </label>
+          </div>
+
+          <label class="check"><input type="checkbox" id="cropMarks" checked> Crop marks</label>
+          <label class="check"><input type="checkbox" id="sheetLabels"> Label each sheet in the margin</label>
+
+          <h3 class="subhead">Pages to print</h3>
+          <div id="printItems" class="print-items"></div>
+
+          <p id="layoutSummary" class="muted"></p>
+          <p id="layoutWarnings" class="layout-warnings"></p>
+
+          <button id="printButton" class="button" type="button">Print sheets</button>
+          <p class="field-help">In the print dialog, set Margins to None and Scale to 100% (not “Fit to page”).</p>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="preview-panel">
+      <div class="preview-head">
+        <div>
+          <h2>Preview</h2>
+          <span class="muted">Check each page, then the printed sheets</span>
+        </div>
+        <div class="preview-tabs" role="tablist">
+          <button id="tabPage" class="preview-tab active" type="button" role="tab">Pages</button>
+          <button id="tabSheets" class="preview-tab" type="button" role="tab">Print layout</button>
+        </div>
+      </div>
+
+      <div id="pageView">
+        <div id="pageThumbs" class="page-thumbs"></div>
+        <div class="large-preview-wrap">
+          <button id="prevPage" type="button" aria-label="Previous page">‹</button>
+          <div id="largePreview" class="large-preview"></div>
+          <button id="nextPage" type="button" aria-label="Next page">›</button>
+        </div>
+        <div id="pageLabel" class="muted page-label">Load an order to see its pages.</div>
+      </div>
+
+      <div id="sheetsView" hidden>
+        <div class="sheets-scroll"><div id="sheets"></div></div>
+      </div>
+    </section>
+  </div>
+</main>
+<footer>THE INVITATION STUDIO</footer>
+<script type="module" src="../assets/js/order-print.js"></script>
+</body>
+</html>

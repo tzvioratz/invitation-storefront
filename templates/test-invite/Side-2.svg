@@ -17,47 +17,47 @@
   <rect id="card1-page-background" x="0" y="0" width="396" height="612" fill="#ffffff" />
 
   <!-- Opening lines (permanent) -->
-  <text id="card1-intro-1" x="198" y="76" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="10.5" fill="#222222">בעזרת השם יתברך</text>
-  <text id="card1-intro-2" x="198" y="98" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="10.5" fill="#222222">נעלה את ירושלים על ראש שמחתנו</text>
+  <text id="card1-intro-1" x="198" y="76" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="15" fill="#222222">בעזרת השם יתברך</text>
+  <text id="card1-intro-2" x="198" y="98" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="15" fill="#222222">נעלה את ירושלים על ראש שמחתנו</text>
 
-  <text id="card1-invite-1" x="198" y="126" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="10.5" fill="#222222">ברוב שבח והודאה להשי"ת</text>
-  <text id="card1-invite-2" x="198" y="147" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="10.5" fill="#222222">מתכבדים אנו להזמין את קרובינו וידידינו</text>
-  <text id="card1-invite-3" x="198" y="167" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="10.5" fill="#222222">להשתתף בשמחת כלולות בנינו היקרים</text>
+  <text id="card1-invite-1" x="198" y="126" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="15" fill="#222222">ברוב שבח והודאה להשי"ת</text>
+  <text id="card1-invite-2" x="198" y="147" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="15" fill="#222222">מתכבדים אנו להזמין את קרובינו וידידינו</text>
+  <text id="card1-invite-3" x="198" y="167" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="15" fill="#222222">להשתתף בשמחת כלולות בנינו היקרים</text>
 
   <!-- Groom -->
-  <text id="card1-groom-label" x="273" y="224" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="7" fill="#222222">החתן</text>
-  <text data-field="card1_chosson" data-label="Groom's Name" id="card1-field-chosson" x="202" y="226" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="500" font-style="normal" font-size="30" fill="#111111">משה נתן</text>
-  <text id="card1-groom-suffix" x="131" y="224" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="7" fill="#222222">נ"י</text>
+  <text id="card1-groom-label" x="273" y="224" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="15" fill="#222222"> החתן </text>
+  <text data-field="card1_chosson" data-label="Groom's Name" id="card1-field-chosson" x="202" y="226" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="500" font-style="normal" font-size="36" fill="#111111">משה נתן</text>
+  <text id="card1-groom-suffix" x="131" y="224" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="15" fill="#222222">נ"י</text>
 
-  <text id="card1-ve-ben-gam" x="198" y="238" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="8" fill="#222222">עב"ג</text>
+  <text id="card1-ve-ben-gam" x="198" y="238" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="15" fill="#222222">עב"ג</text>
 
   <!-- Bride -->
-  <text id="card1-bride-label" x="240" y="277" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="7" fill="#222222">הכלה</text>
-  <text data-field="card1_kallah" data-label="Bride's Name" id="card1-field-kallah" x="198" y="278" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="500" font-style="normal" font-size="30" fill="#111111">מירל</text>
-  <text id="card1-bride-suffix" x="157" y="277" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="7" fill="#222222">תחי'</text>
+  <text id="card1-bride-label" x="240" y="277" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="15" fill="#222222"> הכלה </text>
+  <text data-field="card1_kallah" data-label="Bride's Name" id="card1-field-kallah" x="198" y="278" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="500" font-style="normal" font-size="36" fill="#111111">מירל</text>
+  <text id="card1-bride-suffix" x="157" y="277" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="15" fill="#222222">תחי'</text>
 
   <!-- Event details -->
-  <text id="card1-event-intro" x="198" y="327" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="10.5" fill="#222222">שתתקיים אי"ה למזל טוב בשעה טובה ומוצלחת</text>
-  <text data-field="card1_date" data-label="Date" id="card1-field-date" x="198" y="347" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="10.5" fill="#222222">ביום שני לפרשת ויקרא, אור לכ"ח אדר תשפ"ד</text>
-  <text data-field="card1_receptionTime" data-label="Reception Time" id="card1-field-receptionTime" x="198" y="367" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="10.5" fill="#222222">קבלת פנים בשעה שש וחצי בערב</text>
-  <text data-field="card1_chuppahTime" data-label="Chuppah Time" id="card1-field-chuppahTime" x="198" y="388" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="10.5" fill="#222222">החופה בשעה שבע וחצי</text>
+  <text id="card1-event-intro" x="198" y="327" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="15" fill="#222222">שתתקיים אי"ה למזל טוב בשעה טובה ומוצלחת</text>
+  <text data-field="card1_date" data-label="Date" id="card1-field-date" x="198" y="347" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="15" fill="#222222">ביום שני לפרשת ויקרא, אור לכ"ח אדר תשפ"ד</text>
+  <text data-field="card1_receptionTime" data-label="Reception Time" id="card1-field-receptionTime" x="198" y="367" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="15" fill="#222222">קבלת פנים בשעה שש וחצי בערב</text>
+  <text data-field="card1_chuppahTime" data-label="Chuppah Time" id="card1-field-chuppahTime" x="198" y="388" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="15" fill="#222222">החופה בשעה שבע וחצי</text>
 
-  <text data-field="card1_venue" data-label="Venue Name" id="card1-field-venue" x="198" y="421" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="10.5" fill="#222222">באולם ליק טערעס</text>
-  <text data-field="card1_address" data-label="Venue City / Address" id="card1-field-address" x="198" y="441" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="10.5" fill="#222222">ליקוואוד, נו דזשערזי</text>
+  <text data-field="card1_venue" data-label="Venue Name" id="card1-field-venue" x="198" y="421" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="15" fill="#222222">באולם ליק טערעס</text>
+  <text data-field="card1_address" data-label="Venue City / Address" id="card1-field-address" x="198" y="441" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="15" fill="#222222">ליקוואוד, נו דזשערזי</text>
 
   <!-- Parents -->
-  <text id="card1-groom-parents-title" x="319" y="472" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="8" fill="#222222">הורי החתן</text>
+  <text id="card1-groom-parents-title" x="319" y="472" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="15" fill="#222222">הורי החתן</text>
   <text data-field="card1_chossonParents" data-label="Groom's Parents" id="card1-field-chossonParents" x="319" y="490" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="9" fill="#222222">פנחס וחיה בערגער</text>
 
-  <text id="card1-bride-parents-title" x="119" y="472" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="8" fill="#222222">הורי הכלה</text>
+  <text id="card1-bride-parents-title" x="119" y="472" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="15" fill="#222222">הורי הכלה</text>
   <text data-field="card1_kallahParents" data-label="Bride's Parents" id="card1-field-kallahParents" x="119" y="490" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="9" fill="#222222">דוד וגיטל בראון</text>
 
   <!-- Grandparents -->
-  <text id="card1-grandparents-title" x="198" y="520" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="8" fill="#222222">תפארת בנים אבותם</text>
+  <text id="card1-grandparents-title" x="198" y="520" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="15" fill="#222222">תפארת בנים אבותם</text>
 
-  <text data-field="card1_chossonGrandparents1" data-label="Groom's Grandparents 1" id="card1-field-chossonGrandparents1" x="289" y="538" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="8" fill="#222222">הרב חיים מנחם וחוה בערגער</text>
-  <text data-field="card1_chossonGrandparents2" data-label="Groom's Grandparents 2" id="card1-field-chossonGrandparents2" x="289" y="556" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="8" fill="#222222">מרת יהודית רייך</text>
+  <text data-field="card1_chossonGrandparents1" data-label="Groom's Grandparents 1" id="card1-field-chossonGrandparents1" x="289" y="538" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="15" fill="#222222">הרב חיים מנחם וחוה בערגער</text>
+  <text data-field="card1_chossonGrandparents2" data-label="Groom's Grandparents 2" id="card1-field-chossonGrandparents2" x="289" y="556" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="15" fill="#222222">מרת יהודית רייך</text>
 
-  <text data-field="card1_kallahGrandparents1" data-label="Bride's Grandparents 1" id="card1-field-kallahGrandparents1" x="100" y="538" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="8" fill="#222222">הרב משה ולאה בראון</text>
-  <text data-field="card1_kallahGrandparents2" data-label="Bride's Grandparents 2" id="card1-field-kallahGrandparents2" x="100" y="556" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="8" fill="#222222">הרב יצחק מאיר ושרה פרידמאן</text>
+  <text data-field="card1_kallahGrandparents1" data-label="Bride's Grandparents 1" id="card1-field-kallahGrandparents1" x="100" y="538" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="15" fill="#222222">הרב משה ולאה בראון</text>
+  <text data-field="card1_kallahGrandparents2" data-label="Bride's Grandparents 2" id="card1-field-kallahGrandparents2" x="100" y="556" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" font-family="Frank Ruhl Libre" font-weight="400" font-style="normal" font-size="15" fill="#222222">הרב יצחק מאיר ושרה פרידמאן</text>
 </svg>

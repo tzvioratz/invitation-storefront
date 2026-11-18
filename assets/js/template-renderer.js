@@ -76,9 +76,6 @@ export async function loadPage(page) {
 }
 
 
-// --------------------------------------------------
-// FONT LOADING
-// --------------------------------------------------
 
 async function loadSvgFonts(svg, templateUrl) {
 
@@ -103,21 +100,19 @@ async function loadSvgFonts(svg, templateUrl) {
             return;
         }
 
-        const key = `${family}|${provider}|${source}|${weight}|${style}`;
-
-        fonts.set(key, {
-            family,
+        const key = [
             provider,
+            family,
             source,
             weight,
             style
-        });
+        ].join("|");
+
+        fonts.set(key, { family, provider, source, weight, style });
     });
 
     const results = await Promise.allSettled(
-        [...fonts.values()].map(font =>
-            loadFont(font, templateUrl)
-        )
+        [...fonts.values()].map(font => loadFont(font, templateUrl))
     );
 
     results.forEach((result, index) => {
@@ -130,7 +125,6 @@ async function loadSvgFonts(svg, templateUrl) {
         }
     });
 
-    // Wait for browser font processing to finish.
     await document.fonts.ready;
 }
 
@@ -161,6 +155,7 @@ async function loadFont(font, templateUrl) {
                 await loadDirectFont(font, templateUrl);
 
             } else {
+
                 throw new Error(
                     `Unsupported font provider: ${font.provider}`
                 );
@@ -249,9 +244,21 @@ async function loadDirectFont(font, templateUrl) {
         throw new Error("External font URLs must use HTTPS.");
     }
 
+    // Check whether this exact font face is already registered.
+    const existing = [...document.fonts].find(face =>
+        face.family === font.family &&
+        face.weight === font.weight &&
+        face.style === font.style
+    );
+
+    if (existing) {
+        await existing.load();
+        return;
+    }
+
     const face = new FontFace(
         font.family,
-        `url(${JSON.stringify(url.href)})`,
+        `url("${url.href}")`,
         {
             weight: font.weight,
             style: font.style
@@ -262,7 +269,6 @@ async function loadDirectFont(font, templateUrl) {
 
     document.fonts.add(face);
 }
-
 
 // --------------------------------------------------
 // RENDER INVITATION

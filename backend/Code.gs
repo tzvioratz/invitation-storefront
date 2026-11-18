@@ -33,7 +33,10 @@ const ORDER_HEADERS = [
   "Customization Fee",
   "Intermediate Premium",
   "Adjusted Unit Price",
-  "Effective Price Per Invitation"
+  "Effective Price Per Invitation",  
+  "Add-ons JSON",
+  "Add-on Total",
+  "customFields"
 ];
 
 
@@ -122,7 +125,9 @@ function doPost(e) {
       p.customizationFee,
       p.intermediatePremium,
       p.adjustedUnitPrice,
-      p.effectiveUnitPrice
+      p.effectiveUnitPrice,
+      JSON.stringify(validated.addOns),
+      p.addOnTotal
     ]);
 
     SpreadsheetApp.flush();
@@ -137,17 +142,22 @@ function doPost(e) {
       success: true,
       reference: reference,
       pricing: {
-        orderTotal: p.orderTotal,
-        effectiveUnitPrice: p.effectiveUnitPrice
-      }
+  invitationTotal: p.invitationTotal,
+  addOnTotal: p.addOnTotal,
+  orderTotal: p.orderTotal,
+  effectiveUnitPrice: p.effectiveUnitPrice
+}
     });
 
   } catch (err) {
-    return json_({
-      success: false,
-      error: String(err.message || err)
-    });
-  }
+  console.error("ORDER ERROR:", err.stack || err);
+
+  return json_({
+    success: false,
+    error: err.message,
+    details: err.stack || String(err)
+  });
+}
 }
 
 
@@ -318,15 +328,27 @@ function validateOrder_(o) {
     appliedIntermediatePremium = intermediatePremium;
   }
 
-  // Calculate the order total
-  const orderTotal = Math.max(
-    0,
-    baseCharge +
-    quantity * adjustedUnitPrice +
-    appliedIntermediatePremium
-  );
+// Calculate invitation total.
+const invitationTotal = Math.max(
+  0,
+  baseCharge +
+  quantity * adjustedUnitPrice +
+  appliedIntermediatePremium
+);
 
-  const effectiveUnitPrice = orderTotal / quantity;
+// Validate and calculate add-ons using the private catalog.
+const addOnPricing = validateAddOns_(
+  o.addOns,
+  inv.id,
+  catalog
+);
+
+const addOnTotal = addOnPricing.total;
+
+// Combined order total.
+const orderTotal = invitationTotal + addOnTotal;
+
+const effectiveUnitPrice = orderTotal / quantity;
 
   // Validate customer
   const customer = o.customer || {};
@@ -392,17 +414,21 @@ function validateOrder_(o) {
       notes: String(customer.notes || "").slice(0, 3000)
     },
 
+    addOns: addOnPricing.items,
+
     pricing: {
-      baseCharge: baseCharge,
-      unitPrice: unitPrice,
-      formatAdjustment: formatAdjustment,
-      paperAdjustment: paperAdjustment,
-      customizationFee: customizationFee,
-      intermediatePremium: appliedIntermediatePremium,
-      adjustedUnitPrice: adjustedUnitPrice,
-      orderTotal: orderTotal,
-      effectiveUnitPrice: effectiveUnitPrice
-    }
+  baseCharge: baseCharge,
+  unitPrice: unitPrice,
+  formatAdjustment: formatAdjustment,
+  paperAdjustment: paperAdjustment,
+  customizationFee: customizationFee,
+  intermediatePremium: appliedIntermediatePremium,
+  adjustedUnitPrice: adjustedUnitPrice,
+  invitationTotal: invitationTotal,
+  addOnTotal: addOnTotal,
+  orderTotal: orderTotal,
+  effectiveUnitPrice: effectiveUnitPrice
+}
   };
 }
 
@@ -427,8 +453,8 @@ sheet.getRange("P:X")
 
 
 // Parse a JSON catalog field.
-function parseCatalog_(value, fallback) {
-  if (value === "" || value === null || value === undefined) {
+function parseCatalog_(value, fallback, fieldName = "Unknown field") {
+  if (value === null || value === undefined || value === "") {
     return fallback;
   }
 
@@ -436,10 +462,18 @@ function parseCatalog_(value, fallback) {
     return value;
   }
 
+  const text = value.trim();
+
+  if (!text) return fallback;
+
   try {
-    return JSON.parse(value);
-  } catch (_) {
-    throw new Error("Invalid catalog configuration.");
+    return JSON.parse(text);
+  } catch (err) {
+    throw new Error(
+      `Invalid JSON in AddOns column "${fieldName}". ` +
+      `Value: "${text.substring(0, 200)}". ` +
+      `JSON error: ${err.message}`
+    );
   }
 }
 
@@ -1215,3 +1249,291 @@ function initializeCatalogTab_(sheet, headers) {
   sheet.setFrozenRows(1);
 
 }
+
+
+function getCatalogRecords_(ss, tabName) {
+  const sheet = ss.getSheetByName(tabName);
+
+  if (!sheet || sheet.getLastRow() < 2) {
+    return [];
+  }
+
+  const values = sheet.getDataRange().getValues();
+  const headers = values.shift().map(h => String(h).trim());
+
+  return values
+    .filter(row => row.some(value => value !== ""))
+    .map(row =>
+      Object.fromEntries(
+        headers.map((header, i) => [header, row[i]])
+      )
+    );
+}
+
+
+function isActive_(value) {
+  return /^(true|1|yes)$/i.test(String(value));
+}
+
+
+function validateAddOns_(submittedAddOns, invitationId, catalog) {
+  if (submittedAddOns == null) submittedAddOns = [];
+
+  if (!Array.isArray(submittedAddOns)) {
+    throw new Error("Invalid add-on selection.");
+  }
+
+  if (submittedAddOns.length > 20) {
+    throw new Error("Too many add-ons selected.");
+  }
+
+  const addonRecords = getCatalogRecords_(catalog, ADDONS_TAB);
+  const designRecords = getCatalogRecords_(catalog, ADDON_DESIGNS_TAB);
+
+  const validatedAddOns = [];
+  const seenIds = new Set();
+
+  let total = 0;
+
+  for (const submitted of submittedAddOns) {
+    const addOnId = String(submitted.addOnId || "").trim();
+
+    if (!addOnId || seenIds.has(addOnId)) {
+      throw new Error("Invalid or duplicate add-on.");
+    }
+
+    seenIds.add(addOnId);
+
+    const addOn = addonRecords.find(a =>
+      String(a.id) === addOnId && isActive_(a.active)
+    );
+
+    if (!addOn) {
+      throw new Error("An unavailable add-on was selected.");
+    }
+
+    // Check whether this add-on is available for the invitation.
+const rawAvailableIds = String(
+  addOn.availableInvitationIds || ""
+).trim();
+
+const availableIds =
+  !rawAvailableIds || rawAvailableIds === "*"
+    ? []
+    : parseCatalog_(
+        rawAvailableIds,
+        [],
+        "availableInvitationIds"
+      );
+
+    if (
+      Array.isArray(availableIds) &&
+      availableIds.length &&
+      !availableIds.map(String).includes(String(invitationId))
+    ) {
+      throw new Error(
+        addOn.title + " is not available for this invitation."
+      );
+    }
+
+    // Validate add-on quantity.
+    const quantity = Number(submitted.quantity);
+
+    const min = Number(addOn.quantityMinimum || 1);
+    const max = addOn.quantityMaximum === "" ||
+                addOn.quantityMaximum == null
+      ? Infinity
+      : Number(addOn.quantityMaximum);
+
+    const step = Number(addOn.quantityStep || 1);
+
+    if (
+      !Number.isInteger(quantity) ||
+      !Number.isInteger(min) ||
+      !Number.isInteger(step) ||
+      step <= 0 ||
+      quantity < min ||
+      quantity > max ||
+      (quantity - min) % step !== 0
+    ) {
+      throw new Error(
+        "Invalid quantity for " + addOn.title + "."
+      );
+    }
+
+    // Find an active design belonging to this add-on.
+    const designId = String(submitted.designId || "").trim();
+
+    const design = designRecords.find(d =>
+      String(d.id) === designId &&
+      String(d.addOnId) === addOnId &&
+      isActive_(d.active)
+    );
+
+    if (!design) {
+      throw new Error(
+        "An unavailable design was selected for " + addOn.title + "."
+      );
+    }
+
+    // Validate quantity pricing tiers.
+const tiers = parseCatalog_(
+  addOn.quantityPricing,
+  [],
+  "quantityPricing"
+);
+    if (!Array.isArray(tiers) || !tiers.length) {
+      throw new Error(
+        "Pricing is not configured for " + addOn.title + "."
+      );
+    }
+
+    const tier = tiers.find(t => {
+      const tierMin = Number(t.min);
+      const tierMax = t.max === "" || t.max == null
+        ? Infinity
+        : Number(t.max);
+
+      return quantity >= tierMin && quantity <= tierMax;
+    });
+
+    if (!tier) {
+      throw new Error(
+        "No pricing tier covers the selected quantity for " +
+        addOn.title + "."
+      );
+    }
+
+    const baseCharge = catalogNumber_(
+      addOn.baseCharge,
+      "Add-on Base Charge"
+    );
+
+    const unitPrice = catalogNumber_(
+      tier.unitPrice,
+      "Add-on Unit Price"
+    );
+
+    const adjustment = catalogNumber_(
+      design.priceAdjustment || 0,
+      "Add-on Design Adjustment"
+    );
+
+    if (baseCharge < 0 || unitPrice < 0) {
+      throw new Error("Invalid add-on pricing configuration.");
+    }
+
+    let designTotal = 0;
+
+    if (design.priceAdjustmentType === "perOrder") {
+      designTotal = adjustment;
+    } else if (design.priceAdjustmentType === "perUnit") {
+      designTotal = adjustment * quantity;
+    } else {
+      throw new Error(
+        "Invalid design pricing configuration for " +
+        addOn.title + "."
+      );
+    }
+
+    const addOnTotal = baseCharge +
+      (unitPrice * quantity) +
+      designTotal;
+
+    if (!Number.isFinite(addOnTotal) || addOnTotal < 0) {
+      throw new Error("Invalid calculated add-on price.");
+    }
+
+    // Validate custom information against catalog definitions.
+    const customFields = parseCatalog_(
+      addOn.customFields,
+      [],
+      "customFields"
+    );
+
+    const customInfo = submitted.customInfo || {};
+
+    if (
+      typeof customInfo !== "object" ||
+      Array.isArray(customInfo)
+    ) {
+      throw new Error("Invalid custom information.");
+    }
+
+    const validatedCustomInfo = {};
+
+    if (!Array.isArray(customFields)) {
+      throw new Error("Invalid custom field configuration.");
+    }
+
+    customFields.forEach(field => {
+      const fieldId = String(field.id || "");
+      const value = String(customInfo[fieldId] || "").trim();
+
+      if (!/^[A-Za-z0-9_-]{1,80}$/.test(fieldId)) {
+        throw new Error("Invalid custom field configuration.");
+      }
+
+      if (field.required && !value) {
+        throw new Error(
+          "Please provide " + field.label + " for " + addOn.title + "."
+        );
+      }
+
+      if (value.length > 2000) {
+        throw new Error("Custom information is too long.");
+      }
+
+      validatedCustomInfo[fieldId] = value;
+    });
+
+    // Validate add-on wording structure and values.
+    const wording = submitted.wording || {};
+
+    if (
+      typeof wording !== "object" ||
+      Array.isArray(wording)
+    ) {
+      throw new Error("Invalid add-on wording.");
+    }
+
+    const validatedWording = {};
+
+    Object.entries(wording).forEach(([key, value]) => {
+      if (
+        !/^[A-Za-z0-9_-]{1,80}$/.test(key) ||
+        typeof value !== "string" ||
+        value.length > 2000
+      ) {
+        throw new Error("Invalid add-on wording.");
+      }
+
+      validatedWording[key] = value;
+    });
+
+    validatedAddOns.push({
+      addOnId: addOnId,
+      title: String(addOn.title),
+      designId: designId,
+      designTitle: String(design.title),
+      quantity: quantity,
+      wording: validatedWording,
+      customInfo: validatedCustomInfo,
+      baseCharge: baseCharge,
+      unitPrice: unitPrice,
+      quantityTotal: unitPrice * quantity,
+      designAdjustmentType: String(design.priceAdjustmentType),
+      designAdjustment: adjustment,
+      designTotal: designTotal,
+      total: addOnTotal
+    });
+
+    total += addOnTotal;
+  }
+
+  return {
+    items: validatedAddOns,
+    total: total
+  };
+}
+
