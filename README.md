@@ -1,6 +1,6 @@
 # The Invitation Studio
 
-A static invitation storefront built with HTML, CSS, and vanilla JavaScript. Customers can browse invitation designs, customize their wording and options, select add-ons, review an estimated price, and submit an order request.
+A static invitation storefront built with HTML, CSS, and vanilla JavaScript. Customers can browse invitation designs, customize their wording and options, select add-ons, review an estimated price, and submit an order request. A separate production page lets the shop rebuild any submitted order from its spreadsheet row, correct it, and print it.
 
 The site does not process online payments. Orders are submitted for review, and payment is arranged separately.
 
@@ -117,11 +117,11 @@ When the customer submits an order:
 
 The backend does not trust the price calculated by the browser. It calculates the order price using the private catalog.
 
+### Producing an order
+
+After an order is saved, the shop opens the print page (`print/`), pastes the order's row from the Orders sheet, and the invitation is rebuilt exactly as the customer designed it. From there the shop can correct wording, adjust options, arrange pages on sheets, and print. See [Printing an Order](#10-printing-an-order).
+
 ## 3. Project Structure
-
-The project is organized into pages, assets, templates, and backend code.
-
-A representative structure is:
 
 ```text
 /
@@ -132,17 +132,25 @@ A representative structure is:
 │   └── index.html
 ├── customize/
 │   └── index.html
+├── print/
+│   └── index.html
 ├── assets/
 │   ├── css/
 │   │   ├── site.css
 │   │   ├── catalog.css
-│   │   └── editor.css
+│   │   ├── editor.css
+│   │   └── print-order.css
 │   └── js/
 │       ├── config.js
 │       ├── csv-loader.js
 │       ├── data.js
-│       ├── addons.js
+│       ├── addons-data.js
+│       ├── catalog.js
+│       ├── home.js
+│       ├── invitation.js
 │       ├── editor.js
+│       ├── order-print.js
+│       ├── hebrew-keyboard.js
 │       ├── pricing.js
 │       ├── field-discovery.js
 │       └── template-renderer.js
@@ -156,7 +164,20 @@ A representative structure is:
     └── Code.gs
 ```
 
-The filenames above illustrate the intended organization. Keep the actual import paths and filenames consistent with the files in the project.
+Keep the actual import paths and filenames consistent with the files in the project.
+
+Notes on specific files:
+
+| File | Purpose |
+|---|---|
+| `addons-data.js` | Loads add-ons and add-on designs from their CSV feeds |
+| `template-renderer.js` | Loads SVG/HTML template pages, fonts, and applies options and wording |
+| `field-discovery.js` | Finds `data-field` elements and writes wording into them |
+| `hebrew-keyboard.js` | On-screen Hebrew keyboard used by the print page's wording fields |
+| `order-print.js` | Logic for the print page |
+| `print-order.css` | Styles for the print page, including print media rules |
+
+`editor.js` still contains its own copy of the Hebrew keyboard. It can be changed to import `hebrew-keyboard.js` so the code lives in one place.
 
 ## 4. Google Sheets Catalog
 
@@ -223,6 +244,8 @@ Base Charge
 ```
 
 The adjusted unit price includes the selected format, paper, and customization adjustments.
+
+The format name is also used by the print page to set the card size. A format such as `Flat 5x7` or `Folded 5x7` is read as a 5 × 7 inch card, so include the size as `WxH` in the name.
 
 ### Options tab
 
@@ -333,6 +356,8 @@ Example custom fields:
 ```
 
 Custom field IDs must be unique within the add-on and use letters, numbers, underscores, or hyphens.
+
+Custom field values are order information. They are not printed on the add-on template.
 
 ### AddOnDesigns tab
 
@@ -480,6 +505,8 @@ templates/
 
 The page definitions in the catalog must point to the correct files.
 
+For pages that will be edited in another program (see [Editing a page in another program](#editing-a-page-in-another-program)), use SVG templates and make each `data-field` element a `<text>` element.
+
 ## 8. Adding an Add-on
 
 To add an add-on:
@@ -503,19 +530,39 @@ The backend independently checks the add-on and design records before accepting 
 
 The backend saves each accepted order in the private `Orders` spreadsheet.
 
-The order record includes:
+Each order is one row with these columns, in this order:
 
-- Unique order reference.
-- Submission date and time.
-- Invitation ID and title.
-- Customer name, email, and phone.
-- Invitation quantity.
-- Selected invitation options.
-- Invitation wording JSON.
-- Customer notes.
-- Invitation pricing breakdown.
-- Add-ons JSON.
-- Combined add-on total.
+| Column | Contents |
+|---|---|
+| `Reference` | Unique order reference, such as `INV-20261117-99D6188E` |
+| `Created` | Submission date and time |
+| `Invitation ID` | Catalog ID of the invitation |
+| `Invitation` | Invitation title |
+| `Customer` | Customer name |
+| `Email` | Customer email |
+| `Phone` | Customer phone |
+| `Quantity` | Invitation quantity |
+| `Format` | Selected format |
+| `Paper` | Selected paper |
+| `Font` | Selected font |
+| `Color` | Selected color |
+| `Design` | Selected design option |
+| `Wording JSON` | Wording the customer entered, as JSON keyed by field ID |
+| `Notes` | Customer notes |
+| `Estimated Order Total` | Calculated order total |
+| `Base Charge` | Invitation base charge |
+| `Unit Price` | Base unit price |
+| `Format Adjustment` | Format price adjustment |
+| `Paper Adjustment` | Paper price adjustment |
+| `Customization Fee` | Design option fee |
+| `Intermediate Premium` | Intermediate quantity premium |
+| `Adjusted Unit Price` | Unit price after adjustments |
+| `Effective Price Per Invitation` | Order total divided by quantity |
+| `Add-ons JSON` | Validated add-on selections, as a JSON array |
+| `Add-on Total` | Combined add-on total |
+| `customFields` | Additional custom field data |
+
+`Wording JSON` contains only fields the customer changed. Fields left alone use the template's default text, so an order with untouched wording shows `{}`.
 
 The add-ons JSON contains the validated add-on selections, including:
 
@@ -535,7 +582,97 @@ The backend returns the order reference and pricing totals to the storefront aft
 
 The order is a request for fulfillment, not a payment transaction.
 
-## 10. Pricing and Validation
+## 10. Printing an Order
+
+The print page is at `print/index.html`. It rebuilds an order from its spreadsheet row so the shop can correct it and print it. It is not linked from the public navigation and is marked `noindex`, but it is a static page and can be opened by anyone who knows the address. It only works with a pasted order row and holds no private data.
+
+### Loading an order
+
+1. Copy an order's row from the Orders sheet. The header row is optional.
+2. Paste it into the box at the top of the page and choose **Load order**.
+3. If several rows were pasted, pick one from the list.
+
+The page finds the invitation in the published catalog (even if it has since been marked inactive), applies the order's format, paper, font, color, and design option, fills in the saved wording, and loads each add-on with its saved design and wording.
+
+If the invitation ID is not in the catalog, the page says so and nothing loads. If an add-on design is missing from the add-on catalog, that add-on shows a message and its pages are not previewed.
+
+### Correcting an order
+
+Everything from the order can be changed on this page:
+
+- Invitation quantity, format, paper, font, color, and design option.
+- Every wording field, with the Hebrew keyboard and field highlighting in the preview.
+- Each add-on's design, quantity, wording, and custom information (such as the return address, which is shown for reference and not printed).
+
+Changes affect only this page. The Orders sheet is not modified. Use **Copy corrected Wording JSON** and **Copy corrected Add-ons JSON** to copy updated values back into the sheet. Add-on prices are not recalculated.
+
+### Preview
+
+The preview panel has two tabs:
+
+- **Pages:** each page of the invitation and its add-ons, with thumbnails, as in the customer editor.
+- **Print layout:** the actual printed sheets, shown to scale.
+
+### Print layout
+
+| Setting | Description |
+|---|---|
+| Sheet size | Letter, Legal, Tabloid, A4, A3, or custom |
+| Orientation | Portrait or landscape |
+| Cards per sheet | Use the card size below, or 1-up, 2-up, or 4-up |
+| Card width / height | Set from the order's format. Locked when 1, 2, or 4-up is chosen |
+| Artwork fit | Fit keeps proportions. Stretch fills the card |
+| Sheet margin | Space around the edge of the sheet |
+| Gap between cards | Space between cards |
+| Mode | Production or proof |
+| Extra copies per page | Spare copies added to every page |
+| Crop marks | Corner marks outside each card |
+| Label each sheet | Small label in the margin with the reference, page, and sheet number |
+
+**Cards per sheet.** With 1-up, 2-up, or 4-up the sheet is divided into equal cells and each card is sized to its cell, so response cards can be printed four to a sheet. For 2-up the page chooses side by side or stacked, whichever prints the artwork larger. For 4-up on Letter to produce exact 4.25 × 5.5 inch cards, set the margin and gap to 0. Crop marks need at least 0.1 inch of gap and margin, so they are hidden at 0.
+
+**Modes.**
+
+- *Production* prints the number of copies listed for each page (the order or add-on quantity by default, editable per page). Each page gets its own sheets.
+- *Proof* places one of each included page together, in the chosen order.
+
+**Pages to print.** The list shows every page of the invitation and its add-ons. For each page you can:
+
+- Include or exclude it.
+- Set its copies (production mode).
+- Reorder it by dragging the handle or using the arrow buttons. The order controls which pages print first and where they land on a proof sheet.
+
+To print pages at different sizes, such as invitations at full size and response cards 4-up, uncheck the other pages and print in separate runs.
+
+**Printing.** Choose **Print sheets**. In the browser's print dialog, set Margins to *None* and Scale to *100%* (not "Fit to page"). The page sets the paper size itself. Print settings (except card size) are remembered in the browser.
+
+A single run draws at most 120 sheets. For larger runs, lower the copies and print in batches.
+
+### Editing a page in another program
+
+When a page's layout needs adjusting (text too close or too far apart, for example), it can be exported, edited in a vector program, and re-imported for printing.
+
+1. In **Pages to print**, choose **Export SVG** on the page. The file contains the customer's wording and the chosen font and color.
+2. Edit the layout in a program such as Inkscape or Illustrator. Move and resize text freely.
+3. Save as SVG and choose **Import edited SVG** on the same page.
+4. The imported file replaces that page in the previews and on the printed sheets. **Revert to original** restores the template.
+
+**Wording stays editable after import.** Each text field in the exported file is marked twice: with its `data-field` attribute and with an id such as `field-eventTitle`. On import the page finds each field by either mark, refills it with the current wording, and keeps updating it as wording is edited. Replacing text keeps each field's position, styling, and line spacing, so layout changes carry through.
+
+Limits:
+
+- Only SVG pages can be exported. HTML pages show a note. An SVG can still be imported over an HTML page.
+- Fields must stay as live text. If text is converted to outlines, that field can no longer be found. The row lists any fields missing from the imported file, and those do not update.
+- Per-word styling inside one field (for example one bold word) is not kept when a field is refilled. The first line's styling is used for all lines.
+- Font and color options only apply to pages that have not been imported. An imported page keeps the font and color it had at export. To change them, revert the page, change the option, and export again.
+- Fonts used by an imported file must be available to the browser. Converting unneeded text to outlines avoids this. Fonts declared with `data-font-*` attributes are reloaded on import only if `template-renderer.js` exports `loadSvgFonts`; to enable this, change `async function loadSvgFonts` to `export async function loadSvgFonts`.
+- If an imported file is not 2:3, it is letterboxed within the card.
+
+### Artwork size
+
+Template pages are drawn at a fixed 400 × 600 pixel size (2:3). If the card size is not 2:3 (a 5 × 7 card is not), the print page shows a warning. With "Fit" the artwork is letterboxed inside the card, and with "Stretch" it is distorted.
+
+## 11. Pricing and Validation
 
 The browser displays an estimate to the customer, but the backend recalculates the order using the private catalog.
 
@@ -558,7 +695,7 @@ The backend validates:
 
 If validation fails, the backend returns an unsuccessful response and does not save the order.
 
-## 11. Important Operational Notes
+## 12. Important Operational Notes
 
 - Keep the Orders spreadsheet private.
 - Only publish the catalog tabs needed by the storefront.
@@ -569,8 +706,9 @@ If validation fails, the backend returns an unsuccessful response and does not s
 - After changing catalog data, republish the affected CSV feeds.
 - Test a complete order submission after changing pricing, templates, or catalog structures.
 - The backend stores wording and selections; it does not generate a final print-ready proof or process payments.
+- The print page rebuilds orders from the current published catalog and templates. If a template or catalog entry changes after an order is placed, an old order may not render exactly as the customer saw it. Export the SVG of finished orders if an exact record is needed.
 
-## 12. Testing Checklist
+## 13. Testing Checklist
 
 Before making the storefront available to customers, test:
 
@@ -591,3 +729,16 @@ Before making the storefront available to customers, test:
 - [ ] The backend rejects invalid or unavailable selections.
 - [ ] The order is saved in the private Orders spreadsheet.
 - [ ] The customer receives a successful submission response and order reference.
+
+Print page:
+
+- [ ] A pasted order row loads, with and without the header row.
+- [ ] The rebuilt invitation matches what the customer designed, including add-ons.
+- [ ] Editing wording updates the page preview and the print layout.
+- [ ] Pages can be reordered, and the order carries into the sheets.
+- [ ] 1-up, 2-up, and 4-up produce the expected cell sizes.
+- [ ] Printed sheets match the on-screen layout at 100% scale with margins set to None.
+- [ ] Crop marks line up with the card edges.
+- [ ] An exported SVG opens in the editing program.
+- [ ] An edited SVG imports, keeps its layout, and still updates when wording is changed.
+- [ ] Reverting an imported page restores the original template.
