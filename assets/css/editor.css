@@ -1,3 +1,5 @@
+@import url('https://googleapis.com');
+
 .editor-layout{display:grid;grid-template-columns:minmax(280px,420px) 1fr;gap:45px;align-items:start;margin-top:32px}.editor-controls,.preview-panel,.review-panel{background:#fffefa;border:1px solid var(--line);padding:24px}.control-section{padding-bottom:22px;margin-bottom:22px;border-bottom:1px solid var(--line)}.control-section h2,.preview-head h2,.review-panel h2{font-size:28px;margin:0 0 16px}.control-section label{margin-bottom:13px}.field-help{font-size:10px;color:var(--muted)}.preview-panel{position:sticky;top:20px}.preview-head{display:flex;justify-content:space-between;align-items:start}.preview-tag{font-size:9px;letter-spacing:.16em;color:#8b795b;border:1px solid #d9cbb4;padding:5px 8px}.page-thumbs{display:flex;gap:10px;overflow:auto;padding:14px 0}.thumb{width:76px;flex:0 0 76px;border:1px solid var(--line);background:#eee9df;padding:5px;cursor:pointer}.thumb.active{border:2px solid var(--gold)}.thumb .invitation-page{width:100%;aspect-ratio:2/3;overflow:hidden}
 /* Scale HTML invitation pages down inside thumbnails */
 .thumb .invitation-page.html-page {
@@ -64,6 +66,9 @@
 .field-input-row textarea {
     flex: 1;
     min-width: 0;
+    font-family: 'Rubik', sans-serif !important;
+    font-weight: 500;
+    font-size: 16px;
 }
 
 .hebrew-keyboard-toggle {
@@ -74,6 +79,29 @@
     color: #26384d;
     font-size: 21px;
     cursor: pointer;
+    position: relative;
+}
+
+.hebrew-keyboard-toggle::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #222;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 13px;
+  white-space: nowrap;
+  z-index: 10;
+  display: none;
+  pointer-events: none;
+}
+
+.hebrew-keyboard-toggle:hover::after,
+.hebrew-keyboard-toggle:focus-visible::after {
+  display: block;
 }
 
 .hebrew-keyboard-toggle:hover,
@@ -115,6 +143,7 @@
     border-radius: 5px;
     background: white;
     color: #26384d;
+    font-family: 'Rubik', sans-serif;
     font-size: 19px;
     cursor: pointer;
     touch-action: manipulation;
@@ -176,14 +205,18 @@
     position: relative;
     margin-top: 7px;
 }
-
+.addon-quantity-label .custom-price-dropdown {
+    position: relative;
+    width: max-content;
+    margin-top: 7px;
+}
 .custom-price-trigger,
 .custom-price-option {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: 28px;
     padding: 11px 12px;
     background: white;
     border: 1px solid #d8d5cf;
@@ -203,6 +236,9 @@
     position: absolute;
     z-index: 20;
     top: calc(100% + 4px);
+    width: max-content;
+    min-width: 280px;
+    max-width: min(480px, calc(100vw - 40px));
     left: 0;
     right: 0;
     background: white;
@@ -210,6 +246,9 @@
     border-radius: 6px;
     box-shadow: 0 8px 20px rgba(0,0,0,.12);
     overflow: hidden;
+    max-height: 300px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
 }
 
 .custom-price-menu[hidden] {
@@ -496,3 +535,262 @@
     font-size: .7rem;
     color: #888;
 }
+
+/* =========================================
+   ITEMIZED ORDER INVOICE
+========================================= */
+
+.order-invoice {
+    margin: 20px 0;
+    padding: 20px;
+    background: #fffefa;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+}
+
+.invoice-heading {
+    margin: 0 0 18px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+    font-family: var(--font-heading, Georgia, serif);
+    font-size: 21px;
+    color: var(--navy);
+}
+
+.invoice-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 12px 0;
+}
+
+.invoice-item-details {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+}
+
+.invoice-item-title {
+    font-size: 13px;
+    color: var(--navy);
+}
+
+.invoice-item-description {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+.invoice-item-price {
+    font-size: 13px;
+    white-space: nowrap;
+    color: var(--navy);
+}
+
+.invoice-divider {
+    border-top: 1px solid var(--line);
+    margin: 12px 0;
+}
+
+.invoice-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding-top: 5px;
+    font-size: 16px;
+    color: var(--navy);
+}
+
+.invoice-total-amount {
+    font-size: 23px;
+    color: #16803c;
+    white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+    .order-invoice {
+        padding: 15px;
+    }
+
+    .invoice-item {
+        gap: 8px;
+    }
+}
+
+
+/* =========================================
+   RESPONSIVE EDITOR PREVIEW
+========================================= */
+
+:root {
+    --editor-page-height: clamp(340px, calc(100vh - 390px), 850px);
+}
+
+.large-preview {
+    min-height: calc(var(--editor-page-height) + 30px);
+}
+
+.large-preview .invitation-page {
+    height: var(--editor-page-height);
+    width: auto;
+    max-width: 100%;
+    aspect-ratio: 2 / 3;
+}
+
+.large-preview .invitation-page.html-page {
+    width: auto;
+    height: var(--editor-page-height);
+    aspect-ratio: 2 / 3;
+}
+
+.large-preview .invitation-page .svg-page {
+    width: 100%;
+    height: 100%;
+}
+
+.large-preview-wrap {
+    align-items: center;
+}
+
+/* Medium screens and laptops */
+@media (max-width: 1200px) {
+    :root {
+        --editor-page-height: clamp(300px, calc(100vh - 430px), 620px);
+    }
+}
+
+/* Small screens */
+@media (max-width: 600px) {
+    :root {
+        --editor-page-height: clamp(260px, calc(100vh - 440px), 440px);
+    }
+}
+
+/* =========================================
+   RESPONSIVE CURRENT ORDER TOTAL
+========================================= */
+
+.live-order-total {
+    min-width: 0;
+    width: clamp(145px, 11vw, 240px);
+    padding: clamp(9px, 0.65vw, 16px)
+             clamp(11px, 0.8vw, 18px);
+}
+
+.live-order-total-label {
+    font-size: clamp(10px, 0.6vw, 13px);
+}
+
+.live-order-total strong {
+    font-size: clamp(1.15rem, 1.25vw, 1.8rem);
+}
+
+.live-order-total-note {
+    font-size: clamp(9px, 0.55vw, 12px);
+}
+
+@media (max-width: 600px) {
+    .live-order-total {
+        width: auto;
+        min-width: 135px;
+        padding: 8px 10px;
+    }
+
+    .live-order-total strong {
+        font-size: 1.1rem;
+    }
+}
+
+/* =========================================
+   COLLAPSIBLE PAGE SELECTOR
+========================================= */
+
+.preview-head {
+    position: relative;
+}
+
+/* Minimal preview collapse control */
+
+.preview-head {
+    display: flex;
+    align-items: center;
+}
+
+.preview-collapse-button {
+    margin-left: auto;
+    padding: 5px 8px;
+
+    border: none;
+    background: transparent;
+    color: var(--muted);
+
+    cursor: pointer;
+    line-height: 1;
+    font-size: 21px;
+
+    transition: color 0.2s ease;
+}
+
+.preview-collapse-button:hover {
+    color: var(--navy);
+}
+
+.collapse-chevron {
+    display: block;
+    transition: transform 0.2s ease;
+}
+
+/* Flip arrow when collapsed */
+.preview-panel.page-selector-collapsed .collapse-chevron {
+    transform: rotate(180deg);
+}
+
+.preview-collapse-button:hover {
+    background: #f0ece4;
+}
+
+
+
+/* Hide the page thumbnails */
+.preview-panel.page-selector-collapsed #pageThumbs {
+    display: none;
+}
+
+/* Turn the arrow downward when collapsed */
+.preview-panel.page-selector-collapsed .collapse-chevron {
+    transform: rotate(180deg);
+}
+
+/* Give the invitation additional room */
+.preview-panel.page-selector-collapsed {
+    --editor-page-height: clamp(
+        380px,
+        calc(100vh - 300px),
+        1000px
+    );
+}
+
+/* Smaller screens */
+@media (max-width: 1200px) {
+    .preview-panel.page-selector-collapsed {
+        --editor-page-height: clamp(
+            340px,
+            calc(100vh - 340px),
+            750px
+        );
+    }
+}
+
+@media (max-width: 600px) {
+    .preview-panel.page-selector-collapsed {
+        --editor-page-height: clamp(
+            300px,
+            calc(100vh - 360px),
+            550px
+        );
+    }
+}
+

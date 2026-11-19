@@ -55,18 +55,41 @@ export function calculateEffectiveUnitPrice(invitation, selection, quantity) {
   return calculateEstimate(invitation, selection, qty) / qty;
 }
 
+function adjustmentBounds(map) {
+  const values = Object.values(map || {})
+    .map(Number)
+    .filter(Number.isFinite);
+
+  // 0 covers options that have no entry in the map
+  return {
+    min: Math.min(0, ...values),
+    max: Math.max(0, ...values)
+  };
+}
+
 export function getPriceRange(invitation) {
   const quantities = getQuantityOptions(invitation);
-
   if (!quantities.length) return null;
 
-  const prices = quantities.map(q =>
-    calculateEffectiveUnitPrice(invitation, {}, q)
-  );
+  const f = adjustmentBounds(invitation.formatAdjustments);
+  const p = adjustmentBounds(invitation.paperAdjustments);
+  const c = adjustmentBounds(invitation.customizationFees);
+
+  const base = Number(invitation.baseCharge || 0);
+  const unit = Number(invitation.unitPrice || 0);
+  const premium = Number(invitation.intermediatePremium || 0);
+
+  const perInvitation = (q, adj) => {
+    const extra = isIntermediateQuantity(invitation, q) ? premium : 0;
+    return Math.max(0, base + q * (unit + adj) + extra) / q;
+  };
+
+  const minAdj = f.min + p.min + c.min;
+  const maxAdj = f.max + p.max + c.max;
 
   return {
-    min: Math.min(...prices),
-    max: Math.max(...prices)
+    min: Math.min(...quantities.map(q => perInvitation(q, minAdj))),
+    max: Math.max(...quantities.map(q => perInvitation(q, maxAdj)))
   };
 }
 

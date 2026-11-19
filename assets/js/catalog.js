@@ -112,7 +112,7 @@ async function render() {
             </p>
 
             <small class="muted">
-                Per-invitation price varies by quantity.
+                Per-invitation price varies by quantity and options.
             </small>
 
             <a class="button"
@@ -222,7 +222,7 @@ function addPreviewControls(container, pages) {
             page.style.setProperty("--page-index", position);
             page.style.setProperty(
                 "--page-offset",
-                `${position * 120}px`
+                `${position * 150}px`
             );
 
             page.style.zIndex = 100 - position;

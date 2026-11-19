@@ -359,6 +359,8 @@ Custom field IDs must be unique within the add-on and use letters, numbers, unde
 
 Custom field values are order information. They are not printed on the add-on template.
 
+The backend only saves custom information for fields defined in the add-on's `customFields`. Values for any other ID are discarded, and an empty required field rejects the order. `setupAddOnCatalogTabs()` creates only the first 12 AddOns columns, so add `customFields` as a 13th column header by hand (or add it to `ADDON_HEADERS` in `Code.gs`).
+
 ### AddOnDesigns tab
 
 The add-on design catalog uses these columns:
@@ -505,6 +507,8 @@ templates/
 
 The page definitions in the catalog must point to the correct files.
 
+Each page file must match `templates/<folder>/<file>.svg` or `.html`. The folder may use only letters, numbers, underscores, and hyphens. The file name may use only letters, numbers, underscores, hyphens, and dots. The page `type` must be `svg` or `html`. The backend rejects every order for an invitation that has a page path or type outside these rules.
+
 For pages that will be edited in another program (see [Editing a page in another program](#editing-a-page-in-another-program)), use SVG templates and make each `data-field` element a `<text>` element.
 
 ## 8. Adding an Add-on
@@ -549,7 +553,7 @@ Each order is one row with these columns, in this order:
 | `Design` | Selected design option |
 | `Wording JSON` | Wording the customer entered, as JSON keyed by field ID |
 | `Notes` | Customer notes |
-| `Estimated Order Total` | Calculated order total |
+| `Estimated Order Total` | Calculated total for the invitation and add-ons |
 | `Base Charge` | Invitation base charge |
 | `Unit Price` | Base unit price |
 | `Format Adjustment` | Format price adjustment |
@@ -557,10 +561,10 @@ Each order is one row with these columns, in this order:
 | `Customization Fee` | Design option fee |
 | `Intermediate Premium` | Intermediate quantity premium |
 | `Adjusted Unit Price` | Unit price after adjustments |
-| `Effective Price Per Invitation` | Order total divided by quantity |
+| `Effective Price Per Invitation` | Order total divided by quantity, with add-ons included |
 | `Add-ons JSON` | Validated add-on selections, as a JSON array |
 | `Add-on Total` | Combined add-on total |
-| `customFields` | Additional custom field data |
+| `customFields` | Reserved. The backend does not write to it, so it stays empty. Add-on custom information is stored inside `Add-ons JSON` |
 
 `Wording JSON` contains only fields the customer changed. Fields left alone use the template's default text, so an order with untouched wording shows `{}`.
 
@@ -689,9 +693,10 @@ The backend validates:
 - The selected add-on design belongs to the selected add-on and is active.
 - An applicable quantity pricing tier exists.
 - Add-on design pricing is configured correctly.
-- Required custom information is provided.
-- Wording and custom information values meet length and format restrictions.
+- Required custom information is provided, and only fields defined in the add-on's `customFields` are kept.
+- Wording and custom information values meet length and format restrictions (field IDs use letters, numbers, underscores, or hyphens, up to 80 characters, and values are at most 2,000 characters).
 - Customer name and email are valid.
+- Invitation page paths and types are well formed (see [Adding an Invitation](#7-adding-an-invitation)).
 
 If validation fails, the backend returns an unsuccessful response and does not save the order.
 

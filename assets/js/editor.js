@@ -361,20 +361,14 @@ function updateQuantityMenu() {
         d => d.id === state.design
     );
 
-    const currentTotal = calculateAddOnTotal(
-        addOn,
-        currentDesign,
-        state.quantity
-    );
-
     quantities.forEach(qty => {
-        const candidateTotal = calculateAddOnTotal(
+        const total = calculateAddOnTotal(
             addOn,
             currentDesign,
             qty
         );
 
-        const difference = candidateTotal - currentTotal;
+        const perItem = total / qty;
 
         const option = document.createElement("button");
         option.type = "button";
@@ -384,18 +378,15 @@ function updateQuantityMenu() {
         name.textContent = qty;
 
         const price = document.createElement("span");
-        price.className =
-            "dropdown-price " +
-            (difference > 0.000001 ? "price-increase" :
-             difference < -0.000001 ? "price-decrease" :
-             "price-neutral");
-
-        price.textContent = formatPriceDifference(difference);
+        price.className = "dropdown-price";
+        price.textContent =
+            `(${money(total)} · ${money(perItem)}/each)`;
 
         option.append(name, price);
 
         option.addEventListener("click", () => {
             state.quantity = qty;
+
             updateQuantityTrigger();
             updateAddOnPriceDisplays();
             updatePrice();
@@ -411,11 +402,6 @@ function updateQuantityMenu() {
 function updateQuantityTrigger() {
     quantityTrigger.replaceChildren();
 
-    const name = document.createElement("span");
-    name.textContent = state.quantity;
-
-    quantityTrigger.append(name, quantityPrice);
-
     const currentDesign = addOn.designs.find(
         d => d.id === state.design
     );
@@ -426,7 +412,17 @@ function updateQuantityTrigger() {
         state.quantity
     );
 
-    quantityPrice.textContent = `Adds ${money(total)}`;
+    const perItem = total / state.quantity;
+
+    const name = document.createElement("span");
+    name.textContent = state.quantity;
+
+    const price = document.createElement("span");
+    price.className = "dropdown-price";
+    price.textContent =
+        `(${money(total)} · ${money(perItem)}/each)`;
+
+    quantityTrigger.append(name, price);
 }
 
 quantityTrigger.addEventListener("click", () => {
@@ -437,6 +433,14 @@ quantityTrigger.addEventListener("click", () => {
     quantityMenu.hidden = !opening;
     quantityTrigger.setAttribute("aria-expanded", String(opening));
 });
+        
+    // Close dropdown when clicking anywhere outside it.
+document.addEventListener("click", (event) => {
+    if (!quantityDropdown.contains(event.target)) {
+        quantityMenu.hidden = true;
+        quantityTrigger.setAttribute("aria-expanded", "false");
+    }
+});    
 
 quantityDropdown.append(quantityTrigger, quantityMenu);
 quantityLabel.appendChild(quantityDropdown);
@@ -523,16 +527,6 @@ function updateAddOnPriceDisplays() {
     updateQuantityTrigger();
     updateQuantityMenu();
 
-    const currentDesign = addOn.designs.find(
-        d => d.id === state.design
-    );
-
-    const currentTotal = calculateAddOnTotal(
-        addOn,
-        currentDesign,
-        state.quantity
-    );
-
     for (const label of designsContainer.children) {
         const radio = label.querySelector("input");
         const priceElement = label.querySelector(".addon-design-price");
@@ -547,9 +541,12 @@ function updateAddOnPriceDisplays() {
             state.quantity
         );
 
-        setPriceDifference(
-            priceElement,
-            candidateTotal - currentTotal
+        // Show the actual total price, not the difference.
+        priceElement.textContent = money(candidateTotal);
+        priceElement.classList.remove(
+            "price-increase",
+            "price-decrease",
+            "price-neutral"
         );
     }
 }
@@ -754,23 +751,163 @@ function setPriceDifference(element, amount) {
 }
 
 function buildQuantityOptions() {
-    const select = $("#quantity");
+    const quantityInput = $("#quantity");
+    const trigger = $("#mainQuantityTrigger");
+    const menu = $("#mainQuantityMenu");
+    const dropdown = $("#mainQuantityDropdown");
+
     const quantities = getQuantityOptions(invitation);
 
-    select.replaceChildren();
+    quantityInput.value = quantities.includes(50)
+        ? "50"
+        : quantities.length
+            ? String(quantities[0])
+            : "";
 
-    quantities.forEach(qty => {
-        select.add(new Option(qty.toString(), qty.toString()));
-    });
-
-    if (quantities.length) {
-        select.value = quantities.includes(50)
-            ? "50"
-            : String(quantities[0]);
+    function closeMenu() {
+        menu.hidden = true;
+        trigger.setAttribute("aria-expanded", "false");
     }
 
-    select.addEventListener("change", updatePrice);
+    function updateTrigger() {
+        trigger.replaceChildren();
+
+        const qty = Number(quantityInput.value);
+
+        if (!qty) {
+            trigger.textContent = "Select quantity";
+            return;
+        }
+
+        const total = calculateEstimate(invitation, selection, qty);
+        const perItem = total / qty;
+
+        const name = document.createElement("span");
+        name.textContent = qty;
+
+        const price = document.createElement("span");
+        price.className = "dropdown-price";
+        price.textContent =
+            `( $ ${total.toFixed(2)} · $ ${perItem.toFixed(2)}/each)`;
+
+        trigger.append(name, price);
+    }
+
+    function updateMenu() {
+        menu.replaceChildren();
+
+        quantities.forEach(qty => {
+            const total = calculateEstimate(invitation, selection, qty);
+            const perItem = total / qty;
+
+            const option = document.createElement("button");
+            option.type = "button";
+            option.className = "custom-price-option";
+
+            const name = document.createElement("span");
+            name.textContent = qty;
+
+            const price = document.createElement("span");
+            price.className = "dropdown-price";
+            price.textContent =
+                `( $ ${total.toFixed(2)} · $ ${perItem.toFixed(2)}/each)`;
+
+            option.append(name, price);
+
+            option.addEventListener("click", () => {
+                quantityInput.value = String(qty);
+
+                updateTrigger();
+                closeMenu();
+                updatePrice();
+            });
+
+            menu.appendChild(option);
+        });
+    }
+
+    trigger.addEventListener("click", () => {
+        const opening = menu.hidden;
+
+        if (opening) {
+            updateMenu();
+        }
+
+        menu.hidden = !opening;
+        trigger.setAttribute("aria-expanded", String(opening));
+    });
+
+    document.addEventListener("click", event => {
+        if (!dropdown.contains(event.target)) {
+            closeMenu();
+        }
+    });
+
+    updateMenu();
+    updateTrigger();
 }
+
+function updateQuantityOptionPrices() {
+    const trigger = $("#mainQuantityTrigger");
+    const menu = $("#mainQuantityMenu");
+
+    if (!trigger || !menu || !invitation) return;
+
+    const qty = Number($("#quantity").value);
+
+    if (qty) {
+        const total = calculateEstimate(invitation, selection, qty);
+        const perItem = total / qty;
+
+        trigger.replaceChildren();
+
+        const name = document.createElement("span");
+        name.textContent = qty;
+
+        const price = document.createElement("span");
+        price.className = "dropdown-price";
+        price.textContent =
+            `( $ ${total.toFixed(2)} · $ ${perItem.toFixed(2)}/each)`;
+
+        trigger.append(name, price);
+    }
+
+    // Refresh all available quantity prices.
+    const quantities = getQuantityOptions(invitation);
+    menu.replaceChildren();
+
+    quantities.forEach(q => {
+        const total = calculateEstimate(invitation, selection, q);
+        const perItem = total / q;
+
+        const option = document.createElement("button");
+        option.type = "button";
+        option.className = "custom-price-option";
+
+        const name = document.createElement("span");
+        name.textContent = q;
+
+        const price = document.createElement("span");
+        price.className = "dropdown-price";
+        price.textContent =
+            `( $ ${total.toFixed(2)} · $ ${perItem.toFixed(2)}/each)`;
+
+        option.append(name, price);
+
+        option.addEventListener("click", () => {
+            $("#quantity").value = String(q);
+
+            updateQuantityOptionPrices();
+            updatePrice();
+
+            menu.hidden = true;
+            trigger.setAttribute("aria-expanded", "false");
+        });
+
+        menu.appendChild(option);
+    });
+}
+
 function buildFields() {
     const container = $("#fieldControls");
     container.replaceChildren();
@@ -830,10 +967,9 @@ function buildFields() {
 
         const keyboardButton = document.createElement("button");
         keyboardButton.type = "button";
-        keyboardButton.className = "hebrew-keyboard-toggle";
+        keyboardButton.className = "hebrew-keyboard-toggle ";
         keyboardButton.textContent = "⌨";
-        keyboardButton.title = "Open Hebrew keyboard";
-        keyboardButton.setAttribute("aria-label", "Open Hebrew keyboard");
+keyboardButton.setAttribute("data-tooltip", "Open Hebrew keyboard"); // Replaced .title        keyboardButton.setAttribute("aria-label", "Open Hebrew keyboard");
 
         inputRow.append(input, keyboardButton);
 
@@ -1081,15 +1217,33 @@ function refresh() {
 
 function updatePrice() {
     if (!invitation) return;
-
+updateQuantityOptionPrices();
     const qty = Number($("#quantity").value);
+    const invoice = $("#orderInvoice");
 
+    const liveTotal = document.getElementById("liveOrderTotalAmount");
+
+    // Validate quantity.
     if (!getQuantityOptions(invitation).includes(qty)) {
         $("#estimate").textContent = "Estimated order total: —";
         $("#unitEstimate").textContent = "";
+
+        if (invoice) {
+            invoice.replaceChildren();
+
+            const message = document.createElement("p");
+            message.className = "muted";
+            message.textContent = "Select a quantity to see your invoice.";
+
+            invoice.appendChild(message);
+        }
+
+        if (liveTotal) liveTotal.textContent = "—";
+
         return;
     }
 
+    // Calculate invitation price.
     const invitationTotal = calculateEstimate(
         invitation,
         selection,
@@ -1098,6 +1252,16 @@ function updatePrice() {
 
     let addOnTotal = 0;
 
+    const invoiceItems = [];
+
+    // Invitation line item.
+    invoiceItems.push({
+        title: invitation.title,
+        description: `${qty} invitations · ${money(invitationTotal / qty)} each`,
+        price: invitationTotal
+    });
+
+    // Calculate each selected add-on separately.
     for (const [addOnId, state] of Object.entries(selectedAddOns)) {
         if (!state.enabled) continue;
 
@@ -1108,24 +1272,98 @@ function updatePrice() {
             d => d.id === state.design
         );
 
-        addOnTotal += calculateAddOnTotal(
+        const itemTotal = calculateAddOnTotal(
             addOn,
             design,
             state.quantity
         );
+
+        addOnTotal += itemTotal;
+
+        invoiceItems.push({
+            title: addOn.title,
+            description:
+                `${state.quantity} units` +
+                (design ? ` · ${design.title}` : ""),
+            price: itemTotal
+        });
     }
 
+    // Calculate grand total.
     const total = invitationTotal + addOnTotal;
-    const liveTotal = document.getElementById("liveOrderTotalAmount");
 
-if (liveTotal) {
-    liveTotal.textContent = money(total);
-}
+    // Update the floating total.
+    if (liveTotal) {
+        liveTotal.textContent = money(total);
+    }
+
+    // Update the existing estimate text for order review.
     $("#estimate").textContent =
         "Estimated order total: " + money(total);
 
     $("#unitEstimate").textContent =
-        money(invitationTotal  / qty) + " average per invitation, not including add-ons";
+        money(invitationTotal / qty) +
+        " average per invitation, not including add-ons";
+
+    // Build the itemized invoice.
+    if (!invoice) return;
+
+    invoice.replaceChildren();
+
+    // Invoice heading.
+    const heading = document.createElement("h3");
+    heading.className = "invoice-heading";
+    heading.textContent = "Order Summary";
+
+    invoice.appendChild(heading);
+
+    // Invoice items.
+    invoiceItems.forEach((item, index) => {
+        const row = document.createElement("div");
+        row.className = "invoice-item";
+
+        const details = document.createElement("div");
+        details.className = "invoice-item-details";
+
+        const title = document.createElement("strong");
+        title.className = "invoice-item-title";
+        title.textContent = item.title;
+
+        const description = document.createElement("span");
+        description.className = "invoice-item-description";
+        description.textContent = item.description;
+
+        details.append(title, description);
+
+        const price = document.createElement("strong");
+        price.className = "invoice-item-price";
+        price.textContent = money(item.price);
+
+        row.append(details, price);
+
+        invoice.appendChild(row);
+    });
+
+    // Divider.
+    const divider = document.createElement("div");
+    divider.className = "invoice-divider";
+
+    invoice.appendChild(divider);
+
+    // Grand total.
+    const totalRow = document.createElement("div");
+    totalRow.className = "invoice-total";
+
+    const totalLabel = document.createElement("strong");
+    totalLabel.textContent = "Total";
+
+    const totalAmount = document.createElement("strong");
+    totalAmount.className = "invoice-total-amount";
+    totalAmount.textContent = money(total);
+
+    totalRow.append(totalLabel, totalAmount);
+
+    invoice.appendChild(totalRow);
 }
 
 
@@ -1289,6 +1527,43 @@ $("#submitOrder").addEventListener("click", async () => {
         status.textContent = `We could not confirm your order: ${e.message}. Please try again or contact the business. Do not assume your request was received.`;
     } finally {
         $("#submitOrder").disabled = false;
+    }
+});
+
+const togglePageSelector = $("#togglePageSelector");
+const previewPanel = document.querySelector(".preview-panel");
+
+togglePageSelector?.addEventListener("click", () => {
+    const isCollapsed = previewPanel.classList.toggle(
+        "page-selector-collapsed"
+    );
+
+    togglePageSelector.setAttribute(
+        "aria-expanded",
+        String(!isCollapsed)
+    );
+
+    togglePageSelector.setAttribute(
+        "aria-label",
+        isCollapsed ? "Show page selector" : "Hide page selector"
+    );
+
+    togglePageSelector.title = isCollapsed
+        ? "Show page selector"
+        : "Hide page selector";
+});
+
+document.addEventListener("click", (event) => {
+    // Keep the highlight while interacting with the wording controls.
+    if (
+        event.target.closest("#fieldControls input, #fieldControls textarea, .hebrew-keyboard")
+    ) {
+        return;
+    }
+
+    if (activeFieldId !== null) {
+        activeFieldId = null;
+        drawPages();
     }
 });
 function esc(s) {

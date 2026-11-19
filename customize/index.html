@@ -1,37 +1,130 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Customize Your Invitation</title><link rel="stylesheet" href="../assets/css/site.css"><link rel="stylesheet" href="../assets/css/editor.css"></head><body>
-    <div id="liveOrderTotal" class="live-order-total" aria-live="polite">
-  <span class="live-order-total-label">Current Order Total</span>
-  <strong id="liveOrderTotalAmount">$0.00</strong>
-  <span class="live-order-total-note">Including add-ons</span>
-</div>
-<header class="site-header"><a class="brand" href="../index.html">THE INVITATION STUDIO</a><nav><a id="returnLink" href="../catalog/">Back to collection</a></nav></header>
-<main class="page-wrap"><p class="eyebrow">MAKE IT YOURS</p><h1 id="editorTitle">Customize your invitation</h1><p class="muted">Your screen preview is a guide. Printed paper and colors may vary slightly. This is not your final proof.</p>
-<div class="editor-layout"><section class="editor-controls"><div class="control-section"><h2>Design options</h2>
-  <h3>1. Choose Your Quantity</h3>
-  <p class="muted">How many invitations would you like to order?</p>
-  <select id="quantity" required>
-    <option value="">Select quantity</option>
-  </select>
-<section class="customization-section">
-    <p></p>
-  <h3>2. Invitation Options</h3>
-  <div id="optionControls"></div>
-</section>
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>Customize Your Invitation</title>
+        <link rel="stylesheet" href="../assets/css/site.css" />
+        <link rel="stylesheet" href="../assets/css/editor.css" />
+        <link rel="preconnect" href="https://googleapis.com" />
+    </head>
+    <body>
+        <div id="liveOrderTotal" class="live-order-total" aria-live="polite">
+            <span class="live-order-total-label">Current Order Total</span>
+            <strong id="liveOrderTotalAmount">$0.00</strong>
+            <span class="live-order-total-note">Including add-ons</span>
+        </div>
+        <header class="site-header">
+            <a class="brand" href="../index.html">THE INVITATION STUDIO</a>
+            <nav><a id="returnLink" href="../catalog/">Back to collection</a></nav>
+        </header>
+        <main class="page-wrap">
+            <p class="eyebrow">MAKE IT YOURS</p>
+            <h1 id="editorTitle">Customize your invitation</h1>
+            <p class="muted">
+                Your screen preview is a guide. Printed paper and colors may vary slightly. This is not your final
+                proof.
+            </p>
+            <div class="editor-layout">
+                <section class="editor-controls">
+                    <div class="control-section">
+                        <h2>Design options</h2>
+                        <h3>1. Choose Your Quantity</h3>
+                        <p class="muted">How many invitations would you like to order?</p>
+                        <input type="hidden" id="quantity" value="">
 
+<div id="mainQuantityDropdown" class="custom-price-dropdown">
+    <button
+        type="button"
+        id="mainQuantityTrigger"
+        class="custom-price-trigger"
+        aria-expanded="false">
+        Select quantity
+    </button>
 
-
-</div><div class="control-section"><h2>Your wording</h2><div id="fieldControls"><p class="muted">Loading editable fields…</p></div></div>
-    <section class="customization-section">
-    <h3>3. Optional Add-ons</h3>
-    <p class="muted">
-        Complete your invitation order with matching cards and other extras.
-    </p>
-    <div id="addOnControls">
-        <p class="muted">Loading available add-ons…</p>
+    <div
+        id="mainQuantityMenu"
+        class="custom-price-menu"
+        hidden>
     </div>
-</section>
-    <div class="control-section"><h2>Order details</h2><label>Your name<input id="customerName" required></label><label>Email<input id="customerEmail" type="email" required></label><label>Phone<input id="customerPhone" type="tel"></label><label>Additional notes<textarea id="orderNotes" rows="3"></textarea></label><p class="price" id="estimate">Estimated order total: —</p>
-<p class="muted" id="unitEstimate">—</p><p class="muted">Estimate only. We will confirm the final quote with your proof. Payment is collected in person.</p><button id="reviewButton" class="button">Review order</button></div></section>
-<section class="preview-panel"><div class="preview-head"><div><h2>Invitation preview</h2><span class="muted">Select a page to preview</span></div><span class="preview-tag">PREVIEW</span></div><div id="pageThumbs" class="page-thumbs"></div><div class="large-preview-wrap"><button id="prevPage" aria-label="Previous page">‹</button><div id="largePreview" class="large-preview"></div><button id="nextPage" aria-label="Next page">›</button></div><div id="pageLabel" class="muted page-label"></div></section></div>
-<section id="reviewPanel" class="review-panel" hidden><h2>Review your order request</h2><div id="reviewSummary"></div><button id="submitOrder" class="button">Submit order request</button><button id="editOrder" class="text-button">Continue editing</button><p id="submitStatus" role="status"></p></section></main><footer>THE INVITATION STUDIO</footer>
-<script type="module" src="../assets/js/editor.js"></script></body></html>
+</div>
+                        <section class="customization-section">
+                            <p></p>
+                            <h3>2. Invitation Options</h3>
+                            <div id="optionControls"></div>
+                        </section>
+                    </div>
+                    <div class="control-section">
+                        <h2>Your wording</h2>
+                        <div id="fieldControls"><p class="muted">Loading editable fields…</p></div>
+                    </div>
+                    <section class="customization-section">
+                        <h3>3. Optional Add-ons</h3>
+                        <p class="muted">Complete your invitation order with matching cards and other extras.</p>
+                        <div id="addOnControls">
+                            <p class="muted">Loading available add-ons…</p>
+                        </div>
+                    </section>
+                    <div class="control-section">
+                        <h2>Order details</h2>
+                        <label>Your name<input id="customerName" required /></label
+                        ><label>Email<input id="customerEmail" type="email" required /></label
+                        ><label>Phone<input id="customerPhone" type="tel" /></label
+                        ><label>Additional notes<textarea id="orderNotes" rows="3"></textarea></label
+                        ><!-- Itemized order invoice -->
+                        <div id="orderInvoice" class="order-invoice">
+                            <p class="muted">Your order total will appear here.</p>
+                        </div>
+
+                        <!-- Retained for the existing order-review code -->
+                        <p id="estimate" hidden>Estimated order total: —</p>
+                        <p id="unitEstimate" hidden>—</p>
+
+                        <p class="muted">
+                            Estimate only. We will confirm the final quote with your proof. Payment is collected in
+                            person.
+                        </p>
+                        <button id="reviewButton" class="button">Review order</button>
+                    </div>
+                </section>
+                <section class="preview-panel">
+                    <div class="preview-head">
+                        <div>
+                            <h2>Invitation preview</h2> <h4> Please note, some edits may not look perfect here. We will fix it before sending you a proof.</h4>
+                            <button
+                                type="button"
+                                id="togglePageSelector"
+                                class="preview-collapse-button"
+                                aria-label="Hide page selector"
+                                aria-expanded="true"
+                                title="Hide page selector">
+                                <span class="collapse-chevron">⌄</span>
+                            </button>
+                            <span class="muted">Select a page to preview</span>
+                        </div>
+
+                        <span class="preview-tag">PREVIEW</span>
+                    </div>
+
+                    <div id="pageThumbs" class="page-thumbs"></div>
+
+                    <div class="large-preview-wrap">
+                        <button id="prevPage" aria-label="Previous page">‹</button>
+                        <div id="largePreview" class="large-preview"></div>
+                        <button id="nextPage" aria-label="Next page">›</button>
+                    </div>
+                    <div id="pageLabel" class="muted page-label"></div>
+                </section>
+            </div>
+            <section id="reviewPanel" class="review-panel" hidden>
+                <h2>Review your order request</h2>
+                <div id="reviewSummary"></div>
+                <button id="submitOrder" class="button">Submit order request</button
+                ><button id="editOrder" class="text-button">Continue editing</button>
+                <p id="submitStatus" role="status"></p>
+            </section>
+        </main>
+        <footer>THE INVITATION STUDIO</footer>
+        <script type="module" src="../assets/js/editor.js"></script>
+    </body>
+</html>
