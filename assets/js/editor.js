@@ -3,6 +3,8 @@ import { renderInvitation, updateRenderedWording } from "./template-renderer.js"
 import {calculateEstimate, calculateEffectiveUnitPrice, getQuantityOptions, validatePricing, money,calculateAllAddOnsTotal, calculateAddOnTotal } from "./pricing.js";
 import { CONFIG } from "./config.js";
 import {getActiveAddOns, isAddOnAvailableForInvitation} from "./addons-data.js";
+import { createAdvancedControls } from "./field-advanced.js";
+
 const $ = (s) => document.querySelector(s),
     params = new URLSearchParams(location.search),
     id = params.get("id");
@@ -14,6 +16,7 @@ let invitation,
     activeFieldId=null;
 let availableAddOns = [];
 let selectedAddOns = {};
+let fieldStyles = {};
 try {
     const data = await getStoreData();
     invitation = getInvitation(data, id);
@@ -952,7 +955,7 @@ function buildFields() {
 
         const updateField = () => {
             wording[f.id] = input.value;
-            updateRenderedWording(rendered, wording);
+            updateRenderedWording(rendered, wording, fieldStyles);
             drawPages();
         };
 
@@ -973,6 +976,15 @@ keyboardButton.setAttribute("data-tooltip", "Open Hebrew keyboard"); // Replaced
 
         inputRow.append(input, keyboardButton);
 
+        let advancedPanel = null;
+if (f.advanced) {
+    const adv = createAdvancedControls(f, fieldStyles, () => {
+        updateRenderedWording(rendered, wording, fieldStyles);
+        drawPages();
+    });
+    inputRow.append(adv.toggle);
+    advancedPanel = adv.panel;
+}
         // Keyboard container, initially hidden.
         const keyboard = createHebrewKeyboard(input, updateField);
 
@@ -997,6 +1009,7 @@ keyboardButton.setAttribute("data-tooltip", "Open Hebrew keyboard"); // Replaced
         });
 
         fieldWrap.append(label, inputRow, keyboard);
+        if (advancedPanel) fieldWrap.append(advancedPanel);
         section.appendChild(fieldWrap);
     });
 
@@ -1207,7 +1220,7 @@ function drawPages() {
 
 function refresh() {
     const target = document.createElement("div");
-    renderInvitation({ invitation, target, wording, options: selection }).then((r) => {
+    renderInvitation({ invitation, target, wording, styles: fieldStyles, options: selection }).then((r) => {
         rendered = r;
         drawPages();
         updatePrice();
@@ -1481,6 +1494,7 @@ $("#reviewButton").addEventListener("click", () => {
         invitationId: id,
         selection,
         wording,
+        fieldStyles: { ...fieldStyles },
         quantity: qty,
         addOns: orderAddOns,
         customer: {

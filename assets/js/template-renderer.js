@@ -277,6 +277,7 @@ async function loadDirectFont(font, templateUrl) {
 export async function renderInvitation({
     invitation,
     wording = {},
+    styles = {}, 
     options = {},
     target,
     size = "large"
@@ -314,7 +315,7 @@ export async function renderInvitation({
 
     const fields = discoverFields(pages);
 
-    applyWording(fields, wording);
+    applyWording(fields, wording, styles);
 
     if (size === "thumb") {
 
@@ -409,6 +410,13 @@ function fontValue(v) {
 // UPDATE WORDING
 // --------------------------------------------------
 
-export function updateRenderedWording(rendered, values) {
-    applyWording(rendered.fields, values);
+export function updateRenderedWording(rendered, values, styles = {}) {
+    applyWording(rendered.fields, values, styles);
+}
+// google fonts
+export async function ensureGoogleFont(family) {
+    const url = "https://fonts.googleapis.com/css2?family=" +
+        encodeURIComponent(family).replace(/%20/g, "+") + "&display=swap";
+    await loadGoogleStylesheet(url);
+    await document.fonts.load(`16px "${family}"`, "אבג ABC");
 }

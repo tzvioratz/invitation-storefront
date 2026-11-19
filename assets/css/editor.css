@@ -794,3 +794,17 @@
     }
 }
 
+.field-advanced-toggle { font-size: .8rem; padding: 2px 8px; cursor: pointer; }
+.field-advanced-toggle.has-overrides { font-weight: 600; border-color: currentColor; }
+
+.field-advanced {
+    display: grid; gap: 8px;
+    margin: 6px 0 6px 18px; padding-left: 12px;
+    border-left: 2px solid #ddd;
+}
+.field-advanced[hidden] { display: none; }
+.field-advanced-row { display: flex; align-items: center; gap: 8px; }
+.field-advanced-row > span { width: 48px; font-size: .85rem; }
+.field-advanced-row select,
+.field-advanced-row input[type="number"] { flex: 1; min-width: 0; }
+.field-advanced-reset { justify-self: start; font-size: .8rem; }
