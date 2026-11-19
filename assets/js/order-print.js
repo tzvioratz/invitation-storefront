@@ -1,9 +1,11 @@
 import { getStoreData } from "./data.js";
-import { renderInvitation, updateRenderedWording } from "./template-renderer.js";
 import { loadAddOnData } from "./addons-data.js";
 import { createHebrewKeyboard } from "./hebrew-keyboard.js";
+import { renderInvitation, updateRenderedWording, ensureGoogleFont } from "./template-renderer.js";
+import { sanitizeFieldStyles, setFieldStyle } from "./field-discovery.js";
 // Optional: used to load declared fonts for imported SVGs if template-renderer.js exports loadSvgFonts.
 import * as templateRenderer from "./template-renderer.js";
+import { createAdvancedControls } from "./field-advanced.js"
 
 const $ = s => document.querySelector(s);
 
@@ -15,7 +17,8 @@ const ORDER_COLUMNS = [
     "Quantity", "Format", "Paper", "Font", "Color", "Design", "Wording JSON", "Notes",
     "Estimated Order Total", "Base Charge", "Unit Price", "Format Adjustment",
     "Paper Adjustment", "Customization Fee", "Intermediate Premium", "Adjusted Unit Price",
-    "Effective Price Per Invitation", "Add-ons JSON", "Add-on Total", "customFields"
+    "Effective Price Per Invitation", "Add-ons JSON", "Add-on Total", "customFields",
+    "Add-ons JSON", "Add-on Total", "customFields", "Field Styles JSON"
 ];
 
 const SHEET_SIZES = {
@@ -123,6 +126,9 @@ function normalizeOrder(raw) {
 
     const addOns = safeJSON(raw["Add-ons JSON"], []);
     if (addOns.error) warnings.push("Add-ons JSON could not be read (" + addOns.error + ").");
+    
+    const styles = safeJSON(raw["Field Styles JSON"], {});
+    if (styles.error) warnings.push("Field Styles JSON could not be read (" + styles.error + ").");
 
     return {
         raw,
@@ -136,7 +142,9 @@ function normalizeOrder(raw) {
         },
         wording: wording.value && typeof wording.value === "object" && !Array.isArray(wording.value)
             ? wording.value : {},
+        fieldStyles: sanitizeFieldStyles(styles.value),
         addOns: Array.isArray(addOns.value) ? addOns.value : []
+        
     };
 }
 
@@ -151,10 +159,19 @@ async function renderSource(src) {
 
     const pages = src.type === "invitation" ? invitation.pages : (src.design?.pages || []);
 
+    // Load any fonts the customer picked, or they'll print in a fallback font.
+    const families = new Set(
+        Object.values(src.styles || {}).map(s => s.fontFamily).filter(Boolean)
+    );
+    await Promise.all([...families].map(f =>
+        ensureGoogleFont(f).catch(e => console.warn("Could not load font:", f, e))
+    ));
+
     src.rendered = await renderInvitation({
         invitation: { pages },
         target: document.createElement("div"),
         wording: src.wording,
+        styles: src.styles || {},
         options: src.type === "invitation" ? selection : {}
     });
 }
@@ -177,7 +194,8 @@ async function loadOrder(o) {
 
     sources = [{
         id: "inv", type: "invitation", title: invitation.title,
-        quantity: o.quantity, wording: { ...o.wording }, rendered: null
+        quantity: o.quantity, wording: { ...o.wording },     
+        styles: { ...o.fieldStyles }, rendered: null
     }];
 
     o.addOns.forEach((a, index) => {
@@ -195,6 +213,7 @@ async function loadOrder(o) {
             wording,
             customInfo: { ...(a.customInfo || {}) },
             customFields: Array.isArray(definition?.customFields) ? definition.customFields : [],
+            styles: sanitizeFieldStyles(a.fieldStyles),
             rendered: null
         });
     });
@@ -419,7 +438,7 @@ function buildFieldControl(src, f, scope) {
 
     const updateField = () => {
         src.wording[f.id] = input.value;
-        updateRenderedWording(src.rendered, src.wording);
+        updateRenderedWording(src.rendered, src.wording, src.styles);
         applyImportedWording(src);
         drawPageView();
         scheduleSheets();
@@ -448,8 +467,23 @@ function buildFieldControl(src, f, scope) {
         if (open) { toggle.classList.add("active"); input.focus(); }
     });
 
-    wrap.append(label, row, keyboard);
-    return wrap;
+const labelRow = el("div", "field-label-row");
+labelRow.append(label);
+
+let panel = null;
+if (f.advanced) {
+    const adv = createAdvancedControls(f, src.styles, () => {
+        updateRenderedWording(src.rendered, src.wording, src.styles);
+        applyImportedStyle(src, f.id); 
+        drawPageView();
+        scheduleSheets();
+    });
+    labelRow.append(adv.toggle);
+    panel = adv.panel;
+}
+
+wrap.append(labelRow, row, keyboard);
+if (panel) wrap.append(panel);    return wrap;
 }
 
 function activateField(src, fieldId) {
@@ -845,6 +879,22 @@ function applyImportedWording(src) {
             const f = src.rendered.fields.find(x => x.id === fieldId);
             if (!f) return;
             nodes.forEach(n => setImportedFieldValue(n, fieldValue(src, f)));
+        });
+    });
+}
+
+// Applies one field's style overrides to any imported pages for this source.
+function applyImportedStyle(src, fieldId) {
+    const style = src.styles[fieldId] || {};
+
+    overrides.forEach((ov, key) => {
+        if (!key.startsWith(src.id + "#")) return;
+
+        (ov.map.get(fieldId) || []).forEach(node => {
+            setFieldStyle(node, style);
+            // Programs like Illustrator and Inkscape often put fill and font-size
+            // on each tspan, which would beat a style set only on the <text>.
+            node.querySelectorAll?.("tspan").forEach(t => setFieldStyle(t, style));
         });
     });
 }
@@ -1342,6 +1392,10 @@ $("#copyWording").addEventListener("click", e => {
 
 $("#copyAddOns").addEventListener("click", e => {
     if (order) copyText(JSON.stringify(correctedAddOns()), e.currentTarget);
+});
+
+$("#copyStyles").addEventListener("click", e => {
+    if (order) copyText(JSON.stringify(sources[0].styles), e.currentTarget);
 });
 
 window.addEventListener("resize", debounce(() => {

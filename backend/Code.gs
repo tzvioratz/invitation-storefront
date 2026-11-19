@@ -36,7 +36,11 @@ const ORDER_HEADERS = [
   "Effective Price Per Invitation",  
   "Add-ons JSON",
   "Add-on Total",
-  "customFields"
+  "customFields",
+  "Add-ons JSON",
+  "Add-on Total",
+  "customFields",
+  "Field Styles JSON"
 ];
 
 
@@ -55,7 +59,8 @@ const ADDON_HEADERS = [
   "defaultQuantity",
   "baseCharge",
   "quantityPricing",
-  "sortOrder"
+  "sortOrder",
+  "customFields"
 ];
 
 const ADDON_DESIGN_HEADERS = [
@@ -127,7 +132,11 @@ function doPost(e) {
       p.adjustedUnitPrice,
       p.effectiveUnitPrice,
       JSON.stringify(validated.addOns),
-      p.addOnTotal
+      p.addOnTotal,
+      JSON.stringify(validated.addOns),
+      p.addOnTotal,
+      "",                                       // customFields (not used yet)
+      JSON.stringify(validated.fieldStyles) 
     ]);
 
     SpreadsheetApp.flush();
@@ -396,7 +405,7 @@ const effectiveUnitPrice = orderTotal / quantity;
       throw new Error("Invalid wording value.");
     }
   });
-
+  const fieldStyles = validateFieldStyles_(o.fieldStyles);
   return {
     invitation: {
       id: inv.id,
@@ -405,6 +414,7 @@ const effectiveUnitPrice = orderTotal / quantity;
 
     selection: selection,
     wording: wording,
+    fieldStyles: fieldStyles,
     quantity: quantity,
 
     customer: {
@@ -489,7 +499,71 @@ function catalogNumber_(value, label) {
   return number;
 }
 
+// Validates per-field color / font / size overrides from the editor.
+// Shape: { fieldId: { color: "#rrggbb", fontFamily: "Heebo", fontSize: 36 } }
+// Anything invalid is rejected; unknown properties are dropped.
+function validateFieldStyles_(raw) {
+  if (raw == null) return {};
 
+  if (typeof raw !== "object" || Array.isArray(raw)) {
+    throw new Error("Invalid field styles.");
+  }
+
+  const ids = Object.keys(raw);
+
+  if (ids.length > 100) {
+    throw new Error("Too many styled fields.");
+  }
+
+  const clean = {};
+
+  ids.forEach(id => {
+    if (!/^[A-Za-z0-9_-]{1,80}$/.test(id)) {
+      throw new Error("Invalid styled field ID.");
+    }
+
+    const s = raw[id];
+
+    if (!s || typeof s !== "object" || Array.isArray(s)) {
+      throw new Error("Invalid style for field " + id + ".");
+    }
+
+    const out = {};
+
+    if (s.color != null && s.color !== "") {
+      if (
+        typeof s.color !== "string" ||
+        !/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(s.color)
+      ) {
+        throw new Error("Invalid color for field " + id + ".");
+      }
+      out.color = s.color.toLowerCase();
+    }
+
+    if (s.fontFamily != null && s.fontFamily !== "") {
+      if (
+        typeof s.fontFamily !== "string" ||
+        !/^[A-Za-z0-9 _-]{1,60}$/.test(s.fontFamily)
+      ) {
+        throw new Error("Invalid font for field " + id + ".");
+      }
+      out.fontFamily = s.fontFamily;
+    }
+
+    if (s.fontSize != null && s.fontSize !== "") {
+      const size = Number(s.fontSize);
+
+      if (!Number.isFinite(size) || size < 6 || size > 200) {
+        throw new Error("Invalid font size for field " + id + ".");
+      }
+      out.fontSize = Math.round(size * 10) / 10;
+    }
+
+    if (Object.keys(out).length) clean[id] = out;
+  });
+
+  return clean;
+}
 
 
 /*******************************************************
@@ -1317,14 +1391,9 @@ const rawAvailableIds = String(
   addOn.availableInvitationIds || ""
 ).trim();
 
-const availableIds =
-  !rawAvailableIds || rawAvailableIds === "*"
-    ? []
-    : parseCatalog_(
-        rawAvailableIds,
-        [],
-        "availableInvitationIds"
-      );
+const availableIds = !rawAvailableIds || rawAvailableIds === "*"
+  ? []
+  : rawAvailableIds.split(";").map(s => s.trim()).filter(Boolean);
 
     if (
       Array.isArray(availableIds) &&

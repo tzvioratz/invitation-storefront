@@ -127,3 +127,23 @@ export function applyWording(fields, values, styles = {}) {
         })
     );
 }
+
+export function sanitizeFieldStyles(raw) {
+    const out = {};
+    if (!raw || typeof raw !== "object" || Array.isArray(raw)) return out;
+
+    for (const [id, s] of Object.entries(raw)) {
+        if (!/^[A-Za-z0-9_-]{1,80}$/.test(id) || !s || typeof s !== "object") continue;
+        const clean = {};
+
+        if (typeof s.color === "string" && /^#[0-9a-f]{3}([0-9a-f]{3})?$/i.test(s.color))
+            clean.color = s.color;
+        if (typeof s.fontFamily === "string" && /^[\p{L}\p{N} _-]{1,60}$/u.test(s.fontFamily))
+            clean.fontFamily = s.fontFamily;
+        const size = Number(s.fontSize);
+        if (size >= 6 && size <= 200) clean.fontSize = size;
+
+        if (Object.keys(clean).length) out[id] = clean;
+    }
+    return out;
+}

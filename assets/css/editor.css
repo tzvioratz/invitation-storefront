@@ -794,9 +794,29 @@
     }
 }
 
-.field-advanced-toggle { font-size: .8rem; padding: 2px 8px; cursor: pointer; }
-.field-advanced-toggle.has-overrides { font-weight: 600; border-color: currentColor; }
+.field-label-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+.field-label-row > .field-control {
+    width: auto;
+    margin: 0;
+}
 
+.field-advanced-link {
+    background: none;
+    border: 0;
+    padding: 0;
+    font: inherit;
+    font-size: .75rem;
+    color: #1a5fb4;
+    text-decoration: underline;
+    cursor: pointer;
+}
+.field-advanced-link:hover { text-decoration: none; }
+.field-advanced-link.has-overrides { font-weight: 600; }
+.field-advanced-link.has-overrides::after { content: " •"; }
 .field-advanced {
     display: grid; gap: 8px;
     margin: 6px 0 6px 18px; padding-left: 12px;

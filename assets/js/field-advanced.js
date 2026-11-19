@@ -19,7 +19,7 @@ export function createAdvancedControls(field, styles, onChange) {
 
     const toggle = document.createElement("button");
     toggle.type = "button";
-    toggle.className = "field-advanced-toggle";
+    toggle.className = "field-advanced-link";
     toggle.textContent = "Advanced ▾";
     toggle.setAttribute("aria-expanded", "false");
     toggle.setAttribute("aria-label", `Advanced styling for ${field.label}`);
@@ -82,6 +82,17 @@ export function createAdvancedControls(field, styles, onChange) {
         update({ fontSize: size.value ? Number(size.value) : "" })
     );
     row("Size", size);
+    
+    // Styles
+    const saved = styles[field.id] || {};
+if (saved.color) color.value = toHex(saved.color);
+if (saved.fontFamily) {
+    if (![...font.options].some(o => o.value === saved.fontFamily))
+        font.add(new Option(saved.fontFamily, saved.fontFamily));
+    font.value = saved.fontFamily;
+}
+if (saved.fontSize) size.value = saved.fontSize;
+toggle.classList.toggle("has-overrides", field.id in styles);
 
     // Reset
     const reset = document.createElement("button");
@@ -99,10 +110,10 @@ export function createAdvancedControls(field, styles, onChange) {
     panel.appendChild(reset);
 
     toggle.addEventListener("click", () => {
-        panel.hidden = !panel.hidden;
-        toggle.setAttribute("aria-expanded", String(!panel.hidden));
-        toggle.textContent = panel.hidden ? "Advanced ▾" : "Advanced ▴";
-    });
+    panel.hidden = !panel.hidden;
+    toggle.setAttribute("aria-expanded", String(!panel.hidden));
+    toggle.textContent = panel.hidden ? "advanced ▾" : "advanced ▴";
+});
 
     return { toggle, panel };
 }

@@ -973,18 +973,21 @@ function buildFields() {
         keyboardButton.className = "hebrew-keyboard-toggle ";
         keyboardButton.textContent = "⌨";
 keyboardButton.setAttribute("data-tooltip", "Open Hebrew keyboard"); // Replaced .title        keyboardButton.setAttribute("aria-label", "Open Hebrew keyboard");
-
+const labelRow = document.createElement("div");
+labelRow.className = "field-label-row";
+labelRow.appendChild(label);
         inputRow.append(input, keyboardButton);
 
-        let advancedPanel = null;
+let advancedPanel = null;
 if (f.advanced) {
     const adv = createAdvancedControls(f, fieldStyles, () => {
         updateRenderedWording(rendered, wording, fieldStyles);
         drawPages();
     });
-    inputRow.append(adv.toggle);
+    labelRow.append(adv.toggle);      // was inputRow.append(adv.toggle)
     advancedPanel = adv.panel;
 }
+
         // Keyboard container, initially hidden.
         const keyboard = createHebrewKeyboard(input, updateField);
 
@@ -1008,7 +1011,7 @@ if (f.advanced) {
             }
         });
 
-        fieldWrap.append(label, inputRow, keyboard);
+        fieldWrap.append(labelRow, inputRow, keyboard);
         if (advancedPanel) fieldWrap.append(advancedPanel);
         section.appendChild(fieldWrap);
     });
