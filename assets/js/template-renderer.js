@@ -2,6 +2,7 @@
 import { discoverFields, applyWording } from "./field-discovery.js";
 
 const cache = new Map();
+const SVG_CACHE_NAME = "invitation-templates-v1";
 const fontLoadCache = new Map();
 const fontStylesheetCache = new Map();
 
@@ -12,19 +13,7 @@ const fontStylesheetCache = new Map();
 export async function loadPage(page) {
     const url = new URL("../../" + page.file, import.meta.url).href;
 
-    if (!cache.has(url)) {
-        cache.set(
-            url,
-            fetch(url).then((r) => {
-                if (!r.ok) {
-                    throw new Error(`Could not load template page: ${page.file}`);
-                }
-                return r.text();
-            })
-        );
-    }
-
-    const source = await cache.get(url);
+const source = await getTemplateSource(url, page);
 
     const wrapper = document.createElement("div");
 
@@ -419,4 +408,50 @@ export async function ensureGoogleFont(family) {
         encodeURIComponent(family).replace(/%20/g, "+") + "&display=swap";
     await loadGoogleStylesheet(url);
     await document.fonts.load(`16px "${family}"`, "אבג ABC");
+}
+
+//cache
+
+async function getTemplateSource(url, page) {
+
+    if (!cache.has(url)) {
+
+        const promise = (async () => {
+
+            const cacheStorage = await caches.open(SVG_CACHE_NAME);
+            const cached = await cacheStorage.match(url);
+
+            // Always check the server for a newer copy and save it for next time.
+            const refresh = fetch(url, { cache: "no-cache" }).then(async response => {
+
+                if (!response.ok) {
+                    throw new Error(
+                        `Could not load template page: ${page.file}`
+                    );
+                }
+
+                await cacheStorage.put(url, response.clone());
+
+                return response;
+            });
+
+            // Cached copy exists: show it now and let the refresh finish quietly.
+            if (cached) {
+                refresh.catch(() => {});
+                return cached.text();
+            }
+
+            // Nothing cached yet: wait for the download.
+            return (await refresh).text();
+
+        })();
+
+        cache.set(url, promise);
+
+        promise.catch(() => {
+            cache.delete(url);
+        });
+    }
+
+    return cache.get(url);
 }

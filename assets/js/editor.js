@@ -17,6 +17,7 @@ let invitation,
 let availableAddOns = [];
 let selectedAddOns = {};
 let fieldStyles = {};
+let showAllFields = false;
 try {
     const data = await getStoreData();
     invitation = getInvitation(data, id);
@@ -617,6 +618,7 @@ async function renderAddOnSelection(
         });
 
         buildAddOnWordingFields(
+            state,
             state.rendered,
             wording,
             fieldsContainer
@@ -632,7 +634,9 @@ async function renderAddOnSelection(
 }
 
 
+
 function buildAddOnWordingFields(
+    state,
     rendered,
     wording,
     container
@@ -645,7 +649,44 @@ function buildAddOnWordingFields(
         return;
     }
 
-    rendered.fields.forEach(field => {
+    // Each add-on has its own toggle state.
+    if (state.showAllFields === undefined) {
+        state.showAllFields = false;
+    }
+
+    const hiddenFields = rendered.fields.filter(
+        field => field.hiddenFromEditor
+    );
+
+    const visibleFields = rendered.fields.filter(
+        field => state.showAllFields || !field.hiddenFromEditor
+    );
+
+    // Show All / Show Recommended toggle.
+    if (hiddenFields.length) {
+        const toggle = document.createElement("button");
+        toggle.type = "button";
+        toggle.className = "show-all-fields-toggle";
+
+        toggle.textContent = state.showAllFields
+            ? "Show Recommended Fields"
+            : `Show All Fields (${hiddenFields.length} more)`;
+
+        toggle.addEventListener("click", () => {
+            state.showAllFields = !state.showAllFields;
+
+            buildAddOnWordingFields(
+                state,
+                rendered,
+                wording,
+                container
+            );
+        });
+
+        container.appendChild(toggle);
+    }
+
+    visibleFields.forEach(field => {
         const fieldWrap = document.createElement("div");
         fieldWrap.className = "field-control-wrap";
 
@@ -661,13 +702,14 @@ function buildAddOnWordingFields(
         input.dataset.field = field.id;
         input.placeholder = field.placeholder;
         input.maxLength = field.maxLength;
-        input.value = wording[field.id] ?? field.defaultValue ?? "";
+
+        input.value =
+            wording[field.id] ?? field.defaultValue ?? "";
 
         if (field.required) input.required = true;
 
         input.addEventListener("input", () => {
             wording[field.id] = input.value;
-
             updateRenderedWording(rendered, wording);
         });
 
@@ -675,7 +717,15 @@ function buildAddOnWordingFields(
         fieldWrap.appendChild(label);
         container.appendChild(fieldWrap);
     });
+
+    if (!visibleFields.length) {
+        const message = document.createElement("p");
+        message.textContent =
+            "There are no recommended wording fields. You can show all fields above.";
+        container.appendChild(message);
+    }
 }
+
 
 
 function buildAddOnCustomFields(addOn, state, container) {
@@ -911,9 +961,36 @@ function updateQuantityOptionPrices() {
     });
 }
 
+
 function buildFields() {
     const container = $("#fieldControls");
     container.replaceChildren();
+
+    // Determine which fields should be displayed.
+    const hiddenFields = rendered.fields.filter(
+        f => f.hiddenFromEditor
+    );
+
+    const visibleFields = rendered.fields.filter(
+        f => showAllFields || !f.hiddenFromEditor
+    );
+
+    // Show All / Show Recommended toggle.
+    if (hiddenFields.length) {
+        const toggle = document.createElement("button");
+        toggle.type = "button";
+        toggle.className = "show-all-fields-toggle";
+        toggle.textContent = showAllFields
+            ? "Show Recommended Fields"
+            : `Show All Fields (${hiddenFields.length} more)`;
+
+        toggle.addEventListener("click", () => {
+            showAllFields = !showAllFields;
+            buildFields();
+        });
+
+        container.appendChild(toggle);
+    }
 
     const sections = invitation.pages.map(page => {
         const section = document.createElement("div");
@@ -928,7 +1005,7 @@ function buildFields() {
         return section;
     });
 
-    rendered.fields.forEach(f => {
+    visibleFields.forEach(f => {
         const pageIndex = f.occurrences[0]?.pageIndex ?? 0;
         const section = sections[pageIndex];
 
@@ -970,23 +1047,34 @@ function buildFields() {
 
         const keyboardButton = document.createElement("button");
         keyboardButton.type = "button";
-        keyboardButton.className = "hebrew-keyboard-toggle ";
+        keyboardButton.className = "hebrew-keyboard-toggle";
         keyboardButton.textContent = "⌨";
-keyboardButton.setAttribute("data-tooltip", "Open Hebrew keyboard"); // Replaced .title        keyboardButton.setAttribute("aria-label", "Open Hebrew keyboard");
-const labelRow = document.createElement("div");
-labelRow.className = "field-label-row";
-labelRow.appendChild(label);
+        keyboardButton.setAttribute(
+            "data-tooltip",
+            "Open Hebrew keyboard"
+        );
+        keyboardButton.setAttribute(
+            "aria-label",
+            "Open Hebrew keyboard"
+        );
+
+        const labelRow = document.createElement("div");
+        labelRow.className = "field-label-row";
+        labelRow.appendChild(label);
+
         inputRow.append(input, keyboardButton);
 
-let advancedPanel = null;
-if (f.advanced) {
-    const adv = createAdvancedControls(f, fieldStyles, () => {
-        updateRenderedWording(rendered, wording, fieldStyles);
-        drawPages();
-    });
-    labelRow.append(adv.toggle);      // was inputRow.append(adv.toggle)
-    advancedPanel = adv.panel;
-}
+        let advancedPanel = null;
+
+        if (f.advanced) {
+            const adv = createAdvancedControls(f, fieldStyles, () => {
+                updateRenderedWording(rendered, wording, fieldStyles);
+                drawPages();
+            });
+
+            labelRow.append(adv.toggle);
+            advancedPanel = adv.panel;
+        }
 
         // Keyboard container, initially hidden.
         const keyboard = createHebrewKeyboard(input, updateField);
@@ -1012,15 +1100,25 @@ if (f.advanced) {
         });
 
         fieldWrap.append(labelRow, inputRow, keyboard);
-        if (advancedPanel) fieldWrap.append(advancedPanel);
+
+        if (advancedPanel) {
+            fieldWrap.append(advancedPanel);
+        }
+
         section.appendChild(fieldWrap);
     });
 
     if (!rendered.fields.length) {
         container.textContent =
             "This design has no editable wording fields.";
+    } else if (!visibleFields.length) {
+        const message = document.createElement("p");
+        message.textContent =
+            "There are no recommended wording fields. You can show all fields above.";
+        container.appendChild(message);
     }
 }
+
 
 function createHebrewKeyboard(input, updateField) {
     const keyboard = document.createElement("div");

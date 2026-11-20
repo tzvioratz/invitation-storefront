@@ -459,6 +459,8 @@ function ensureOrderHeaders_(sheet) {
 
 sheet.getRange("P:X")
   .setNumberFormat("$#,##0.00");
+
+sheet.getRange("Z:Z").setNumberFormat("$#,##0.00");
 }
 
 
@@ -1580,6 +1582,7 @@ const tiers = parseCatalog_(
       validatedWording[key] = value;
     });
 
+        const validatedFieldStyles = validateFieldStyles_(submitted.fieldStyles);
     validatedAddOns.push({
       addOnId: addOnId,
       title: String(addOn.title),
@@ -1587,6 +1590,7 @@ const tiers = parseCatalog_(
       designTitle: String(design.title),
       quantity: quantity,
       wording: validatedWording,
+      fieldStyles: validatedFieldStyles,      
       customInfo: validatedCustomInfo,
       baseCharge: baseCharge,
       unitPrice: unitPrice,

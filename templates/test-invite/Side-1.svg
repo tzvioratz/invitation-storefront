@@ -1,61 +1,42 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 550 850" width="5.5in" height="8.5in">
-  <title>Wedding Invitation Template (5.5 x 8.5 in)</title>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="5.5in"
+     height="8.5in"
+     viewBox="0 0 396 612">
+  <metadata>
+    <font-declaration
+        data-font-family="Playfair Display SC"
+        data-font-provider="google"
+        data-font-source="https://fonts.googleapis.com/css2?family=Playfair+Display+SC:wght@700"
+        data-font-weight="700"
+        data-font-style="normal" />
+    <font-declaration
+        data-font-family="Ballet"
+        data-font-provider="google"
+        data-font-source="https://fonts.googleapis.com/css2?family=Ballet"
+        data-font-weight="400"
+        data-font-style="normal" />
+  </metadata>
 
-  <!-- Page background -->
-  <rect x="0" y="0" width="550" height="850" fill="#ffffff"/>
+  <rect x="0" y="0" width="396" height="612" fill="#ffffff"/>
 
-  <!-- ===== Opening block (permanent text) ===== -->
-  <text x="275" y="130" text-anchor="middle" font-family="Cinzel, 'Trajan Pro', 'Times New Roman', serif" font-size="15" letter-spacing="1.2" fill="#1a1a1a">WITH GRATITUDE TO HASHEM YISBORACH</text>
+  <!-- Host / parents / request lines -->
+  <text data-field="card1_opening" data-label="Opening Line" data-editor-hidden="true" x="198" y="78" text-anchor="middle" font-family="'Playfair Display SC', serif" font-size="8" font-weight="700" letter-spacing="0.8" fill="#111111">WITH GRATITUDE TO HASHEM YISBORACH</text>
+  <text data-field="card1_parents1" data-label="Parents - First Line" x="198" y="105" text-anchor="middle" font-family="'Playfair Display SC', serif" font-size="8" font-weight="700" letter-spacing="0.8" fill="#111111">MR. AND MRS. DOVID BRAUN</text>
+  <text data-field="card1_parents2" data-label="Parents - Second Line" x="198" y="131" text-anchor="middle" font-family="'Playfair Display SC', serif" font-size="8" font-weight="700" letter-spacing="0.8" fill="#111111">RABBI AND MRS. PINCHAS BERGER</text>
+  <text data-field="card1_requestLine" data-label="Request Line" data-editor-hidden="true" x="198" y="157" text-anchor="middle" font-family="'Playfair Display SC', serif" font-size="8" font-weight="700" letter-spacing="0.8" fill="#111111">REQUEST THE HONOUR OF YOUR PRESENCE</text>
+  <text data-field="card1_marriageLine" data-label="Marriage Line" data-editor-hidden="true" x="198" y="183" text-anchor="middle" font-family="'Playfair Display SC', serif" font-size="8" font-weight="700" letter-spacing="0.8" fill="#111111">AT THE MARRIAGE OF THEIR CHILDREN</text>
 
-  <!-- Kallah's parents -->
-  <text data-field="kallahParents" data-label="Kallah's Parents"
-        x="275" y="163" text-anchor="middle" direction="ltr" unicode-bidi="plaintext"
-        font-family="Cinzel, 'Trajan Pro', 'Times New Roman', serif" font-size="15" letter-spacing="1.2" fill="#1a1a1a">MR. AND MRS. DOVID BRAUN</text>
+  <!-- Script names -->
+  <text x="98" y="272" font-family="Ballet, cursive" font-size="54" fill="#111111"><tspan data-field="card1_kallah" data-label="Bride's Name">Miri</tspan><tspan data-field="card1_nameConnector" data-label="Name Connector" data-editor-hidden="true" dx="6" font-size="30">and</tspan></text>
+  <text data-field="card1_chosson" data-label="Groom's Name" x="136" y="335" font-family="Ballet, cursive" font-size="54" fill="#111111">Moishe</text>
 
-  <!-- Chosson's parents -->
-  <text data-field="chossonParents" data-label="Chosson's Parents"
-        x="275" y="196" text-anchor="middle" direction="ltr" unicode-bidi="plaintext"
-        font-family="Cinzel, 'Trajan Pro', 'Times New Roman', serif" font-size="15" letter-spacing="1.2" fill="#1a1a1a">RABBI AND MRS. PINCHAS BERGER</text>
+  <!-- Date / time lines -->
+  <text data-field="card1_date" data-label="Wedding Date" x="198" y="405" text-anchor="middle" font-family="'Playfair Display SC', serif" font-size="8" font-weight="700" letter-spacing="0.8" fill="#111111">MONDAY, THE TWENTIETH OF MARCH</text>
+  <text xml:space="preserve" x="198" y="431" text-anchor="middle" font-family="'Playfair Display SC', serif" font-size="8" font-weight="700" letter-spacing="0.8" fill="#111111"><tspan data-field="card1_timePrefix" data-label="Time Prefix" data-editor-hidden="true">AT </tspan><tspan data-field="card1_time" data-label="Reception Time">SIX-THIRTY</tspan><tspan data-field="card1_timeSuffix" data-label="Time Suffix" data-editor-hidden="true"> IN THE EVENING</tspan></text>
+  <text xml:space="preserve" x="198" y="456" text-anchor="middle" font-family="'Playfair Display SC', serif" font-size="8" font-weight="700" letter-spacing="0.8" fill="#111111"><tspan data-field="card1_chupahPrefix" data-label="Chupah Prefix" data-editor-hidden="true">CHUPAH AT </tspan><tspan data-field="card1_chupahTime" data-label="Chupah Time">SEVEN-THIRTY</tspan></text>
 
-  <!-- Permanent request lines -->
-  <text x="275" y="229" text-anchor="middle" font-family="Cinzel, 'Trajan Pro', 'Times New Roman', serif" font-size="15" letter-spacing="1.2" fill="#1a1a1a">REQUEST THE HONOUR OF YOUR PRESENCE</text>
-  <text x="275" y="262" text-anchor="middle" font-family="Cinzel, 'Trajan Pro', 'Times New Roman', serif" font-size="15" letter-spacing="1.2" fill="#1a1a1a">AT THE MARRIAGE OF THEIR CHILDREN</text>
-
-  <!-- ===== Names (script) ===== -->
-  <text data-field="kallah" data-label="Kallah's Name"
-        x="262" y="355" text-anchor="end" direction="ltr" unicode-bidi="plaintext"
-        font-family="'Pinyon Script', 'Snell Roundhand', 'Brush Script MT', cursive" font-size="72" fill="#1a1a1a">Miri</text>
-
-  <text x="276" y="355" text-anchor="start"
-        font-family="'Pinyon Script', 'Snell Roundhand', 'Brush Script MT', cursive" font-size="48" fill="#1a1a1a">and</text>
-
-  <text data-field="chosson" data-label="Chosson's Name"
-        x="300" y="434" text-anchor="middle" direction="ltr" unicode-bidi="plaintext"
-        font-family="'Pinyon Script', 'Snell Roundhand', 'Brush Script MT', cursive" font-size="72" fill="#1a1a1a">Moishe</text>
-
-  <!-- ===== Date and time ===== -->
-  <text data-field="date" data-label="Wedding Date"
-        x="275" y="540" text-anchor="middle" direction="ltr" unicode-bidi="plaintext"
-        font-family="Cinzel, 'Trajan Pro', 'Times New Roman', serif" font-size="15" letter-spacing="1.2" fill="#1a1a1a">MONDAY, THE TWENTIETH OF MARCH</text>
-
-  <text data-field="time" data-label="Reception Time"
-        x="275" y="573" text-anchor="middle" direction="ltr" unicode-bidi="plaintext"
-        font-family="Cinzel, 'Trajan Pro', 'Times New Roman', serif" font-size="15" letter-spacing="1.2" fill="#1a1a1a">AT SIX-THIRTY IN THE EVENING</text>
-
-  <text data-field="chupahTime" data-label="Chupah Time"
-        x="275" y="606" text-anchor="middle" direction="ltr" unicode-bidi="plaintext"
-        font-family="Cinzel, 'Trajan Pro', 'Times New Roman', serif" font-size="15" letter-spacing="1.2" fill="#1a1a1a">CHUPAH AT SEVEN-THIRTY</text>
-
-  <!-- ===== Venue ===== -->
-  <text data-field="venue" data-label="Venue Name"
-        x="275" y="665" text-anchor="middle" direction="ltr" unicode-bidi="plaintext"
-        font-family="Cinzel, 'Trajan Pro', 'Times New Roman', serif" font-size="15" letter-spacing="1.2" fill="#1a1a1a">LAKE TERRACE</text>
-
-  <text data-field="address" data-label="Street Address"
-        x="275" y="698" text-anchor="middle" direction="ltr" unicode-bidi="plaintext"
-        font-family="Cinzel, 'Trajan Pro', 'Times New Roman', serif" font-size="15" letter-spacing="1.2" fill="#1a1a1a">1690 OAK STREET</text>
-
-  <text data-field="cityState" data-label="City and State"
-        x="275" y="731" text-anchor="middle" direction="ltr" unicode-bidi="plaintext"
-        font-family="Cinzel, 'Trajan Pro', 'Times New Roman', serif" font-size="15" letter-spacing="1.2" fill="#1a1a1a">LAKEWOOD, NEW JERSEY</text>
+  <!-- Venue lines -->
+  <text data-field="card1_venue" data-label="Venue" x="198" y="492" text-anchor="middle" font-family="'Playfair Display SC', serif" font-size="7.5" font-weight="700" letter-spacing="0.8" fill="#111111">LAKE TERRACE</text>
+  <text data-field="card1_street" data-label="Street Address" x="198" y="519" text-anchor="middle" font-family="'Playfair Display SC', serif" font-size="7.5" font-weight="700" letter-spacing="0.8" fill="#111111">1690 OAK STREET</text>
+  <text data-field="card1_cityState" data-label="City and State" x="198" y="545" text-anchor="middle" font-family="'Playfair Display SC', serif" font-size="7.5" font-weight="700" letter-spacing="0.8" fill="#111111">LAKEWOOD, NEW JERSEY</text>
 </svg>

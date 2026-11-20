@@ -828,3 +828,26 @@
 .field-advanced-row select,
 .field-advanced-row input[type="number"] { flex: 1; min-width: 0; }
 .field-advanced-reset { justify-self: start; font-size: .8rem; }
+
+.show-all-fields-toggle {
+    display: block;
+    width: 100%;
+    margin: 0 0 16px;
+    padding: 10px 14px;
+
+    border: 1px solid #d8cbb8;
+    border-radius: 4px;
+
+    background: #faf7f2;
+    color: #514333;
+
+    font: inherit;
+    font-size: 0.9rem;
+    cursor: pointer;
+
+    transition: background 0.2s ease;
+}
+
+.show-all-fields-toggle:hover {
+    background: #f0e9de;
+}

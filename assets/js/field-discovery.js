@@ -17,12 +17,13 @@ export function discoverFields(pageElements) {
             registry.set(id, {
                 id,
                 label: node.getAttribute("data-label") || humanize(id),
-                defaultValue: node.textContent || "",
+                defaultValue: readDefaultValue(node),
                 required: node.getAttribute("data-required") === "true",
                 placeholder: node.getAttribute("data-placeholder") || "",
                 maxLength: Number(node.getAttribute("data-maxlength")) || 500,
                 multiline: node.getAttribute("data-multiline") === "true",
                 advanced: node.getAttribute("data-advanced") !== "false",
+                hiddenFromEditor: node.getAttribute("data-editor-hidden") === "true",
                 styleDefaults: readStyleDefaults(node),
                 pageIndex: index,
                 pageLabel: page.label,
@@ -38,6 +39,21 @@ function humanize(s) {
     return s.replace(/[_-]/g, " ")
         .replace(/([a-z])([A-Z])/g, "$1 $2")
         .replace(/\b\w/g, c => c.toUpperCase());
+}
+// Multiline <text> blocks: join tspans with newlines instead of nothing.
+function readDefaultValue(node) {
+    if (
+        node.namespaceURI === SVG_NS &&
+        node.localName === "text" &&
+        node.getAttribute("data-multiline") === "true"
+    ) {
+        const lines = [...node.children]
+            .filter(c => c.localName === "tspan")
+            .map(c => c.textContent);
+
+        if (lines.length) return lines.join("\n");
+    }
+    return node.textContent || "";
 }
 
 // Read the template's own color/font/size by walking up the ancestors.
@@ -60,6 +76,29 @@ function readStyleDefaults(node) {
     };
 }
 
+const lineSteps = new WeakMap();
+
+// Reads the template's own line spacing once, before the tspans are rebuilt.
+// Handles both dy="17" and absolute y="560" / y="577" styles.
+function getLineStep(node) {
+    if (lineSteps.has(node)) return lineSteps.get(node);
+
+    const tspans = [...node.children].filter(c => c.localName === "tspan");
+    let step = "1.2em"; // fallback if the template gives no spacing
+
+    if (tspans.length > 1) {
+        const dy = tspans[1].getAttribute("dy");
+        const y0 = parseFloat(tspans[0].getAttribute("y"));
+        const y1 = parseFloat(tspans[1].getAttribute("y"));
+
+        if (dy) step = dy;
+        else if (!isNaN(y0) && !isNaN(y1)) step = String(y1 - y0);
+    }
+
+    lineSteps.set(node, step);
+    return step;
+}
+
 export function setFieldValue(node, value) {
     const safe = String(value ?? "");
 
@@ -75,13 +114,15 @@ export function setFieldValue(node, value) {
     }
 
     // Whole <text> element: supports multi-line values.
+    const step = getLineStep(node); // must run before the children are removed
+
     while (node.firstChild) node.removeChild(node.firstChild);
 
     const x = node.getAttribute("x");
     safe.split(/\n/).forEach((line, i) => {
         const t = document.createElementNS(SVG_NS, "tspan");
         if (x !== null) t.setAttribute("x", x);
-        if (i) t.setAttribute("dy", "1.2em");
+        if (i) t.setAttribute("dy", step);
         t.textContent = line;
         node.appendChild(t);
     });
