@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="5.5in" height="8.5in" viewBox="0 0 396 612">
+
+
+
+
+
+  <rect x="0" y="0" width="396" height="612" fill="#ffffff" />
+
+  <text x="198" y="38" text-anchor="middle" font-family="Assistant" font-size="11.5" font-weight="400" font-style="normal" fill="#222222" data-field="card2_blessing" data-label="Opening Blessing" data-editor-hidden="true">בעזרת השם יתברך</text>
+
+  <text x="198" y="61" text-anchor="middle" font-family="Assistant" font-size="11.5" font-weight="400" font-style="normal" fill="#222222" data-field="card2_jerusalemVerse" data-label="Jerusalem Verse" data-editor-hidden="true">נעלה את ירושלים על ראש שמחתנו</text>
+
+  <text x="198" y="96" text-anchor="middle" font-family="Assistant" font-size="11.5" font-weight="400" font-style="normal" fill="#222222" data-field="card2_thanksgiving" data-label="Thanksgiving Introduction" data-editor-hidden="true">ברוב שבח והודאה להשי״ת</text>
+
+  <text x="198" y="120" text-anchor="middle" font-family="Assistant" font-size="11.5" font-weight="400" font-style="normal" fill="#222222" data-field="card2_invitationIntroduction" data-label="Invitation Introduction" data-editor-hidden="true">מתכבדים אנו להזמין את קרובינו וידידינו</text>
+
+  <text x="198" y="144" text-anchor="middle" font-family="Assistant" font-size="11.5" font-weight="400" font-style="normal" fill="#222222" data-field="card2_childrenIntroduction" data-label="Children Introduction" data-editor-hidden="true">להשתתף בשמחת כלולות בנינו היקרים</text>
+
+  <line x1="126" y1="180" x2="270" y2="180" stroke="#222222" stroke-width="0.9" />
+
+  <text x="198" y="226" text-anchor="middle" font-family="Assistant" font-weight="400" font-style="normal" fill="#222222" xml:space="preserve"><tspan font-size="9" data-field="card2_chossonPrefix" data-label="Groom's Name Introduction" data-editor-hidden="true">החתן </tspan><tspan font-size="27" data-field="card2_chosson" data-label="Groom's Name">משה דוד הכהן</tspan><tspan font-size="9" data-field="card2_chossonSuffix" data-label="Groom's Honorific" data-editor-hidden="true"> נ״י</tspan></text>
+
+  <text x="198" y="248" text-anchor="middle" font-family="Assistant" font-size="9.5" font-weight="400" font-style="normal" fill="#222222" data-field="card2_marriageConnector" data-label="Marriage Connector" data-editor-hidden="true">עב״ג</text>
+
+  <text x="198" y="280" text-anchor="middle" font-family="Assistant" font-weight="400" font-style="normal" fill="#222222" xml:space="preserve"><tspan font-size="9" data-field="card2_kallahPrefix" data-label="Bride's Name Introduction" data-editor-hidden="true">הכלה </tspan><tspan font-size="27" data-field="card2_kallah" data-label="Bride's Name">שירה</tspan><tspan font-size="9" data-field="card2_kallahSuffix" data-label="Bride's Honorific" data-editor-hidden="true"> תחי׳</tspan></text>
+
+  <line x1="126" y1="306" x2="270" y2="306" stroke="#222222" stroke-width="0.9" />
+
+  <text x="198" y="340" text-anchor="middle" font-family="Assistant" font-size="11.5" font-weight="400" font-style="normal" fill="#222222" data-field="card2_eventIntroduction" data-label="Event Introduction" data-editor-hidden="true">שתתקיים אי״ה למזל טוב בשעה טובה ומוצלחת</text>
+
+  <text x="198" y="364" text-anchor="middle" font-family="Assistant" font-size="11.5" font-weight="400" font-style="normal" fill="#222222" data-field="card2_date" data-label="Wedding Date">ביום שני לפרשת ויקרא, אור לכ״ח אדר תשפ״ד</text>
+
+  <text x="198" y="388" text-anchor="middle" font-family="Assistant" font-size="11.5" font-weight="400" font-style="normal" fill="#222222" xml:space="preserve"><tspan data-field="card2_receptionPrefix" data-label="Reception Time Introduction" data-editor-hidden="true">קבלת פנים בשעה </tspan><tspan data-field="card2_receptionTime" data-label="Reception Time">שש וחצי</tspan><tspan data-field="card2_receptionSuffix" data-label="Reception Time Ending" data-editor-hidden="true"> בערב</tspan></text>
+
+  <text x="198" y="412" text-anchor="middle" font-family="Assistant" font-size="11.5" font-weight="400" font-style="normal" fill="#222222" xml:space="preserve"><tspan data-field="card2_chupahPrefix" data-label="Chupah Time Introduction" data-editor-hidden="true">החופה בשעה </tspan><tspan data-field="card2_chupahTime" data-label="Chupah Time">שבע וחצי</tspan></text>
+
+  <text x="198" y="444" text-anchor="middle" font-family="Assistant" font-size="11.5" font-weight="400" font-style="normal" fill="#222222" xml:space="preserve"><tspan data-field="card2_venuePrefix" data-label="Venue Introduction" data-editor-hidden="true">באולם </tspan><tspan data-field="card2_venue" data-label="Venue">ליק טערעס</tspan></text>
+
+  <text x="198" y="468" text-anchor="middle" font-family="Assistant" font-size="11.5" font-weight="400" font-style="normal" fill="#222222" data-field="card2_location" data-label="City and State">ליקוואוד, נוא דזערזי</text>
+
+  <text x="278" y="496" text-anchor="middle" font-family="Assistant" font-size="10" font-weight="500" font-style="normal" fill="#222222" data-field="card2_groomParentsHeading" data-label="Groom's Parents Heading" data-editor-hidden="true">הורי החתן</text>
+
+  <text x="278" y="515" text-anchor="middle" font-family="Assistant" font-size="10.5" font-weight="400" font-style="normal" fill="#222222" data-field="card2_groomParents" data-label="Groom's Parents">אליהו הכהן ונחמה שווארץ</text>
+
+  <text x="118" y="496" text-anchor="middle" font-family="Assistant" font-size="10" font-weight="500" font-style="normal" fill="#222222" data-field="card2_brideParentsHeading" data-label="Bride's Parents Heading" data-editor-hidden="true">הורי הכלה</text>
+
+  <text x="118" y="515" text-anchor="middle" font-family="Assistant" font-size="10.5" font-weight="400" font-style="normal" fill="#222222" data-field="card2_brideParents" data-label="Bride's Parents">אברהם וגיטל פרידמן</text>
+
+  <text x="198" y="540" text-anchor="middle" font-family="Assistant" font-size="9.5" font-weight="500" font-style="normal" fill="#222222" data-field="card2_familyPhrase" data-label="Family Phrase" data-editor-hidden="true">תפארת בנים אבותם</text>
+
+  <text x="278" y="556" text-anchor="middle" font-family="Assistant" font-size="9.5" font-weight="400" font-style="normal" fill="#222222" data-field="card2_groomGrandparents" data-label="Groom's Grandparents and Family" data-multiline="true"><tspan x="278" dy="0">ר׳ חיים הכהן וחוה שווארץ</tspan><tspan x="278" dy="13">מרת לאה רייך</tspan><tspan x="278" dy="13" font-size="7.5">אשת המנוח הרב יעקב ז״ל</tspan></text>
+
+  <text x="118" y="556" text-anchor="middle" font-family="Assistant" font-size="9.5" font-weight="400" font-style="normal" fill="#222222" data-field="card2_brideGrandparents" data-label="Bride's Grandparents" data-multiline="true"><tspan x="118" dy="0">הרב משה מאיר וחנה פרידמן</tspan><tspan x="118" dy="13">ר׳ יצחק מאיר ושרה גולנברג</tspan><tspan x="118" dy="13">מרת חי׳ רייזל שטיין</tspan></text>
+</svg>
