@@ -1005,7 +1005,7 @@ function buildFields() {
         });
     });
 
-    
+    const revealedContainers = new Map();
     // Render fields in their original order.
     rendered.fields.forEach(f => {
 
@@ -1149,31 +1149,41 @@ function buildFields() {
         section.appendChild(fieldWrap);
     });
 
-    // Add one hide button to each page that has revealed fields.
-    sections.forEach((section, pageIndex) => {
-        const revealedInSection = rendered.fields.filter(f =>
-            f.hiddenFromEditor &&
-            revealedHiddenFieldIds.has(f.id) &&
-            (f.occurrences[0]?.pageIndex ?? 0) === pageIndex
-        );
+  // Add one hide button after the last revealed field on each page.
+sections.forEach((section, pageIndex) => {
+    const revealedInSection = rendered.fields.filter(f =>
+        f.hiddenFromEditor &&
+        revealedHiddenFieldIds.has(f.id) &&
+        (f.occurrences[0]?.pageIndex ?? 0) === pageIndex
+    );
 
-        if (!revealedInSection.length) return;
+    if (!revealedInSection.length) return;
 
-        const hideButton = document.createElement("button");
-        hideButton.type = "button";
-        hideButton.className = "hide-revealed-fields";
-        hideButton.textContent = "Hide optional fields";
+    const fieldWrappers = [...section.querySelectorAll(".field-control-wrap")];
 
-        hideButton.addEventListener("click", () => {
-            revealedInSection.forEach(f => {
-                revealedHiddenFieldIds.delete(f.id);
-            });
+    const lastRevealedField = revealedInSection[revealedInSection.length - 1];
 
-            buildFields();
+    const lastWrapper = fieldWrappers.find(wrap =>
+        wrap.querySelector(`[data-field="${CSS.escape(lastRevealedField.id)}"]`)
+    );
+
+    if (!lastWrapper) return;
+
+    const hideButton = document.createElement("button");
+    hideButton.type = "button";
+    hideButton.className = "hide-revealed-fields";
+    hideButton.textContent = "Hide optional fields";
+
+    hideButton.addEventListener("click", () => {
+        revealedInSection.forEach(f => {
+            revealedHiddenFieldIds.delete(f.id);
         });
 
-        section.appendChild(hideButton);
+        buildFields();
     });
+
+    lastWrapper.after(hideButton);
+});
 }
 
 
