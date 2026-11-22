@@ -851,3 +851,73 @@
 .show-all-fields-toggle:hover {
     background: #f0e9de;
 }
+
+.show-more-fields {
+    display: inline-block;
+    margin: 10px 0 16px;
+    padding: 5px 9px;
+    border: 1px solid #ded5c8;
+    border-radius: 4px;
+    background: transparent;
+    color: #75634d;
+    font: inherit;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.show-more-fields:hover {
+    background: #f5f0e8;
+}
+
+.field-control-wrap.field-revealed {
+    background: #f3f3f3;
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    padding: 10px;
+    margin: 8px 0;
+}
+
+.field-control-wrap.field-revealed {
+    position: relative;
+    background: #f3f3f3;
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    padding: 14px 32px 10px 10px;
+    margin: 8px 0;
+}
+
+.hide-revealed-field {
+    position: absolute;
+    top: 6px;
+    right: 7px;
+    border: none;
+    background: transparent;
+    color: #888;
+    font-size: 17px;
+    line-height: 1;
+    padding: 3px 5px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.hide-revealed-field:hover {
+    background: #dedede;
+    color: #333;
+}
+
+.hide-revealed-fields {
+    display: block;
+    margin: 8px 0 12px auto;
+    padding: 5px 9px;
+    border: none;
+    background: transparent;
+    color: #888;
+    font-size: 0.75rem;
+    cursor: pointer;
+}
+
+.hide-revealed-fields:hover {
+    color: #444;
+    text-decoration: underline;
+}

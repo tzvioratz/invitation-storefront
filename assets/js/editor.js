@@ -1,8 +1,16 @@
 import { getStoreData, getInvitation } from "./data.js";
 import { renderInvitation, updateRenderedWording } from "./template-renderer.js";
-import {calculateEstimate, calculateEffectiveUnitPrice, getQuantityOptions, validatePricing, money,calculateAllAddOnsTotal, calculateAddOnTotal } from "./pricing.js";
+import {
+    calculateEstimate,
+    calculateEffectiveUnitPrice,
+    getQuantityOptions,
+    validatePricing,
+    money,
+    calculateAllAddOnsTotal,
+    calculateAddOnTotal
+} from "./pricing.js";
 import { CONFIG } from "./config.js";
-import {getActiveAddOns, isAddOnAvailableForInvitation} from "./addons-data.js";
+import { getActiveAddOns, isAddOnAvailableForInvitation } from "./addons-data.js";
 import { createAdvancedControls } from "./field-advanced.js";
 
 const $ = (s) => document.querySelector(s),
@@ -13,45 +21,44 @@ let invitation,
     wording = {},
     selection = {},
     activePage = 0,
-    activeFieldId=null;
+    activeFieldId = null;
 let availableAddOns = [];
 let selectedAddOns = {};
 let fieldStyles = {};
-let showAllFields = false;
+let revealedHiddenFieldIds = new Set();
+
 try {
     const data = await getStoreData();
     invitation = getInvitation(data, id);
     if (!invitation) throw new Error("This invitation is not available.");
     $("#editorTitle").textContent = invitation.title;
     $("#returnLink").href = "../invitation/?id=" + encodeURIComponent(id);
-// Make sure the invitation's pricing configuration is valid.
-validatePricing(invitation);
+    // Make sure the invitation's pricing configuration is valid.
+    validatePricing(invitation);
 
-selection = {
-    format: invitation.formats[0],
-    paper: invitation.papers[0],
-    design: invitation.designOptions[0]
-};
+    selection = {
+        format: invitation.formats[0],
+        paper: invitation.papers[0],
+        design: invitation.designOptions[0]
+    };
 
-buildQuantityOptions();
-buildOptions();
+    buildQuantityOptions();
+    buildOptions();
 
     rendered = await renderInvitation({
-    invitation,
-    target: document.createElement("div"),
-    wording,
-    options: selection
-});
+        invitation,
+        target: document.createElement("div"),
+        wording,
+        options: selection
+    });
     buildFields();
     drawPages();
-// Load and display optional add-ons.
-availableAddOns = await getActiveAddOns();
+    // Load and display optional add-ons.
+    availableAddOns = await getActiveAddOns();
 
+    await buildAddOnControls();
 
-await buildAddOnControls();
-
-console.log("Add-on controls built.");
-
+    console.log("Add-on controls built.");
 
     updatePrice();
 } catch (e) {
@@ -59,11 +66,10 @@ console.log("Add-on controls built.");
     $("#fieldControls").textContent = e.message;
 }
 
-
 function activateField(fieldId) {
     activeFieldId = fieldId;
 
-    const field = rendered.fields.find(f => f.id === fieldId);
+    const field = rendered.fields.find((f) => f.id === fieldId);
     if (!field || !field.occurrences.length) return;
 
     // Switch to the first page containing this field.
@@ -72,12 +78,6 @@ function activateField(fieldId) {
     // Rebuild the preview with the selected field highlighted.
     drawPages();
 }
-
-
-
-
-
-
 
 function updateOptionPrice(key, values, priceElement) {
     const selectedValue = selection[key];
@@ -91,12 +91,10 @@ function updateOptionPrice(key, values, priceElement) {
     priceElement.className = "option-price";
 
     if (difference > 0.000001) {
-        priceElement.textContent =
-            `+${money(difference)} per invitation`;
+        priceElement.textContent = `+${money(difference)} per invitation`;
         priceElement.classList.add("price-increase");
     } else if (difference < -0.000001) {
-        priceElement.textContent =
-            `−${money(Math.abs(difference))} per invitation`;
+        priceElement.textContent = `−${money(Math.abs(difference))} per invitation`;
         priceElement.classList.add("price-decrease");
     } else {
         priceElement.textContent = "No price change";
@@ -104,23 +102,18 @@ function updateOptionPrice(key, values, priceElement) {
     }
 }
 
-
 function getOptionAdjustment(key, value) {
-    if (key === "format")
-        return Number(invitation.formatAdjustments?.[value] || 0);
+    if (key === "format") return Number(invitation.formatAdjustments?.[value] || 0);
 
-    if (key === "paper")
-        return Number(invitation.paperAdjustments?.[value] || 0);
+    if (key === "paper") return Number(invitation.paperAdjustments?.[value] || 0);
 
-    if (key === "design")
-        return Number(invitation.customizationFees?.[value] || 0);
+    if (key === "design") return Number(invitation.customizationFees?.[value] || 0);
 
     return 0;
 }
 
 function getOptionBaseFee(key, value) {
-    if (key === "design")
-        return Number(invitation.designBaseFees?.[value] || 0);
+    if (key === "design") return Number(invitation.designBaseFees?.[value] || 0);
 
     return 0;
 }
@@ -134,9 +127,7 @@ function formatOptionPriceChange(perUnit, flat) {
     if (Math.abs(perUnit) > EPS) parts.push(formatAdjustment(perUnit));
 
     if (Math.abs(flat) > EPS) {
-        parts.push(
-            `${flat > 0 ? "+" : "−"}${money(Math.abs(flat))} / order`
-        );
+        parts.push(`${flat > 0 ? "+" : "−"}${money(Math.abs(flat))} / order`);
     }
 
     // Nothing changes: reuse your existing "no change" wording.
@@ -153,130 +144,121 @@ function buildOptions() {
     const container = $("#optionControls");
     container.replaceChildren();
 
-    groups.filter(g => g[2].length).forEach(([key, label, values]) => {
-        const wrapper = document.createElement("div");
-        wrapper.className = "option-price-group";
+    groups
+        .filter((g) => g[2].length)
+        .forEach(([key, label, values]) => {
+            const wrapper = document.createElement("div");
+            wrapper.className = "option-price-group";
 
-        const heading = document.createElement("label");
-        heading.textContent = label;
+            const heading = document.createElement("label");
+            heading.textContent = label;
 
-        const dropdown = document.createElement("div");
-        dropdown.className = "custom-price-dropdown";
+            const dropdown = document.createElement("div");
+            dropdown.className = "custom-price-dropdown";
 
-        const trigger = document.createElement("button");
-        trigger.type = "button";
-        trigger.className = "custom-price-trigger";
-        trigger.setAttribute("aria-expanded", "false");
+            const trigger = document.createElement("button");
+            trigger.type = "button";
+            trigger.className = "custom-price-trigger";
+            trigger.setAttribute("aria-expanded", "false");
 
-        const menu = document.createElement("div");
-        menu.className = "custom-price-menu";
-        menu.hidden = true;
+            const menu = document.createElement("div");
+            menu.className = "custom-price-menu";
+            menu.hidden = true;
 
-        function updateMenu() {
-            menu.replaceChildren();
+            function updateMenu() {
+                menu.replaceChildren();
 
-            // Compare every option against the CURRENT selection.
-            const currentAdjustment =
-                getOptionAdjustment(key, selection[key]);
-            const currentBaseFee =
-                getOptionBaseFee(key, selection[key]);
+                // Compare every option against the CURRENT selection.
+                const currentAdjustment = getOptionAdjustment(key, selection[key]);
+                const currentBaseFee = getOptionBaseFee(key, selection[key]);
 
-            values.forEach(value => {
-                const difference =
-                    getOptionAdjustment(key, value) - currentAdjustment;
-                const baseDifference =
-                    getOptionBaseFee(key, value) - currentBaseFee;
+                values.forEach((value) => {
+                    const difference = getOptionAdjustment(key, value) - currentAdjustment;
+                    const baseDifference = getOptionBaseFee(key, value) - currentBaseFee;
 
-                const EPS = 0.000001;
-                const up = difference > EPS || baseDifference > EPS;
-                const down = difference < -EPS || baseDifference < -EPS;
+                    const EPS = 0.000001;
+                    const up = difference > EPS || baseDifference > EPS;
+                    const down = difference < -EPS || baseDifference < -EPS;
 
-                const option = document.createElement("button");
-                option.type = "button";
-                option.className = "custom-price-option";
+                    const option = document.createElement("button");
+                    option.type = "button";
+                    option.className = "custom-price-option";
+
+                    const name = document.createElement("span");
+                    name.textContent = value;
+
+                    const price = document.createElement("span");
+                    price.className =
+                        "dropdown-price " +
+                        (up && !down ? "price-increase" : down && !up ? "price-decrease" : "price-neutral");
+
+                    price.textContent = formatOptionPriceChange(difference, baseDifference);
+
+                    option.append(name, price);
+
+                    option.addEventListener("click", () => {
+                        selection[key] = value;
+                        updateTrigger();
+                        updateMenu();
+                        closeMenu();
+                        refresh();
+                    });
+
+                    menu.appendChild(option);
+                });
+            }
+
+            function updateTrigger() {
+                trigger.replaceChildren();
 
                 const name = document.createElement("span");
-                name.textContent = value;
+                name.textContent = selection[key];
 
                 const price = document.createElement("span");
-                price.className = "dropdown-price " +
-                    (up && !down ? "price-increase" :
-                     down && !up ? "price-decrease" :
-                     "price-neutral");
+                price.className = "dropdown-price price-neutral";
+                price.textContent = "";
 
-                price.textContent =
-                    formatOptionPriceChange(difference, baseDifference);
+                trigger.append(name, price);
+            }
 
-                option.append(name, price);
+            function closeMenu() {
+                menu.hidden = true;
+                trigger.setAttribute("aria-expanded", "false");
+            }
 
-                option.addEventListener("click", () => {
-                    selection[key] = value;
-                    updateTrigger();
-                    updateMenu();
-                    closeMenu();
-                    refresh();
-                });
+            trigger.addEventListener("click", () => {
+                const opening = menu.hidden;
 
-                menu.appendChild(option);
+                if (opening) updateMenu();
+
+                menu.hidden = !opening;
+                trigger.setAttribute("aria-expanded", String(opening));
             });
-        }
 
-        function updateTrigger() {
-            trigger.replaceChildren();
+            updateTrigger();
+            updateMenu();
 
-            const name = document.createElement("span");
-            name.textContent = selection[key];
-
-            const price = document.createElement("span");
-            price.className = "dropdown-price price-neutral";
-            price.textContent = "";
-
-            trigger.append(name, price);
-        }
-
-        function closeMenu() {
-            menu.hidden = true;
-            trigger.setAttribute("aria-expanded", "false");
-        }
-
-        trigger.addEventListener("click", () => {
-            const opening = menu.hidden;
-
-            if (opening) updateMenu();
-
-            menu.hidden = !opening;
-            trigger.setAttribute("aria-expanded", String(opening));
+            dropdown.append(trigger, menu);
+            document.addEventListener("click", (event) => {
+                if (!dropdown.contains(event.target)) {
+                    closeMenu();
+                }
+            });
+            heading.appendChild(dropdown);
+            wrapper.appendChild(heading);
+            container.appendChild(wrapper);
         });
-
-        updateTrigger();
-        updateMenu();
-
-        dropdown.append(trigger, menu);
-        document.addEventListener("click", (event) => {
-    if (!dropdown.contains(event.target)) {
-        closeMenu();
-    }
-});
-        heading.appendChild(dropdown);
-        wrapper.appendChild(heading);
-        container.appendChild(wrapper);
-    });
 }
-
-
 
 async function buildAddOnControls() {
     const container = $("#addOnControls");
     container.replaceChildren();
     selectedAddOns = {};
 
-    const compatibleAddOns = availableAddOns.filter(addOn =>
-        isAddOnAvailableForInvitation(addOn, id)
-    );
+    const compatibleAddOns = availableAddOns.filter((addOn) => isAddOnAvailableForInvitation(addOn, id));
 
     if (!compatibleAddOns.length) {
-        container.textContent =
-            "No optional add-ons are currently available.";
+        container.textContent = "No optional add-ons are currently available.";
         return;
     }
 
@@ -296,11 +278,10 @@ async function buildAddOnControls() {
         const defaultQty = quantities.includes(invitationQty)
             ? invitationQty
             : quantities.length
-                ? quantities.reduce((best, qty) =>
-                    Math.abs(qty - invitationQty) <
-                    Math.abs(best - invitationQty) ? qty : best
-                  )
-                : min;
+              ? quantities.reduce((best, qty) =>
+                    Math.abs(qty - invitationQty) < Math.abs(best - invitationQty) ? qty : best
+                )
+              : min;
 
         const state = {
             enabled: false,
@@ -308,7 +289,8 @@ async function buildAddOnControls() {
             design: addOn.designs[0]?.id || "",
             wordingByDesign: {},
             customInfo: {},
-            rendered: null
+            rendered: null,
+            revealedHiddenFieldIdsByDesign: {},
         };
 
         selectedAddOns[addOn.id] = state;
@@ -368,116 +350,102 @@ async function buildAddOnControls() {
 
         toggle.append(yesButton, noButton);
 
-// Quantity dropdown.
-// Custom quantity dropdown with price differences.
-const quantityLabel = document.createElement("label");
-quantityLabel.className = "addon-quantity-label";
-quantityLabel.textContent = "Quantity";
+        // Quantity dropdown.
+        // Custom quantity dropdown with price differences.
+        const quantityLabel = document.createElement("label");
+        quantityLabel.className = "addon-quantity-label";
+        quantityLabel.textContent = "Quantity";
 
-const quantityDropdown = document.createElement("div");
-quantityDropdown.className = "custom-price-dropdown";
+        const quantityDropdown = document.createElement("div");
+        quantityDropdown.className = "custom-price-dropdown";
 
-const quantityTrigger = document.createElement("button");
-quantityTrigger.type = "button";
-quantityTrigger.className = "custom-price-trigger";
+        const quantityTrigger = document.createElement("button");
+        quantityTrigger.type = "button";
+        quantityTrigger.className = "custom-price-trigger";
 
-const quantityMenu = document.createElement("div");
-quantityMenu.className = "custom-price-menu";
-quantityMenu.hidden = true;
+        const quantityMenu = document.createElement("div");
+        quantityMenu.className = "custom-price-menu";
+        quantityMenu.hidden = true;
 
-const quantityPrice = document.createElement("span");
-quantityPrice.className = "addon-current-price";
+        const quantityPrice = document.createElement("span");
+        quantityPrice.className = "addon-current-price";
 
-function updateQuantityMenu() {
-    quantityMenu.replaceChildren();
+        function updateQuantityMenu() {
+            quantityMenu.replaceChildren();
 
-    const currentDesign = addOn.designs.find(
-        d => d.id === state.design
-    );
+            const currentDesign = addOn.designs.find((d) => d.id === state.design);
 
-    quantities.forEach(qty => {
-        const total = calculateAddOnTotal(
-            addOn,
-            currentDesign,
-            qty
-        );
+            quantities.forEach((qty) => {
+                const total = calculateAddOnTotal(addOn, currentDesign, qty);
 
-        const perItem = total / qty;
+                const perItem = total / qty;
 
-        const option = document.createElement("button");
-        option.type = "button";
-        option.className = "custom-price-option";
+                const option = document.createElement("button");
+                option.type = "button";
+                option.className = "custom-price-option";
 
-        const name = document.createElement("span");
-        name.textContent = qty;
+                const name = document.createElement("span");
+                name.textContent = qty;
 
-        const price = document.createElement("span");
-        price.className = "dropdown-price";
-        price.textContent =
-            `(${money(total)} · ${money(perItem)}/each)`;
+                const price = document.createElement("span");
+                price.className = "dropdown-price";
+                price.textContent = `(${money(total)} · ${money(perItem)}/each)`;
 
-        option.append(name, price);
+                option.append(name, price);
 
-        option.addEventListener("click", () => {
-            state.quantity = qty;
+                option.addEventListener("click", () => {
+                    state.quantity = qty;
 
-            updateQuantityTrigger();
-            updateAddOnPriceDisplays();
-            updatePrice();
+                    updateQuantityTrigger();
+                    updateAddOnPriceDisplays();
+                    updatePrice();
 
-            quantityMenu.hidden = true;
-            quantityTrigger.setAttribute("aria-expanded", "false");
+                    quantityMenu.hidden = true;
+                    quantityTrigger.setAttribute("aria-expanded", "false");
+                });
+
+                quantityMenu.appendChild(option);
+            });
+        }
+
+        function updateQuantityTrigger() {
+            quantityTrigger.replaceChildren();
+
+            const currentDesign = addOn.designs.find((d) => d.id === state.design);
+
+            const total = calculateAddOnTotal(addOn, currentDesign, state.quantity);
+
+            const perItem = total / state.quantity;
+
+            const name = document.createElement("span");
+            name.textContent = state.quantity;
+
+            const price = document.createElement("span");
+            price.className = "dropdown-price";
+            price.textContent = `(${money(total)} · ${money(perItem)}/each)`;
+
+            quantityTrigger.append(name, price);
+        }
+
+        quantityTrigger.addEventListener("click", () => {
+            const opening = quantityMenu.hidden;
+
+            if (opening) updateQuantityMenu();
+
+            quantityMenu.hidden = !opening;
+            quantityTrigger.setAttribute("aria-expanded", String(opening));
         });
 
-        quantityMenu.appendChild(option);
-    });
-}
+        // Close dropdown when clicking anywhere outside it.
+        document.addEventListener("click", (event) => {
+            if (!quantityDropdown.contains(event.target)) {
+                quantityMenu.hidden = true;
+                quantityTrigger.setAttribute("aria-expanded", "false");
+            }
+        });
 
-function updateQuantityTrigger() {
-    quantityTrigger.replaceChildren();
-
-    const currentDesign = addOn.designs.find(
-        d => d.id === state.design
-    );
-
-    const total = calculateAddOnTotal(
-        addOn,
-        currentDesign,
-        state.quantity
-    );
-
-    const perItem = total / state.quantity;
-
-    const name = document.createElement("span");
-    name.textContent = state.quantity;
-
-    const price = document.createElement("span");
-    price.className = "dropdown-price";
-    price.textContent =
-        `(${money(total)} · ${money(perItem)}/each)`;
-
-    quantityTrigger.append(name, price);
-}
-
-quantityTrigger.addEventListener("click", () => {
-    const opening = quantityMenu.hidden;
-
-    if (opening) updateQuantityMenu();
-
-    quantityMenu.hidden = !opening;
-    quantityTrigger.setAttribute("aria-expanded", String(opening));
-});
-        
-    // Close dropdown when clicking anywhere outside it.
-document.addEventListener("click", (event) => {
-    if (!quantityDropdown.contains(event.target)) {
-        quantityMenu.hidden = true;
-        quantityTrigger.setAttribute("aria-expanded", "false");
-    }
-});    
-
-quantityDropdown.append(quantityTrigger, quantityMenu);
-quantityLabel.appendChild(quantityDropdown);
+        quantityDropdown.append(quantityTrigger, quantityMenu);
+        quantityLabel.appendChild(quantityDropdown);
 
         // Design choices
         const designHeading = document.createElement("h4");
@@ -498,10 +466,10 @@ quantityLabel.appendChild(quantityDropdown);
 
             const designTitle = document.createElement("span");
             designTitle.textContent = design.title;
-            
+
             const designPrice = document.createElement("span");
-designPrice.className = "addon-design-price dropdown-price";
-            
+            designPrice.className = "addon-design-price dropdown-price";
+
             const preview = document.createElement("div");
             preview.className = "addon-design-preview";
 
@@ -524,12 +492,7 @@ designPrice.className = "addon-design-price dropdown-price";
                 state.design = design.id;
 
                 // Render the newly selected design and its editable fields.
-                await renderAddOnSelection(
-                    addOn,
-                    state,
-                    selectedPreview,
-                    fieldsContainer
-                );
+                await renderAddOnSelection(addOn, state, selectedPreview, fieldsContainer);
                 updateAddOnPriceDisplays();
                 updatePrice();
             });
@@ -557,35 +520,25 @@ designPrice.className = "addon-design-price dropdown-price";
         customFieldsContainer.className = "addon-custom-fields";
 
         buildAddOnCustomFields(addOn, state, customFieldsContainer);
-function updateAddOnPriceDisplays() {
-    updateQuantityTrigger();
-    updateQuantityMenu();
+        function updateAddOnPriceDisplays() {
+            updateQuantityTrigger();
+            updateQuantityMenu();
 
-    for (const label of designsContainer.children) {
-        const radio = label.querySelector("input");
-        const priceElement = label.querySelector(".addon-design-price");
+            for (const label of designsContainer.children) {
+                const radio = label.querySelector("input");
+                const priceElement = label.querySelector(".addon-design-price");
 
-        const candidateDesign = addOn.designs.find(
-            d => d.id === radio.value
-        );
+                const candidateDesign = addOn.designs.find((d) => d.id === radio.value);
 
-        const candidateTotal = calculateAddOnTotal(
-            addOn,
-            candidateDesign,
-            state.quantity
-        );
+                const candidateTotal = calculateAddOnTotal(addOn, candidateDesign, state.quantity);
 
-        // Show the actual total price, not the difference.
-        priceElement.textContent = money(candidateTotal);
-        priceElement.classList.remove(
-            "price-increase",
-            "price-decrease",
-            "price-neutral"
-        );
-    }
-}
+                // Show the actual total price, not the difference.
+                priceElement.textContent = money(candidateTotal);
+                priceElement.classList.remove("price-increase", "price-decrease", "price-neutral");
+            }
+        }
 
-updateAddOnPriceDisplays();
+        updateAddOnPriceDisplays();
         configuration.append(
             quantityLabel,
             designHeading,
@@ -602,25 +555,15 @@ updateAddOnPriceDisplays();
 
         // Render the initially selected design.
         if (state.design) {
-            await renderAddOnSelection(
-                addOn,
-                state,
-                selectedPreview,
-                fieldsContainer
-            );
+            await renderAddOnSelection(addOn, state, selectedPreview, fieldsContainer);
         } else {
             selectedPreview.textContent = "No design available.";
         }
     }
 }
 
-async function renderAddOnSelection(
-    addOn,
-    state,
-    previewContainer,
-    fieldsContainer
-) {
-    const design = addOn.designs.find(d => d.id === state.design);
+async function renderAddOnSelection(addOn, state, previewContainer, fieldsContainer) {
+    const design = addOn.designs.find((d) => d.id === state.design);
 
     previewContainer.replaceChildren();
     fieldsContainer.replaceChildren();
@@ -647,21 +590,14 @@ async function renderAddOnSelection(
             options: {}
         });
 
-        buildAddOnWordingFields(
-            state,
-            state.rendered,
-            wording,
-            fieldsContainer
-        );
-
+        buildAddOnWordingFields(state, state.rendered, wording, fieldsContainer);
     } catch (error) {
         previewContainer.textContent = "Preview unavailable.";
-        console.error(
-            `Could not render ${addOn.title}:`,
-            error
-        );
+        console.error(`Could not render ${addOn.title}:`, error);
     }
 }
+
+
 
 
 
@@ -679,46 +615,68 @@ function buildAddOnWordingFields(
         return;
     }
 
-    // Each add-on has its own toggle state.
-    if (state.showAllFields === undefined) {
-        state.showAllFields = false;
+    if (!state.revealedHiddenFieldIdsByDesign) {
+        state.revealedHiddenFieldIdsByDesign = {};
     }
 
-    const hiddenFields = rendered.fields.filter(
-        field => field.hiddenFromEditor
-    );
+    const designId = state.design || "default";
 
-    const visibleFields = rendered.fields.filter(
-        field => state.showAllFields || !field.hiddenFromEditor
-    );
+    if (!state.revealedHiddenFieldIdsByDesign[designId]) {
+        state.revealedHiddenFieldIdsByDesign[designId] = new Set();
+    }
 
-    // Show All / Show Recommended toggle.
-    if (hiddenFields.length) {
-        const toggle = document.createElement("button");
-        toggle.type = "button";
-        toggle.className = "show-all-fields-toggle";
+    const revealedIds =
+        state.revealedHiddenFieldIdsByDesign[designId];
 
-        toggle.textContent = state.showAllFields
-            ? "Show Recommended Fields"
-            : `Show All Fields (${hiddenFields.length} more)`;
+    const hiddenGroups = getHiddenFieldGroups(rendered.fields);
+    const hiddenGroupByField = new Map();
 
-        toggle.addEventListener("click", () => {
-            state.showAllFields = !state.showAllFields;
-
-            buildAddOnWordingFields(
-                state,
-                rendered,
-                wording,
-                container
-            );
+    hiddenGroups.forEach(group => {
+        group.forEach(field => {
+            hiddenGroupByField.set(field, group);
         });
+    });
 
-        container.appendChild(toggle);
-    }
+    rendered.fields.forEach(field => {
 
-    visibleFields.forEach(field => {
+        if (
+            field.hiddenFromEditor &&
+            !revealedIds.has(field.id)
+        ) {
+            const group = hiddenGroupByField.get(field);
+
+            if (group[0] === field) {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "show-more-fields";
+                button.textContent =
+                    `+ Show ${group.length} hidden field${group.length === 1 ? "" : "s"}`;
+
+                button.addEventListener("click", () => {
+                    group.forEach(groupField => {
+                        revealedIds.add(groupField.id);
+                    });
+
+                    buildAddOnWordingFields(
+                        state,
+                        rendered,
+                        wording,
+                        container
+                    );
+                });
+
+                container.appendChild(button);
+            }
+
+            return;
+        }
+
         const fieldWrap = document.createElement("div");
         fieldWrap.className = "field-control-wrap";
+
+        if (field.hiddenFromEditor) {
+            fieldWrap.classList.add("field-revealed");
+        }
 
         const label = document.createElement("label");
         label.className = "field-control";
@@ -736,7 +694,9 @@ function buildAddOnWordingFields(
         input.value =
             wording[field.id] ?? field.defaultValue ?? "";
 
-        if (field.required) input.required = true;
+        if (field.required) {
+            input.required = true;
+        }
 
         input.addEventListener("input", () => {
             wording[field.id] = input.value;
@@ -748,35 +708,52 @@ function buildAddOnWordingFields(
         container.appendChild(fieldWrap);
     });
 
-    if (!visibleFields.length) {
-        const message = document.createElement("p");
-        message.textContent =
-            "There are no recommended wording fields. You can show all fields above.";
-        container.appendChild(message);
+    // One hide button for all revealed fields in this add-on design.
+    const revealedFields = rendered.fields.filter(field =>
+        field.hiddenFromEditor && revealedIds.has(field.id)
+    );
+
+    if (revealedFields.length) {
+        const hideButton = document.createElement("button");
+        hideButton.type = "button";
+        hideButton.className = "hide-revealed-fields";
+        hideButton.textContent = "Hide optional fields";
+
+        hideButton.addEventListener("click", () => {
+            revealedFields.forEach(field => {
+                revealedIds.delete(field.id);
+            });
+
+            buildAddOnWordingFields(
+                state,
+                rendered,
+                wording,
+                container
+            );
+        });
+
+        container.appendChild(hideButton);
     }
 }
+
+
 
 
 
 function buildAddOnCustomFields(addOn, state, container) {
     container.replaceChildren();
 
-    const customFields = Array.isArray(addOn.customFields)
-        ? addOn.customFields
-        : [];
+    const customFields = Array.isArray(addOn.customFields) ? addOn.customFields : [];
 
-    customFields.forEach(field => {
+    customFields.forEach((field) => {
         const wrapper = document.createElement("div");
         wrapper.className = "field-control-wrap";
 
         const label = document.createElement("label");
         label.className = "field-control";
-        label.textContent =
-            field.label + (field.required ? " *" : "");
+        label.textContent = field.label + (field.required ? " *" : "");
 
-        const input = field.type === "textarea"
-            ? document.createElement("textarea")
-            : document.createElement("input");
+        const input = field.type === "textarea" ? document.createElement("textarea") : document.createElement("input");
 
         input.dataset.customField = field.id;
         input.placeholder = field.placeholder || "";
@@ -794,25 +771,18 @@ function buildAddOnCustomFields(addOn, state, container) {
     });
 }
 
-
-
 function formatAdjustment(amount) {
-    if (amount > 0.000001)
-        return `+${money(amount)} / invitation`;
+    if (amount > 0.000001) return `+${money(amount)} / invitation`;
 
-    if (amount < -0.000001)
-        return `−${money(Math.abs(amount))} / invitation`;
+    if (amount < -0.000001) return `−${money(Math.abs(amount))} / invitation`;
 
     return "";
 }
 
-
 function formatPriceDifference(amount) {
-    if (amount > 0.000001)
-        return `+$${amount.toFixed(2)}`;
+    if (amount > 0.000001) return `+$${amount.toFixed(2)}`;
 
-    if (amount < -0.000001)
-        return `−$${Math.abs(amount).toFixed(2)}`;
+    if (amount < -0.000001) return `−$${Math.abs(amount).toFixed(2)}`;
 
     return "No price change";
 }
@@ -820,16 +790,10 @@ function formatPriceDifference(amount) {
 function setPriceDifference(element, amount) {
     element.textContent = formatPriceDifference(amount);
 
-    element.classList.remove(
-        "price-increase",
-        "price-decrease",
-        "price-neutral"
-    );
+    element.classList.remove("price-increase", "price-decrease", "price-neutral");
 
     element.classList.add(
-        amount > 0.000001 ? "price-increase" :
-        amount < -0.000001 ? "price-decrease" :
-        "price-neutral"
+        amount > 0.000001 ? "price-increase" : amount < -0.000001 ? "price-decrease" : "price-neutral"
     );
 }
 
@@ -841,11 +805,7 @@ function buildQuantityOptions() {
 
     const quantities = getQuantityOptions(invitation);
 
-    quantityInput.value = quantities.includes(50)
-        ? "50"
-        : quantities.length
-            ? String(quantities[0])
-            : "";
+    quantityInput.value = quantities.includes(50) ? "50" : quantities.length ? String(quantities[0]) : "";
 
     function closeMenu() {
         menu.hidden = true;
@@ -870,8 +830,7 @@ function buildQuantityOptions() {
 
         const price = document.createElement("span");
         price.className = "dropdown-price";
-        price.textContent =
-            `( $ ${total.toFixed(2)} · $ ${perItem.toFixed(2)}/each)`;
+        price.textContent = `( $ ${total.toFixed(2)} · $ ${perItem.toFixed(2)}/each)`;
 
         trigger.append(name, price);
     }
@@ -879,7 +838,7 @@ function buildQuantityOptions() {
     function updateMenu() {
         menu.replaceChildren();
 
-        quantities.forEach(qty => {
+        quantities.forEach((qty) => {
             const total = calculateEstimate(invitation, selection, qty);
             const perItem = total / qty;
 
@@ -892,8 +851,7 @@ function buildQuantityOptions() {
 
             const price = document.createElement("span");
             price.className = "dropdown-price";
-            price.textContent =
-                `( $ ${total.toFixed(2)} · $ ${perItem.toFixed(2)}/each)`;
+            price.textContent = `( $ ${total.toFixed(2)} · $ ${perItem.toFixed(2)}/each)`;
 
             option.append(name, price);
 
@@ -920,7 +878,7 @@ function buildQuantityOptions() {
         trigger.setAttribute("aria-expanded", String(opening));
     });
 
-    document.addEventListener("click", event => {
+    document.addEventListener("click", (event) => {
         if (!dropdown.contains(event.target)) {
             closeMenu();
         }
@@ -949,8 +907,7 @@ function updateQuantityOptionPrices() {
 
         const price = document.createElement("span");
         price.className = "dropdown-price";
-        price.textContent =
-            `( $ ${total.toFixed(2)} · $ ${perItem.toFixed(2)}/each)`;
+        price.textContent = `( $ ${total.toFixed(2)} · $ ${perItem.toFixed(2)}/each)`;
 
         trigger.append(name, price);
     }
@@ -959,7 +916,7 @@ function updateQuantityOptionPrices() {
     const quantities = getQuantityOptions(invitation);
     menu.replaceChildren();
 
-    quantities.forEach(q => {
+    quantities.forEach((q) => {
         const total = calculateEstimate(invitation, selection, q);
         const perItem = total / q;
 
@@ -972,8 +929,7 @@ function updateQuantityOptionPrices() {
 
         const price = document.createElement("span");
         price.className = "dropdown-price";
-        price.textContent =
-            `( $ ${total.toFixed(2)} · $ ${perItem.toFixed(2)}/each)`;
+        price.textContent = `( $ ${total.toFixed(2)} · $ ${perItem.toFixed(2)}/each)`;
 
         option.append(name, price);
 
@@ -992,34 +948,38 @@ function updateQuantityOptionPrices() {
 }
 
 
+function getHiddenFieldGroups(fields) {
+    const groups = [];
+    let currentGroup = [];
+
+    fields.forEach(field => {
+        if (field.hiddenFromEditor) {
+            currentGroup.push(field);
+        } else {
+            if (currentGroup.length) {
+                groups.push(currentGroup);
+                currentGroup = [];
+            }
+        }
+    });
+
+    if (currentGroup.length) {
+        groups.push(currentGroup);
+    }
+
+    return groups;
+}
+
+
+
 function buildFields() {
     const container = $("#fieldControls");
     container.replaceChildren();
 
-    // Determine which fields should be displayed.
-    const hiddenFields = rendered.fields.filter(
-        f => f.hiddenFromEditor
-    );
-
-    const visibleFields = rendered.fields.filter(
-        f => showAllFields || !f.hiddenFromEditor
-    );
-
-    // Show All / Show Recommended toggle.
-    if (hiddenFields.length) {
-        const toggle = document.createElement("button");
-        toggle.type = "button";
-        toggle.className = "show-all-fields-toggle";
-        toggle.textContent = showAllFields
-            ? "Show Recommended Fields"
-            : `Show All Fields (${hiddenFields.length} more)`;
-
-        toggle.addEventListener("click", () => {
-            showAllFields = !showAllFields;
-            buildFields();
-        });
-
-        container.appendChild(toggle);
+    if (!rendered.fields.length) {
+        container.textContent =
+            "This design has no editable wording fields.";
+        return;
     }
 
     const sections = invitation.pages.map(page => {
@@ -1035,12 +995,58 @@ function buildFields() {
         return section;
     });
 
-    visibleFields.forEach(f => {
+    // Identify separate groups of consecutive hidden fields.
+    const hiddenGroups = getHiddenFieldGroups(rendered.fields);
+    const hiddenGroupByField = new Map();
+
+    hiddenGroups.forEach(group => {
+        group.forEach(field => {
+            hiddenGroupByField.set(field, group);
+        });
+    });
+
+    
+    // Render fields in their original order.
+    rendered.fields.forEach(f => {
+
+        if (
+            f.hiddenFromEditor &&
+            !revealedHiddenFieldIds.has(f.id)
+        ) {
+            const group = hiddenGroupByField.get(f);
+
+            if (group[0] === f) {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "show-more-fields";
+                button.textContent =
+                    `+ Show ${group.length} hidden field${group.length === 1 ? "" : "s"}`;
+
+                button.addEventListener("click", () => {
+                    group.forEach(field => {
+                        revealedHiddenFieldIds.add(field.id);
+                    });
+                    buildFields();
+                });
+
+                const pageIndex =
+                    f.occurrences[0]?.pageIndex ?? 0;
+
+                sections[pageIndex].appendChild(button);
+            }
+
+            return;
+        }
+
         const pageIndex = f.occurrences[0]?.pageIndex ?? 0;
         const section = sections[pageIndex];
 
         const fieldWrap = document.createElement("div");
         fieldWrap.className = "field-control-wrap";
+
+        if (f.hiddenFromEditor) {
+            fieldWrap.classList.add("field-revealed");
+        }
 
         const label = document.createElement("label");
         label.className = "field-control";
@@ -1071,7 +1077,6 @@ function buildFields() {
 
         label.appendChild(input);
 
-        // Input and Hebrew keyboard button.
         const inputRow = document.createElement("div");
         inputRow.className = "field-input-row";
 
@@ -1097,22 +1102,28 @@ function buildFields() {
         let advancedPanel = null;
 
         if (f.advanced) {
-            const adv = createAdvancedControls(f, fieldStyles, () => {
-                updateRenderedWording(rendered, wording, fieldStyles);
-                drawPages();
-            });
+            const adv = createAdvancedControls(
+                f,
+                fieldStyles,
+                () => {
+                    updateRenderedWording(
+                        rendered,
+                        wording,
+                        fieldStyles
+                    );
+                    drawPages();
+                }
+            );
 
             labelRow.append(adv.toggle);
             advancedPanel = adv.panel;
         }
 
-        // Keyboard container, initially hidden.
         const keyboard = createHebrewKeyboard(input, updateField);
 
         keyboardButton.addEventListener("click", () => {
             const shouldOpen = keyboard.hidden;
 
-            // Close other open keyboards.
             container.querySelectorAll(".hebrew-keyboard").forEach(kb => {
                 kb.hidden = true;
             });
@@ -1138,15 +1149,31 @@ function buildFields() {
         section.appendChild(fieldWrap);
     });
 
-    if (!rendered.fields.length) {
-        container.textContent =
-            "This design has no editable wording fields.";
-    } else if (!visibleFields.length) {
-        const message = document.createElement("p");
-        message.textContent =
-            "There are no recommended wording fields. You can show all fields above.";
-        container.appendChild(message);
-    }
+    // Add one hide button to each page that has revealed fields.
+    sections.forEach((section, pageIndex) => {
+        const revealedInSection = rendered.fields.filter(f =>
+            f.hiddenFromEditor &&
+            revealedHiddenFieldIds.has(f.id) &&
+            (f.occurrences[0]?.pageIndex ?? 0) === pageIndex
+        );
+
+        if (!revealedInSection.length) return;
+
+        const hideButton = document.createElement("button");
+        hideButton.type = "button";
+        hideButton.className = "hide-revealed-fields";
+        hideButton.textContent = "Hide optional fields";
+
+        hideButton.addEventListener("click", () => {
+            revealedInSection.forEach(f => {
+                revealedHiddenFieldIds.delete(f.id);
+            });
+
+            buildFields();
+        });
+
+        section.appendChild(hideButton);
+    });
 }
 
 
@@ -1159,7 +1186,7 @@ function createHebrewKeyboard(input, updateField) {
         ["ק", "ר", "א", "ט", "ו", "ן", "ם", "פ"],
         ["ש", "ד", "ג", "כ", "ע", "י", "ח", "ל", "ך", "ף"],
         ["ז", "ס", "ב", "ה", "נ", "מ", "צ", "ת", "ץ"],
-        [".", ",", "?", "!", ":", ";", "'", "\"", "־", "׳", "״"]
+        [".", ",", "?", "!", ":", ";", "'", '"', "־", "׳", "״"]
     ];
 
     function insertText(text) {
@@ -1168,35 +1195,27 @@ function createHebrewKeyboard(input, updateField) {
         const start = input.selectionStart ?? input.value.length;
         const end = input.selectionEnd ?? start;
 
-        const newValue =
-            input.value.slice(0, start) +
-            text +
-            input.value.slice(end);
+        const newValue = input.value.slice(0, start) + text + input.value.slice(end);
 
         if (newValue.length > input.maxLength) return;
 
-        input.setRangeText(
-            text,
-            start,
-            end,
-            "end"
-        );
+        input.setRangeText(text, start, end, "end");
 
         input.dispatchEvent(new Event("input", { bubbles: true }));
         updateField();
     }
 
-    rows.forEach(chars => {
+    rows.forEach((chars) => {
         const row = document.createElement("div");
         row.className = "hebrew-keyboard-row";
 
-        chars.forEach(char => {
+        chars.forEach((char) => {
             const key = document.createElement("button");
             key.type = "button";
             key.className = "hebrew-key";
             key.textContent = char;
 
-            key.addEventListener("mousedown", e => e.preventDefault());
+            key.addEventListener("mousedown", (e) => e.preventDefault());
             key.addEventListener("click", () => insertText(char));
 
             row.appendChild(key);
@@ -1216,7 +1235,7 @@ function createHebrewKeyboard(input, updateField) {
         key.textContent = text;
         key.title = title || text;
 
-        key.addEventListener("mousedown", e => e.preventDefault());
+        key.addEventListener("mousedown", (e) => e.preventDefault());
         key.addEventListener("click", action);
 
         specialRow.appendChild(key);
@@ -1224,41 +1243,48 @@ function createHebrewKeyboard(input, updateField) {
 
     addSpecialKey("Space", "space-key", () => insertText(" "), "Insert space");
 
-    addSpecialKey("⌫", "backspace-key", () => {
-        input.focus();
+    addSpecialKey(
+        "⌫",
+        "backspace-key",
+        () => {
+            input.focus();
 
-        let start = input.selectionStart ?? input.value.length;
-        let end = input.selectionEnd ?? start;
+            let start = input.selectionStart ?? input.value.length;
+            let end = input.selectionEnd ?? start;
 
-        if (start === end && start > 0) {
-            start--;
-        }
+            if (start === end && start > 0) {
+                start--;
+            }
 
-        input.setRangeText("", start, end, "end");
-        input.dispatchEvent(new Event("input", { bubbles: true }));
-        updateField();
-    }, "Backspace");
+            input.setRangeText("", start, end, "end");
+            input.dispatchEvent(new Event("input", { bubbles: true }));
+            updateField();
+        },
+        "Backspace"
+    );
 
-    addSpecialKey("↵ Enter", "enter-key", () => {
-        // A single-line input cannot contain a newline.
-        // In that case Enter inserts a space instead.
-        insertText(input.tagName === "TEXTAREA" ? "\n" : " ");
-    }, "Insert newline");
+    addSpecialKey(
+        "↵ Enter",
+        "enter-key",
+        () => {
+            // A single-line input cannot contain a newline.
+            // In that case Enter inserts a space instead.
+            insertText(input.tagName === "TEXTAREA" ? "\n" : " ");
+        },
+        "Insert newline"
+    );
 
     keyboard.appendChild(specialRow);
 
     return keyboard;
 }
 
-
 function highlightActiveField(activeElement) {
-    const matches = [
-        ...activeElement.querySelectorAll("[data-field]")
-    ].filter(el =>
-        el.getAttribute("data-field") === activeFieldId
+    const matches = [...activeElement.querySelectorAll("[data-field]")].filter(
+        (el) => el.getAttribute("data-field") === activeFieldId
     );
 
-    matches.forEach(el => {
+    matches.forEach((el) => {
         el.classList.add("field-highlight");
 
         // HTML fields use CSS outlines.
@@ -1273,10 +1299,7 @@ function highlightActiveField(activeElement) {
         try {
             const bounds = el.getBBox();
 
-            const rect = document.createElementNS(
-                "http://www.w3.org/2000/svg",
-                "rect"
-            );
+            const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
 
             rect.setAttribute("x", bounds.x - 8);
             rect.setAttribute("y", bounds.y - 8);
@@ -1298,10 +1321,7 @@ function drawPages() {
 
     if (!rendered || !rendered.pages.length) return;
 
-    activePage = Math.max(
-        0,
-        Math.min(activePage, rendered.pages.length - 1)
-    );
+    activePage = Math.max(0, Math.min(activePage, rendered.pages.length - 1));
 
     thumbs.replaceChildren();
     large.replaceChildren();
@@ -1332,8 +1352,7 @@ function drawPages() {
     });
 
     // Display only the selected page in the large preview.
-    const activeElement =
-        rendered.pages[activePage].element.cloneNode(true);
+    const activeElement = rendered.pages[activePage].element.cloneNode(true);
 
     large.append(activeElement);
 
@@ -1345,8 +1364,7 @@ function drawPages() {
         `${rendered.pages[activePage].page.label} · Page ${activePage + 1} of ${rendered.pages.length}`;
 
     $("#prevPage").disabled = activePage === 0;
-    $("#nextPage").disabled =
-        activePage === rendered.pages.length - 1;
+    $("#nextPage").disabled = activePage === rendered.pages.length - 1;
 }
 
 function refresh() {
@@ -1358,10 +1376,9 @@ function refresh() {
     });
 }
 
-
 function updatePrice() {
     if (!invitation) return;
-updateQuantityOptionPrices();
+    updateQuantityOptionPrices();
     const qty = Number($("#quantity").value);
     const invoice = $("#orderInvoice");
 
@@ -1387,22 +1404,16 @@ updateQuantityOptionPrices();
         return;
     }
 
-       // Calculate invitation price.
     // Calculate invitation price.
-    const invitationTotal = calculateEstimate(
-        invitation,
-        selection,
-        qty
-    );
+    // Calculate invitation price.
+    const invitationTotal = calculateEstimate(invitation, selection, qty);
 
     let addOnTotal = 0;
 
-    const invoiceItems = [];          // must come first
+    const invoiceItems = []; // must come first
 
     // Invitation line item (replacement block starts here).
-    const designBaseFee = Number(
-        invitation.designBaseFees?.[selection.design] || 0
-    );
+    const designBaseFee = Number(invitation.designBaseFees?.[selection.design] || 0);
     const cardsTotal = invitationTotal - designBaseFee;
 
     invoiceItems.push({
@@ -1419,32 +1430,22 @@ updateQuantityOptionPrices();
         });
     }
 
-
-
     // Calculate each selected add-on separately.
     for (const [addOnId, state] of Object.entries(selectedAddOns)) {
         if (!state.enabled) continue;
 
-        const addOn = availableAddOns.find(a => a.id === addOnId);
+        const addOn = availableAddOns.find((a) => a.id === addOnId);
         if (!addOn) continue;
 
-        const design = addOn.designs?.find(
-            d => d.id === state.design
-        );
+        const design = addOn.designs?.find((d) => d.id === state.design);
 
-        const itemTotal = calculateAddOnTotal(
-            addOn,
-            design,
-            state.quantity
-        );
+        const itemTotal = calculateAddOnTotal(addOn, design, state.quantity);
 
         addOnTotal += itemTotal;
 
         invoiceItems.push({
             title: addOn.title,
-            description:
-                `${state.quantity} units` +
-                (design ? ` · ${design.title}` : ""),
+            description: `${state.quantity} units` + (design ? ` · ${design.title}` : ""),
             price: itemTotal
         });
     }
@@ -1458,12 +1459,9 @@ updateQuantityOptionPrices();
     }
 
     // Update the existing estimate text for order review.
-    $("#estimate").textContent =
-        "Estimated order total: " + money(total);
+    $("#estimate").textContent = "Estimated order total: " + money(total);
 
-    $("#unitEstimate").textContent =
-        money(invitationTotal / qty) +
-        " average per invitation, not including add-ons";
+    $("#unitEstimate").textContent = money(invitationTotal / qty) + " average per invitation, not including add-ons";
 
     // Build the itemized invoice.
     if (!invoice) return;
@@ -1526,8 +1524,6 @@ updateQuantityOptionPrices();
     invoice.appendChild(totalRow);
 }
 
-
-
 $("#prevPage").addEventListener("click", () => {
     activePage = Math.max(0, activePage - 1);
     drawPages();
@@ -1551,9 +1547,7 @@ $("#reviewButton").addEventListener("click", () => {
         !Number.isInteger(qty) ||
         !validQuantities.includes(qty)
     ) {
-        alert(
-            "Enter your name, a valid email, and select one of the available quantities."
-        );
+        alert("Enter your name, a valid email, and select one of the available quantities.");
         return;
     }
 
@@ -1561,7 +1555,7 @@ $("#reviewButton").addEventListener("click", () => {
     for (const [addOnId, state] of Object.entries(selectedAddOns)) {
         if (!state.enabled) continue;
 
-        const addOn = availableAddOns.find(a => a.id === addOnId);
+        const addOn = availableAddOns.find((a) => a.id === addOnId);
         if (!addOn) continue;
 
         const wording = state.wordingByDesign?.[state.design] || {};
@@ -1574,9 +1568,7 @@ $("#reviewButton").addEventListener("click", () => {
                 const value = wording[field.id] ?? field.defaultValue ?? "";
 
                 if (!String(value).trim()) {
-                    alert(
-                        `Please complete "${field.label}" for ${addOn.title}.`
-                    );
+                    alert(`Please complete "${field.label}" for ${addOn.title}.`);
                     return;
                 }
             }
@@ -1587,9 +1579,7 @@ $("#reviewButton").addEventListener("click", () => {
             if (!field.required) continue;
 
             if (!String(state.customInfo?.[field.id] || "").trim()) {
-                alert(
-                    `Please enter "${field.label}" for ${addOn.title}.`
-                );
+                alert(`Please enter "${field.label}" for ${addOn.title}.`);
                 return;
             }
         }
@@ -1621,17 +1611,15 @@ $("#reviewButton").addEventListener("click", () => {
     };
 
     summary["Add-ons"] = orderAddOns.length
-        ? orderAddOns.map(addOn => {
-            const definition = availableAddOns.find(
-                a => a.id === addOn.addOnId
-            );
+        ? orderAddOns
+              .map((addOn) => {
+                  const definition = availableAddOns.find((a) => a.id === addOn.addOnId);
 
-            const design = definition?.designs.find(
-                d => d.id === addOn.designId
-            );
+                  const design = definition?.designs.find((d) => d.id === addOn.designId);
 
-            return `${definition?.title || addOn.addOnId} — ${design?.title || ""} — Quantity: ${addOn.quantity}`;
-        }).join("; ")
+                  return `${definition?.title || addOn.addOnId} — ${design?.title || ""} — Quantity: ${addOn.quantity}`;
+              })
+              .join("; ")
         : "None";
 
     // Save pending order.
@@ -1693,30 +1681,18 @@ const togglePageSelector = $("#togglePageSelector");
 const previewPanel = document.querySelector(".preview-panel");
 
 togglePageSelector?.addEventListener("click", () => {
-    const isCollapsed = previewPanel.classList.toggle(
-        "page-selector-collapsed"
-    );
+    const isCollapsed = previewPanel.classList.toggle("page-selector-collapsed");
 
-    togglePageSelector.setAttribute(
-        "aria-expanded",
-        String(!isCollapsed)
-    );
+    togglePageSelector.setAttribute("aria-expanded", String(!isCollapsed));
 
-    togglePageSelector.setAttribute(
-        "aria-label",
-        isCollapsed ? "Show page selector" : "Hide page selector"
-    );
+    togglePageSelector.setAttribute("aria-label", isCollapsed ? "Show page selector" : "Hide page selector");
 
-    togglePageSelector.title = isCollapsed
-        ? "Show page selector"
-        : "Hide page selector";
+    togglePageSelector.title = isCollapsed ? "Show page selector" : "Hide page selector";
 });
 
 document.addEventListener("click", (event) => {
     // Keep the highlight while interacting with the wording controls.
-    if (
-        event.target.closest("#fieldControls input, #fieldControls textarea, .hebrew-keyboard")
-    ) {
+    if (event.target.closest("#fieldControls input, #fieldControls textarea, .hebrew-keyboard")) {
         return;
     }
 
@@ -1731,4 +1707,3 @@ function esc(s) {
         (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]
     );
 }
-
