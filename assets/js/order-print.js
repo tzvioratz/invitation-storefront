@@ -310,6 +310,61 @@ function buildFieldControls() {
         fillSourceBlock(src);
     });
 }
+function getRevealedIds(src) {
+    if (src.type === "invitation") {
+        if (!src.revealedHiddenFieldIds) {
+            src.revealedHiddenFieldIds = new Set();
+        }
+
+        return src.revealedHiddenFieldIds;
+    }
+
+    // Each add-on design has its own revealed-field state.
+    if (!src.revealedHiddenFieldIdsByDesign) {
+        src.revealedHiddenFieldIdsByDesign = {};
+    }
+
+    if (!src.revealedHiddenFieldIdsByDesign[src.designId]) {
+        src.revealedHiddenFieldIdsByDesign[src.designId] = new Set();
+    }
+
+    return src.revealedHiddenFieldIdsByDesign[src.designId];
+}
+
+
+function getHiddenFieldGroups(fields) {
+    const groups = [];
+    let currentGroup = [];
+    let currentPage = null;
+
+    fields.forEach(field => {
+        const pageIndex = field.occurrences[0]?.pageIndex ?? 0;
+
+        // Never combine groups across pages.
+        if (currentGroup.length && pageIndex !== currentPage) {
+            groups.push(currentGroup);
+            currentGroup = [];
+        }
+
+        if (field.hiddenFromEditor) {
+            currentGroup.push(field);
+            currentPage = pageIndex;
+        } else {
+            if (currentGroup.length) {
+                groups.push(currentGroup);
+                currentGroup = [];
+            }
+
+            currentPage = pageIndex;
+        }
+    });
+
+    if (currentGroup.length) {
+        groups.push(currentGroup);
+    }
+
+    return groups;
+}
 
 function fillSourceBlock(src) {
     const block = src.block;
@@ -321,6 +376,7 @@ function fillSourceBlock(src) {
     if (src.type === "addon") buildAddOnHeader(src, block);
 
     const pages = src.rendered?.pages || [];
+
     if (!pages.length) {
         block.append(el("p", "source-message",
             src.type === "addon"
@@ -334,13 +390,101 @@ function fillSourceBlock(src) {
             return section;
         });
 
+        const revealedIds = getRevealedIds(src);
+
+        // Identify consecutive groups of hidden fields.
+        const hiddenGroups = getHiddenFieldGroups(src.rendered.fields);
+        const hiddenGroupByField = new Map();
+
+        hiddenGroups.forEach(group => {
+            group.forEach(field => {
+                hiddenGroupByField.set(field, group);
+            });
+        });
+
+        const fieldWrappers = new Map();
+
+        // Render fields in their original positions.
         src.rendered.fields.forEach(f => {
             const pageIndex = f.occurrences[0]?.pageIndex ?? 0;
-            sections[pageIndex].append(buildFieldControl(src, f, block));
+            const section = sections[pageIndex];
+
+            if (
+                f.hiddenFromEditor &&
+                !revealedIds.has(f.id)
+            ) {
+                const group = hiddenGroupByField.get(f);
+
+                if (group[0] === f) {
+                    const button = el(
+                        "button",
+                        "show-more-fields",
+                        `+ Show ${group.length} hidden field${group.length === 1 ? "" : "s"}`
+                    );
+
+                    button.type = "button";
+
+                    button.addEventListener("click", () => {
+                        group.forEach(field => {
+                            revealedIds.add(field.id);
+                        });
+
+                        fillSourceBlock(src);
+                    });
+
+                    section.append(button);
+                }
+
+                return;
+            }
+
+            const fieldWrap = buildFieldControl(src, f, block);
+
+            if (f.hiddenFromEditor) {
+                fieldWrap.classList.add("field-revealed");
+            }
+
+            section.append(fieldWrap);
+            fieldWrappers.set(f.id, fieldWrap);
+        });
+
+        // One hide button per page, immediately after its last revealed field.
+        sections.forEach((section, pageIndex) => {
+            const revealedInSection = src.rendered.fields.filter(f =>
+                f.hiddenFromEditor &&
+                revealedIds.has(f.id) &&
+                (f.occurrences[0]?.pageIndex ?? 0) === pageIndex
+            );
+
+            if (!revealedInSection.length) return;
+
+            const lastField = revealedInSection[revealedInSection.length - 1];
+            const lastWrapper = fieldWrappers.get(lastField.id);
+
+            if (!lastWrapper) return;
+
+            const hideButton = el(
+                "button",
+                "hide-revealed-fields",
+                "Hide optional fields"
+            );
+
+            hideButton.type = "button";
+
+            hideButton.addEventListener("click", () => {
+                revealedInSection.forEach(f => {
+                    revealedIds.delete(f.id);
+                });
+
+                fillSourceBlock(src);
+            });
+
+            lastWrapper.after(hideButton);
         });
 
         if (!src.rendered.fields.length) {
-            block.append(el("p", "source-message", "This design has no editable wording fields."));
+            block.append(el("p", "source-message",
+                "This design has no editable wording fields."));
         }
     }
 
