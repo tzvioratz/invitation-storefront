@@ -31,10 +31,14 @@ try {
             `<a href="catalog/?style=${encodeURIComponent(x)}">${escapeHTML(x)}</a>`
         ).join("");
 
-    // Preload all active invitation SVGs in the background.
-    preloadInvitationTemplates(active).catch(error => {
-        console.warn("Invitation preloading failed:", error);
-    });
+    console.time("HOMEPAGE SVG PRELOAD");
+
+preloadInvitationTemplates(active).then(() => {
+    console.timeEnd("HOMEPAGE SVG PRELOAD");
+}).catch(error => {
+    console.warn("Invitation preloading failed:", error);
+});
+    
 
 } catch (e) {
 

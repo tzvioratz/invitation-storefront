@@ -9,14 +9,44 @@ const DISABLE_SVG_CACHE = false;
 const fontLoadCache = new Map();
 const fontStylesheetCache = new Map();
 
+let svgCachePromise = null;
+
+function getSvgCache() {
+    if (!("caches" in window)) {
+        return Promise.resolve(null);
+    }
+
+    if (!svgCachePromise) {
+        svgCachePromise = caches.open(SVG_CACHE_NAME)
+            .catch(error => {
+                console.warn("SVG cache unavailable:", error);
+                svgCachePromise = null;
+                return null;
+            });
+    }
+
+    return svgCachePromise;
+}
+
 // --------------------------------------------------
 // LOAD TEMPLATE PAGE
 // --------------------------------------------------
 
+
 export async function loadPage(page) {
+
+    const totalStart = performance.now();
     const url = new URL("../../" + page.file, import.meta.url).href;
 
-const source = await getTemplateSource(url, page);
+    // 1. Retrieve SVG source from cache or network.
+    const sourceStart = performance.now();
+
+    const source = await getTemplateSource(url, page);
+
+    console.log(
+        page.file, "SOURCE RETRIEVAL:",
+        (performance.now() - sourceStart).toFixed(0), "ms"
+    );
 
     const wrapper = document.createElement("div");
 
@@ -25,6 +55,10 @@ const source = await getTemplateSource(url, page);
         (page.type === "svg" ? "svg-page" : "html-page");
 
     if (page.type === "svg") {
+
+        // 2. Parse SVG.
+        const parseStart = performance.now();
+
         const doc = new DOMParser().parseFromString(
             source,
             "image/svg+xml"
@@ -40,12 +74,33 @@ const source = await getTemplateSource(url, page);
             throw new Error(`Template is not an SVG: ${page.file}`);
         }
 
-        // Load declared fonts before inserting the SVG.
+        console.log(
+            page.file, "SVG PARSING:",
+            (performance.now() - parseStart).toFixed(0), "ms"
+        );
+
+        // 3. Load fonts.
+        const fontStart = performance.now();
+
         await loadSvgFonts(svg, url);
+
+        console.log(
+            page.file, "FONT LOADING:",
+            (performance.now() - fontStart).toFixed(0), "ms"
+        );
+
+        // 4. Import SVG into the document.
+        const importStart = performance.now();
 
         wrapper.appendChild(document.importNode(svg, true));
 
+        console.log(
+            page.file, "SVG IMPORT:",
+            (performance.now() - importStart).toFixed(0), "ms"
+        );
+
     } else {
+
         const doc = new DOMParser().parseFromString(
             source,
             "text/html"
@@ -53,19 +108,25 @@ const source = await getTemplateSource(url, page);
 
         const body = doc.body;
 
-        [...body.childNodes].forEach((n) =>
+        [...body.childNodes].forEach(n =>
             wrapper.appendChild(document.importNode(n, true))
         );
 
         const styles = [...doc.querySelectorAll("style")];
 
-        styles.forEach((s) =>
+        styles.forEach(s =>
             wrapper.prepend(document.importNode(s, true))
         );
     }
 
+    console.log(
+        page.file, "LOAD PAGE TOTAL:",
+        (performance.now() - totalStart).toFixed(0), "ms"
+    );
+
     return wrapper;
 }
+
 
 
 
@@ -117,7 +178,6 @@ async function loadSvgFonts(svg, templateUrl) {
         }
     });
 
-    await document.fonts.ready;
 }
 
 
@@ -177,6 +237,8 @@ async function loadFont(font, templateUrl) {
 
 async function loadGoogleStylesheet(source) {
 
+    const start = performance.now();
+
     const url = new URL(source);
 
     if (
@@ -212,7 +274,13 @@ async function loadGoogleStylesheet(source) {
         });
     }
 
-    return fontStylesheetCache.get(source);
+    await fontStylesheetCache.get(source);
+
+    console.log(
+        "GOOGLE STYLESHEET:",
+        (performance.now() - start).toFixed(0),
+        "ms"
+    );
 }
 
 
@@ -269,22 +337,24 @@ async function loadDirectFont(font, templateUrl) {
 export async function renderInvitation({
     invitation,
     wording = {},
-    styles = {}, 
+    styles = {},
     options = {},
     target,
     size = "large"
 }) {
 
+    const totalStart = performance.now();
+
     target.replaceChildren();
+       // 1. Measure SVG loading, parsing, and font loading.
+    const pageStart = performance.now();
+   
+    
 
-    const pages = [];
-
-    for (let i = 0; i < invitation.pages.length; i++) {
-
-        const page = invitation.pages[i];
+const pages = await Promise.all(
+    invitation.pages.map(async (page, i) => {
 
         try {
-
             const el = await loadPage(page);
 
             el.dataset.pageIndex = i;
@@ -292,7 +362,7 @@ export async function renderInvitation({
 
             applyOptions(el, options);
 
-            pages.push({ page, element: el });
+            return { page, element: el };
 
         } catch (err) {
 
@@ -301,17 +371,43 @@ export async function renderInvitation({
             fallback.className = "invitation-page template-error";
             fallback.textContent = err.message;
 
-            pages.push({ page, element: fallback });
+            return { page, element: fallback };
         }
-    }
+    })
+);
+
+
+    console.log(
+        `${invitation.title} - PAGE LOADING:`,
+        (performance.now() - pageStart).toFixed(0),
+        "ms"
+    );
+
+    // 2. Measure field discovery.
+    const fieldStart = performance.now();
 
     const fields = discoverFields(pages);
 
+    console.log(
+        `${invitation.title} - FIELD DISCOVERY:`,
+        (performance.now() - fieldStart).toFixed(0),
+        "ms"
+    );
+
+    // 3. Measure applying wording.
+    const wordingStart = performance.now();
+
     applyWording(fields, wording, styles);
 
+    console.log(
+        `${invitation.title} - APPLY WORDING:`,
+        (performance.now() - wordingStart).toFixed(0),
+        "ms"
+    );
+
+    // 4. Build preview.
     if (size === "thumb") {
 
-        // Create one stack containing every invitation page.
         const stack = document.createElement("div");
         stack.className = "catalog-page-stack";
 
@@ -330,15 +426,19 @@ export async function renderInvitation({
 
     } else {
 
-        // Normal full-size rendering.
         pages.forEach(p => {
             target.appendChild(p.element);
         });
     }
 
+    console.log(
+        `${invitation.title} - TOTAL RENDER:`,
+        (performance.now() - totalStart).toFixed(0),
+        "ms"
+    );
+
     return { pages, fields };
 }
-
 
 
 // --------------------------------------------------
@@ -417,6 +517,7 @@ export async function ensureGoogleFont(family) {
 
 
 
+
 async function getTemplateSource(url, page) {
 
     // Development mode: always fetch fresh.
@@ -439,15 +540,7 @@ async function getTemplateSource(url, page) {
 
     const promise = (async () => {
 
-        let cacheStorage = null;
-
-        try {
-            if ("caches" in window) {
-                cacheStorage = await caches.open(SVG_CACHE_NAME);
-            }
-        } catch (error) {
-            console.warn("SVG cache unavailable:", error);
-        }
+        const cacheStorage = await getSvgCache();
 
         // Try persistent cache first.
         if (cacheStorage) {
@@ -481,6 +574,7 @@ async function getTemplateSource(url, page) {
 
     return promise;
 }
+
 
 
 // --------------------------------------------------
@@ -584,6 +678,7 @@ export async function preloadInvitation(invitation) {
 // PRELOAD INVITATION TEMPLATES
 // --------------------------------------------------
 
+
 export async function preloadInvitationTemplates(invitations) {
 
     const pages = invitations.flatMap(invitation =>
@@ -593,18 +688,43 @@ export async function preloadInvitationTemplates(invitations) {
         }))
     );
 
-    // Deduplicate URLs in case templates share pages.
+    // Avoid loading the same template page more than once.
     const uniquePages = [
         ...new Map(pages.map(item => [item.url, item])).values()
     ];
 
     await Promise.all(
-        uniquePages.map(({ page, url }) =>
-            getTemplateSource(url, page).catch(error => {
-                console.warn(`Could not preload ${page.file}:`, error);
-            })
-        )
+        uniquePages.map(async ({ page, url }) => {
+
+            try {
+                // 1. Retrieve and cache the SVG source.
+                const source = await getTemplateSource(url, page);
+
+                // 2. Preload fonts used by SVG templates.
+                if (page.type === "svg") {
+
+                    const doc = new DOMParser().parseFromString(
+                        source,
+                        "image/svg+xml"
+                    );
+
+                    if (doc.querySelector("parsererror")) {
+                        throw new Error(`Invalid SVG: ${page.file}`);
+                    }
+
+                    await loadSvgFonts(doc.documentElement, url);
+                }
+
+            } catch (error) {
+                console.warn(
+                    `Could not preload template or fonts for ${page.file}:`,
+                    error
+                );
+            }
+        })
     );
 
-    console.log(`Preloaded ${uniquePages.length} invitation pages.`);
+    console.log(
+        `Preloaded ${uniquePages.length} invitation pages and their fonts.`
+    );
 }

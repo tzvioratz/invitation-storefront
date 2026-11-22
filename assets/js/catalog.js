@@ -71,6 +71,10 @@ async function render() {
     }
 
     await Promise.all(matches.map(async (i) => {
+        const catalogStart = performance.now();
+        console.log(
+    `ALL CATALOG PREVIEWS: ${(performance.now() - catalogStart).toFixed(0)}ms`
+);
         const card = document.createElement("article");
         card.className = "catalog-card";
 
@@ -129,11 +133,17 @@ async function render() {
         $("#catalogGrid").append(card);
 
         try {
-            const result = await renderInvitation({
-                invitation: i,
-                target: art,
-                size: "thumb"
-            });
+            const start = performance.now();
+
+const result = await renderInvitation({
+    invitation: i,
+    target: art,
+    size: "thumb"
+});
+
+console.log(
+    `Invitation ${i.title}: ${(performance.now() - start).toFixed(0)}ms`
+);
 
             addPreviewControls(art, result.pages);
         } catch (e) {
