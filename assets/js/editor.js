@@ -597,16 +597,7 @@ async function renderAddOnSelection(addOn, state, previewContainer, fieldsContai
     }
 }
 
-
-
-
-
-function buildAddOnWordingFields(
-    state,
-    rendered,
-    wording,
-    container
-) {
+function buildAddOnWordingFields(state,rendered,wording,container) {
     container.replaceChildren();
 
     if (!rendered?.fields?.length) {
@@ -735,10 +726,6 @@ function buildAddOnWordingFields(
         container.appendChild(hideButton);
     }
 }
-
-
-
-
 
 function buildAddOnCustomFields(addOn, state, container) {
     container.replaceChildren();
@@ -947,7 +934,6 @@ function updateQuantityOptionPrices() {
     });
 }
 
-
 function getHiddenFieldGroups(fields) {
     const groups = [];
     let currentGroup = [];
@@ -969,8 +955,6 @@ function getHiddenFieldGroups(fields) {
 
     return groups;
 }
-
-
 
 function buildFields() {
     const container = $("#fieldControls");
@@ -1185,7 +1169,6 @@ sections.forEach((section, pageIndex) => {
     lastWrapper.after(hideButton);
 });
 }
-
 
 function createHebrewKeyboard(input, updateField) {
     const keyboard = document.createElement("div");

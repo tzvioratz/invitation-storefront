@@ -58,18 +58,74 @@ export function createAdvancedControls(field, styles, onChange) {
     row("Color", color);
 
     // Font
-    const font = document.createElement("select");
-    font.add(new Option("Template default", ""));
-    ADVANCED_FONTS.forEach(f => font.add(new Option(f, f)));
-    font.addEventListener("change", async () => {
-        const family = font.value;
-        if (family) {
-            try { await ensureGoogleFont(family); }
-            catch (e) { console.warn("Could not load font:", family, e); }
-        }
+// Font
+const fontControls = document.createElement("div");
+fontControls.className = "field-advanced-font-controls";
+
+const fontInput = document.createElement("input");
+fontInput.type = "text";
+fontInput.placeholder = "Enter Google Font name";
+fontInput.autocomplete = "off";
+fontInput.spellcheck = false;
+fontInput.value = styles[field.id]?.fontFamily || "";
+
+const applyFontButton = document.createElement("button");
+applyFontButton.type = "button";
+applyFontButton.textContent = "Apply";
+applyFontButton.className = "field-advanced-font-apply";
+
+const fontStatus = document.createElement("span");
+fontStatus.className = "field-advanced-font-status";
+
+const fontLink = document.createElement("a");
+fontLink.href = "https://fonts.google.com/";
+fontLink.target = "_blank";
+fontLink.rel = "noopener noreferrer";
+fontLink.textContent = "Browse Google Fonts";
+fontLink.className = "field-advanced-font-link";
+
+async function applyFont() {
+    const family = fontInput.value.trim();
+
+    if (!family) {
+        fontStatus.textContent = "Enter a font name first.";
+        return;
+    }
+
+    applyFontButton.disabled = true;
+    fontStatus.textContent = "Loading font...";
+
+    try {
+        await ensureGoogleFont(family);
+
         update({ fontFamily: family });
-    });
-    row("Font", font);
+
+        fontStatus.textContent = "Font applied!";
+    } catch (error) {
+        console.warn("Could not load Google Font:", family, error);
+        fontStatus.textContent = "Could not load this font. Check its name.";
+    } finally {
+        applyFontButton.disabled = false;
+    }
+}
+
+applyFontButton.addEventListener("click", applyFont);
+
+fontInput.addEventListener("keydown", event => {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        applyFont();
+    }
+});
+
+fontControls.append(
+    fontInput,
+    applyFontButton,
+    fontLink,
+    fontStatus
+);
+
+row("Font", fontControls);
 
     // Size
     const size = document.createElement("input");
@@ -87,9 +143,7 @@ export function createAdvancedControls(field, styles, onChange) {
     const saved = styles[field.id] || {};
 if (saved.color) color.value = toHex(saved.color);
 if (saved.fontFamily) {
-    if (![...font.options].some(o => o.value === saved.fontFamily))
-        font.add(new Option(saved.fontFamily, saved.fontFamily));
-    font.value = saved.fontFamily;
+    fontInput.value = saved.fontFamily;
 }
 if (saved.fontSize) size.value = saved.fontSize;
 toggle.classList.toggle("has-overrides", field.id in styles);
@@ -102,6 +156,7 @@ toggle.classList.toggle("has-overrides", field.id in styles);
     reset.addEventListener("click", () => {
         color.value = toHex(defaults.color);
         font.value = "";
+        fontStatus.textContent = "";
         size.value = "";
         delete styles[field.id];
         toggle.classList.remove("has-overrides");

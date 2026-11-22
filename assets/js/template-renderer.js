@@ -507,10 +507,28 @@ export function updateRenderedWording(rendered, values, styles = {}) {
 }
 // google fonts
 export async function ensureGoogleFont(family) {
+    family = String(family || "").trim();
+
+    if (!family) {
+        throw new Error("Font name is required.");
+    }
+
     const url = "https://fonts.googleapis.com/css2?family=" +
-        encodeURIComponent(family).replace(/%20/g, "+") + "&display=swap";
+        encodeURIComponent(family).replace(/%20/g, "+") +
+        "&display=swap";
+
     await loadGoogleStylesheet(url);
-    await document.fonts.load(`16px "${family}"`, "אבג ABC");
+
+    const loaded = await document.fonts.load(
+        `16px "${family.replace(/["\\]/g, "\\$&")}"`,
+        "אבג ABC"
+    );
+
+    if (!loaded.length) {
+        throw new Error(`Font "${family}" could not be found.`);
+    }
+
+    return loaded;
 }
 
 //cache
