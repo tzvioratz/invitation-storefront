@@ -1,3 +1,53 @@
-import {getStoreData,getActiveInvitations} from "./data.js";
-try{const data=await getStoreData();const active=getActiveInvitations(data);const occasions=[...new Set(active.flatMap(i=>i.occasions))];const styles=[...new Set(active.flatMap(i=>i.styles))];document.querySelector("#occasionLinks").innerHTML=occasions.map(x=>`<a href="catalog/?occasion=${encodeURIComponent(x)}">${escapeHTML(x)}</a>`).join("");document.querySelector("#styleLinks").innerHTML=styles.map(x=>`<a href="catalog/?style=${encodeURIComponent(x)}">${escapeHTML(x)}</a>`).join("");}catch(e){document.querySelector("#occasionLinks").textContent=e.message;}
-function escapeHTML(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+
+import {
+    getStoreData,
+    getActiveInvitations
+} from "./data.js";
+
+import {
+    preloadInvitationTemplates
+} from "./template-renderer.js";
+
+try {
+
+    const data = await getStoreData();
+    const active = getActiveInvitations(data);
+
+    const occasions = [
+        ...new Set(active.flatMap(i => i.occasions))
+    ];
+
+    const styles = [
+        ...new Set(active.flatMap(i => i.styles))
+    ];
+
+    document.querySelector("#occasionLinks").innerHTML =
+        occasions.map(x =>
+            `<a href="catalog/?occasion=${encodeURIComponent(x)}">${escapeHTML(x)}</a>`
+        ).join("");
+
+    document.querySelector("#styleLinks").innerHTML =
+        styles.map(x =>
+            `<a href="catalog/?style=${encodeURIComponent(x)}">${escapeHTML(x)}</a>`
+        ).join("");
+
+    // Preload all active invitation SVGs in the background.
+    preloadInvitationTemplates(active).catch(error => {
+        console.warn("Invitation preloading failed:", error);
+    });
+
+} catch (e) {
+
+    document.querySelector("#occasionLinks").textContent = e.message;
+
+}
+
+function escapeHTML(s) {
+    return String(s).replace(/[&<>"']/g, c => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    }[c]));
+}

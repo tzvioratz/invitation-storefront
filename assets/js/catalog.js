@@ -1,9 +1,8 @@
-
 import { getStoreData, getActiveInvitations } from "./data.js";
 import { renderInvitation } from "./template-renderer.js";
 import { getPriceRange, money } from "./pricing.js";
 
-const $ = s => document.querySelector(s);
+const $ = (s) => document.querySelector(s);
 
 let data, items;
 
@@ -19,19 +18,17 @@ try {
     $("#styleFilter").value = params.get("style") || "";
 
     render();
-
 } catch (e) {
     $("#catalogMessage").hidden = false;
     $("#catalogMessage").textContent = e.message;
 }
 
 function populateFilters() {
+    const occ = [...new Set(items.flatMap((i) => i.occasions))].sort();
+    const sty = [...new Set(items.flatMap((i) => i.styles))].sort();
 
-    const occ = [...new Set(items.flatMap(i => i.occasions))].sort();
-    const sty = [...new Set(items.flatMap(i => i.styles))].sort();
-
-    occ.forEach(x => $("#occasionFilter").add(new Option(x, x)));
-    sty.forEach(x => $("#styleFilter").add(new Option(x, x)));
+    occ.forEach((x) => $("#occasionFilter").add(new Option(x, x)));
+    sty.forEach((x) => $("#styleFilter").add(new Option(x, x)));
 
     $("#occasionFilter").addEventListener("change", update);
     $("#styleFilter").addEventListener("change", update);
@@ -44,48 +41,36 @@ function populateFilters() {
 }
 
 function update() {
-
     const p = new URLSearchParams();
 
-    if ($("#occasionFilter").value)
-        p.set("occasion", $("#occasionFilter").value);
+    if ($("#occasionFilter").value) p.set("occasion", $("#occasionFilter").value);
 
-    if ($("#styleFilter").value)
-        p.set("style", $("#styleFilter").value);
+    if ($("#styleFilter").value) p.set("style", $("#styleFilter").value);
 
-    history.replaceState(
-        {},
-        "",
-        location.pathname + (p.size ? "?" + p : "")
-    );
+    history.replaceState({}, "", location.pathname + (p.size ? "?" + p : ""));
 
     render();
 }
 
 async function render() {
-
     const occasion = $("#occasionFilter").value;
     const style = $("#styleFilter").value;
 
-    const matches = items.filter(i =>
-        (!occasion || i.occasions.includes(occasion)) &&
-        (!style || i.styles.includes(style))
+    const matches = items.filter(
+        (i) => (!occasion || i.occasions.includes(occasion)) && (!style || i.styles.includes(style))
     );
 
-    $("#resultCount").textContent =
-        `${matches.length} design${matches.length === 1 ? "" : "s"} found`;
+    $("#resultCount").textContent = `${matches.length} design${matches.length === 1 ? "" : "s"} found`;
 
     $("#catalogGrid").replaceChildren();
 
     $("#catalogMessage").hidden = matches.length > 0;
 
     if (!matches.length) {
-        $("#catalogMessage").textContent =
-            "No matching designs. Try clearing one or both filters.";
+        $("#catalogMessage").textContent = "No matching designs. Try clearing one or both filters.";
     }
 
-    for (const i of matches) {
-
+    await Promise.all(matches.map(async (i) => {
         const card = document.createElement("article");
         card.className = "catalog-card";
 
@@ -106,9 +91,7 @@ async function render() {
             <h2>${esc(i.title)}</h2>
 
             <p>
-                ${range
-                    ? `${money(range.min)}–${money(range.max)} per invitation`
-                    : "Contact us for pricing"}
+                ${range ? `${money(range.min)}–${money(range.max)} per invitation` : "Contact us for pricing"}
             </p>
 
             <small class="muted">
@@ -123,30 +106,29 @@ async function render() {
 
         card.append(art, info);
         // Make the entire information section clickable
-const invitationUrl = `../invitation/?id=${encodeURIComponent(i.id)}&${params.toString()}`;
+        const invitationUrl = `../invitation/?id=${encodeURIComponent(i.id)}&${params.toString()}`;
 
-info.style.cursor = "pointer";
-info.setAttribute("role", "link");
-info.setAttribute("tabindex", "0");
-info.setAttribute("aria-label", `View ${i.title}`);
+        info.style.cursor = "pointer";
+        info.setAttribute("role", "link");
+        info.setAttribute("tabindex", "0");
+        info.setAttribute("aria-label", `View ${i.title}`);
 
-info.addEventListener("click", (e) => {
-    // Let the actual button/link handle its own click
-    if (e.target.closest("a, button")) return;
+        info.addEventListener("click", (e) => {
+            // Let the actual button/link handle its own click
+            if (e.target.closest("a, button")) return;
 
-    location.href = invitationUrl;
-});
+            location.href = invitationUrl;
+        });
 
-info.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        location.href = invitationUrl;
-    }
-});
+        info.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                location.href = invitationUrl;
+            }
+        });
         $("#catalogGrid").append(card);
 
         try {
-
             const result = await renderInvitation({
                 invitation: i,
                 target: art,
@@ -154,18 +136,15 @@ info.addEventListener("keydown", (e) => {
             });
 
             addPreviewControls(art, result.pages);
-
         } catch (e) {
             art.textContent = "Preview unavailable";
         }
-    }
+    }));
 }
-
 
 // Add arrows and page dots to an invitation preview
 
 function addPreviewControls(container, pages) {
-
     if (pages.length <= 1) return;
 
     const stack = container.querySelector(".catalog-page-stack");
@@ -192,7 +171,6 @@ function addPreviewControls(container, pages) {
     dots.className = "preview-dots";
 
     pages.forEach((page, index) => {
-
         const dot = document.createElement("button");
 
         dot.type = "button";
@@ -207,23 +185,15 @@ function addPreviewControls(container, pages) {
     });
 
     function showPage(index) {
-
         currentPage = (index + pages.length) % pages.length;
 
         // Rotate the stack so the selected page is first
-        const rotated = [
-            ...pageElements.slice(currentPage),
-            ...pageElements.slice(0, currentPage)
-        ];
+        const rotated = [...pageElements.slice(currentPage), ...pageElements.slice(0, currentPage)];
 
         rotated.forEach((page, position) => {
-
             // Move each page into its new stack position
             page.style.setProperty("--page-index", position);
-            page.style.setProperty(
-                "--page-offset",
-                `${position * 150}px`
-            );
+            page.style.setProperty("--page-offset", `${position * 150}px`);
 
             page.style.zIndex = 100 - position;
 
@@ -249,14 +219,16 @@ function addPreviewControls(container, pages) {
     showPage(0);
 }
 
-
-
 function esc(s) {
-    return String(s).replace(/[&<>"']/g, c => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;"
-    }[c]));
+    return String(s).replace(
+        /[&<>"']/g,
+        (c) =>
+            ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;"
+            })[c]
+    );
 }

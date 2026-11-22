@@ -36,16 +36,7 @@ selection = {
 buildQuantityOptions();
 buildOptions();
 
-// Load and display optional add-ons.
-availableAddOns = await getActiveAddOns();
-
-console.log("Add-ons loaded:", availableAddOns);
-
-await buildAddOnControls();
-
-console.log("Add-on controls built.");
-
-rendered = await renderInvitation({
+    rendered = await renderInvitation({
     invitation,
     target: document.createElement("div"),
     wording,
@@ -53,6 +44,15 @@ rendered = await renderInvitation({
 });
     buildFields();
     drawPages();
+// Load and display optional add-ons.
+availableAddOns = await getActiveAddOns();
+
+
+await buildAddOnControls();
+
+console.log("Add-on controls built.");
+
+
     updatePrice();
 } catch (e) {
     $("#editorTitle").textContent = "Unable to load invitation";
@@ -1419,19 +1419,7 @@ updateQuantityOptionPrices();
         });
     }
 
-    // Calculate each selected add-on separately.
-    for (const [addOnId, state] of Object.entries(selectedAddOns)) {
 
-    let addOnTotal = 0;
-
-    const invoiceItems = [];
-
-    // Invitation line item.
-    invoiceItems.push({
-        title: invitation.title,
-        description: `${qty} invitations · ${money(invitationTotal / qty)} each`,
-        price: invitationTotal
-    });
 
     // Calculate each selected add-on separately.
     for (const [addOnId, state] of Object.entries(selectedAddOns)) {
@@ -1459,7 +1447,7 @@ updateQuantityOptionPrices();
                 (design ? ` · ${design.title}` : ""),
             price: itemTotal
         });
-    }}
+    }
 
     // Calculate grand total.
     const total = invitationTotal + addOnTotal;

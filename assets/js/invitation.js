@@ -3,6 +3,7 @@ import { getStoreData, getInvitation } from "./data.js";
 import { renderInvitation } from "./template-renderer.js";
 import { getPriceRange, money } from "./pricing.js";
 
+
 const $ = (s) => document.querySelector(s);
 
 const p = new URLSearchParams(location.search);
@@ -36,28 +37,40 @@ try {
     .map(([k, v]) => `<p><b>${k}:</b> ${v.map(esc).join(", ")}</p>`)
     .join("");
 
-  // Render invitation preview
-  const target = $("#detailPages");
+  // Render invitation preview and discover its fields.
+const target = $("#detailPages");
 
-  await renderInvitation({
+const rendered = await renderInvitation({
     invitation: inv,
     target
-  });
+});
 
-  target.classList.add("detail-pages");
+target.classList.add("detail-pages");
 
-  // Customize link
-  const link = new URL("../customize/", location.href);
-  link.searchParams.set("id", id);
-    
-    // Preload the customize page.
+console.log("Invitation fields prepared:", rendered.fields);
+
+// Customize link
+const link = new URL("../customize/", location.href);
+link.searchParams.set("id", id);
+
+if (p.get("occasion")) {
+    link.searchParams.set("occasion", p.get("occasion"));
+}
+
+if (p.get("style")) {
+    link.searchParams.set("style", p.get("style"));
+}
+
+$("#customizeLink").href = link.href;
+
+// Preload the customize page.
 const prefetch = document.createElement("link");
-
 prefetch.rel = "prefetch";
 prefetch.as = "document";
 prefetch.href = link.href;
 
 document.head.appendChild(prefetch);
+
 
   if (p.get("occasion")) {
     link.searchParams.set("occasion", p.get("occasion"));
@@ -98,3 +111,4 @@ function esc(s) {
     "'": "&#39;"
   }[c]));
 }
+

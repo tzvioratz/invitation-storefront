@@ -3,6 +3,9 @@ import { discoverFields, applyWording } from "./field-discovery.js";
 
 const cache = new Map();
 const SVG_CACHE_NAME = "invitation-templates-v1";
+const refreshing = new Map();
+
+const DISABLE_SVG_CACHE = false;
 const fontLoadCache = new Map();
 const fontStylesheetCache = new Map();
 
@@ -412,46 +415,196 @@ export async function ensureGoogleFont(family) {
 
 //cache
 
+
+
 async function getTemplateSource(url, page) {
 
-    if (!cache.has(url)) {
-
-        const promise = (async () => {
-
-            const cacheStorage = await caches.open(SVG_CACHE_NAME);
-            const cached = await cacheStorage.match(url);
-
-            // Always check the server for a newer copy and save it for next time.
-            const refresh = fetch(url, { cache: "no-cache" }).then(async response => {
-
-                if (!response.ok) {
-                    throw new Error(
-                        `Could not load template page: ${page.file}`
-                    );
-                }
-
-                await cacheStorage.put(url, response.clone());
-
-                return response;
-            });
-
-            // Cached copy exists: show it now and let the refresh finish quietly.
-            if (cached) {
-                refresh.catch(() => {});
-                return cached.text();
-            }
-
-            // Nothing cached yet: wait for the download.
-            return (await refresh).text();
-
-        })();
-
-        cache.set(url, promise);
-
-        promise.catch(() => {
-            cache.delete(url);
+    // Development mode: always fetch fresh.
+    if (DISABLE_SVG_CACHE) {
+        const response = await fetch(url, {
+            cache: "no-store"
         });
+
+        if (!response.ok) {
+            throw new Error(`Could not load template page: ${page.file}`);
+        }
+
+        return response.text();
     }
 
-    return cache.get(url);
+    // Reuse an existing in-memory result.
+    if (cache.has(url)) {
+        return cache.get(url);
+    }
+
+    const promise = (async () => {
+
+        let cacheStorage = null;
+
+        try {
+            if ("caches" in window) {
+                cacheStorage = await caches.open(SVG_CACHE_NAME);
+            }
+        } catch (error) {
+            console.warn("SVG cache unavailable:", error);
+        }
+
+        // Try persistent cache first.
+        if (cacheStorage) {
+            try {
+                const cached = await cacheStorage.match(url);
+
+                if (cached) {
+                    const cachedText = await cached.text();
+
+                    // Return cached SVG immediately.
+                    // Update the cache in the background.
+                    refreshTemplate(url, page, cacheStorage);
+
+                    return cachedText;
+                }
+            } catch (error) {
+                console.warn("Could not read SVG cache:", error);
+            }
+        }
+
+        // No cached version: download it now.
+        return await downloadTemplate(url, page, cacheStorage);
+
+    })();
+
+    cache.set(url, promise);
+
+    promise.catch(() => {
+        cache.delete(url);
+    });
+
+    return promise;
+}
+
+
+// --------------------------------------------------
+// BACKGROUND TEMPLATE UPDATE
+// --------------------------------------------------
+
+function refreshTemplate(url, page, cacheStorage) {
+
+    // Don't start duplicate background requests.
+    if (refreshing.has(url)) {
+        return refreshing.get(url);
+    }
+
+    const promise = downloadTemplate(url, page, cacheStorage)
+        .then(freshText => {
+
+            // Update the in-memory copy too.
+            cache.set(url, Promise.resolve(freshText));
+
+            return freshText;
+
+        })
+        .catch(error => {
+            console.warn(`Background update failed: ${page.file}`, error);
+        })
+        .finally(() => {
+            refreshing.delete(url);
+        });
+
+    refreshing.set(url, promise);
+
+    return promise;
+}
+
+
+// --------------------------------------------------
+// DOWNLOAD TEMPLATE
+// --------------------------------------------------
+
+async function downloadTemplate(url, page, cacheStorage) {
+
+    const response = await fetch(url, {
+        cache: "no-cache"
+    });
+
+    if (!response.ok) {
+        throw new Error(`Could not load template page: ${page.file}`);
+    }
+
+    const freshText = await response.text();
+
+    // Save the latest version for the next visit.
+    if (cacheStorage) {
+        try {
+            await cacheStorage.put(
+                url,
+                new Response(freshText, {
+                    headers: {
+                        "Content-Type": response.headers.get("Content-Type") || "image/svg+xml"
+                    }
+                })
+            );
+        } catch (error) {
+            console.warn("Could not update SVG cache:", error);
+        }
+    }
+
+    return freshText;
+}
+
+
+
+
+export async function preloadInvitation(invitation) {
+
+    // Load all pages concurrently instead of one at a time.
+    const pages = await Promise.all(
+        invitation.pages.map(async (page, index) => {
+
+            const element = await loadPage(page);
+
+            element.dataset.pageIndex = index;
+            element.dataset.pageLabel = page.label;
+
+            return {
+                page,
+                element
+            };
+        })
+    );
+
+    // Discover editable fields while the templates are loaded.
+    const fields = discoverFields(pages);
+
+    return {
+        pages,
+        fields
+    };
+}
+// --------------------------------------------------
+// PRELOAD INVITATION TEMPLATES
+// --------------------------------------------------
+
+export async function preloadInvitationTemplates(invitations) {
+
+    const pages = invitations.flatMap(invitation =>
+        invitation.pages.map(page => ({
+            page,
+            url: new URL("../../" + page.file, import.meta.url).href
+        }))
+    );
+
+    // Deduplicate URLs in case templates share pages.
+    const uniquePages = [
+        ...new Map(pages.map(item => [item.url, item])).values()
+    ];
+
+    await Promise.all(
+        uniquePages.map(({ page, url }) =>
+            getTemplateSource(url, page).catch(error => {
+                console.warn(`Could not preload ${page.file}:`, error);
+            })
+        )
+    );
+
+    console.log(`Preloaded ${uniquePages.length} invitation pages.`);
 }
