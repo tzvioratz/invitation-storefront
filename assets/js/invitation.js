@@ -49,6 +49,15 @@ try {
   // Customize link
   const link = new URL("../customize/", location.href);
   link.searchParams.set("id", id);
+    
+    // Preload the customize page.
+const prefetch = document.createElement("link");
+
+prefetch.rel = "prefetch";
+prefetch.as = "document";
+prefetch.href = link.href;
+
+document.head.appendChild(prefetch);
 
   if (p.get("occasion")) {
     link.searchParams.set("occasion", p.get("occasion"));

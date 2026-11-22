@@ -30,8 +30,6 @@ validatePricing(invitation);
 selection = {
     format: invitation.formats[0],
     paper: invitation.papers[0],
-    font: invitation.fonts[0],
-    color: invitation.colors[0],
     design: invitation.designOptions[0]
 };
 
@@ -120,12 +118,35 @@ function getOptionAdjustment(key, value) {
     return 0;
 }
 
+function getOptionBaseFee(key, value) {
+    if (key === "design")
+        return Number(invitation.designBaseFees?.[value] || 0);
+
+    return 0;
+}
+
+// Combines the per-invitation change and the flat per-order change
+// into one label, e.g. "+$0.25 per invitation, +$10.00 per order".
+function formatOptionPriceChange(perUnit, flat) {
+    const EPS = 0.000001;
+    const parts = [];
+
+    if (Math.abs(perUnit) > EPS) parts.push(formatAdjustment(perUnit));
+
+    if (Math.abs(flat) > EPS) {
+        parts.push(
+            `${flat > 0 ? "+" : "−"}${money(Math.abs(flat))} / order`
+        );
+    }
+
+    // Nothing changes: reuse your existing "no change" wording.
+    return parts.length ? parts.join(", ") : formatAdjustment(0);
+}
+
 function buildOptions() {
     const groups = [
         ["format", "Card format", invitation.formats],
         ["paper", "Paper", invitation.papers],
-        ["font", "Font", invitation.fonts],
-        ["color", "Color", invitation.colors],
         ["design", "Design option", invitation.designOptions]
     ];
 
@@ -157,10 +178,18 @@ function buildOptions() {
             // Compare every option against the CURRENT selection.
             const currentAdjustment =
                 getOptionAdjustment(key, selection[key]);
+            const currentBaseFee =
+                getOptionBaseFee(key, selection[key]);
 
             values.forEach(value => {
                 const difference =
                     getOptionAdjustment(key, value) - currentAdjustment;
+                const baseDifference =
+                    getOptionBaseFee(key, value) - currentBaseFee;
+
+                const EPS = 0.000001;
+                const up = difference > EPS || baseDifference > EPS;
+                const down = difference < -EPS || baseDifference < -EPS;
 
                 const option = document.createElement("button");
                 option.type = "button";
@@ -171,11 +200,12 @@ function buildOptions() {
 
                 const price = document.createElement("span");
                 price.className = "dropdown-price " +
-                    (difference > 0.000001 ? "price-increase" :
-                     difference < -0.000001 ? "price-decrease" :
+                    (up && !down ? "price-increase" :
+                     down && !up ? "price-decrease" :
                      "price-neutral");
 
-                price.textContent = formatAdjustment(difference);
+                price.textContent =
+                    formatOptionPriceChange(difference, baseDifference);
 
                 option.append(name, price);
 
@@ -1357,12 +1387,40 @@ updateQuantityOptionPrices();
         return;
     }
 
+       // Calculate invitation price.
     // Calculate invitation price.
     const invitationTotal = calculateEstimate(
         invitation,
         selection,
         qty
     );
+
+    let addOnTotal = 0;
+
+    const invoiceItems = [];          // must come first
+
+    // Invitation line item (replacement block starts here).
+    const designBaseFee = Number(
+        invitation.designBaseFees?.[selection.design] || 0
+    );
+    const cardsTotal = invitationTotal - designBaseFee;
+
+    invoiceItems.push({
+        title: invitation.title,
+        description: `${qty} invitations · ${money(cardsTotal / qty)} each`,
+        price: cardsTotal
+    });
+
+    if (designBaseFee > 0) {
+        invoiceItems.push({
+            title: "Design fee",
+            description: selection.design,
+            price: designBaseFee
+        });
+    }
+
+    // Calculate each selected add-on separately.
+    for (const [addOnId, state] of Object.entries(selectedAddOns)) {
 
     let addOnTotal = 0;
 
@@ -1401,7 +1459,7 @@ updateQuantityOptionPrices();
                 (design ? ` · ${design.title}` : ""),
             price: itemTotal
         });
-    }
+    }}
 
     // Calculate grand total.
     const total = invitationTotal + addOnTotal;
@@ -1565,8 +1623,6 @@ $("#reviewButton").addEventListener("click", () => {
         Invitation: invitation.title,
         Format: selection.format,
         Paper: selection.paper,
-        Font: selection.font,
-        Color: selection.color,
         Design: selection.design,
         Quantity: qty,
         Name: name,

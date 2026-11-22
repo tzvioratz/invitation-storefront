@@ -39,13 +39,14 @@ export function calculateEstimate(invitation, selection, quantity) {
   }
 
   const baseCharge = Number(invitation.baseCharge || 0);
+const designBaseFee = Number(invitation.designBaseFees?.[selection.design] ?? 0 );
   const unitPrice = getAdjustedUnitPrice(invitation, selection);
 
   const premium = isIntermediateQuantity(invitation, qty)
     ? Number(invitation.intermediatePremium || 0)
     : 0;
 
-  return Math.max(0, baseCharge + qty * unitPrice + premium);
+  return Math.max(0, baseCharge +designBaseFee+ qty * unitPrice + premium);
 }
 
 export function calculateEffectiveUnitPrice(invitation, selection, quantity) {
@@ -74,22 +75,23 @@ export function getPriceRange(invitation) {
   const f = adjustmentBounds(invitation.formatAdjustments);
   const p = adjustmentBounds(invitation.paperAdjustments);
   const c = adjustmentBounds(invitation.customizationFees);
+  const d = adjustmentBounds(invitation.designBaseFees);
 
   const base = Number(invitation.baseCharge || 0);
   const unit = Number(invitation.unitPrice || 0);
   const premium = Number(invitation.intermediatePremium || 0);
 
-  const perInvitation = (q, adj) => {
+  const perInvitation = (q, adj, flat) => {
     const extra = isIntermediateQuantity(invitation, q) ? premium : 0;
-    return Math.max(0, base + q * (unit + adj) + extra) / q;
+    return Math.max(0, base + flat + q * (unit + adj) + extra) / q;
   };
 
   const minAdj = f.min + p.min + c.min;
   const maxAdj = f.max + p.max + c.max;
 
   return {
-    min: Math.min(...quantities.map(q => perInvitation(q, minAdj))),
-    max: Math.max(...quantities.map(q => perInvitation(q, maxAdj)))
+    min: Math.min(...quantities.map(q => perInvitation(q, minAdj, d.min))),
+    max: Math.max(...quantities.map(q => perInvitation(q, maxAdj, d.max)))
   };
 }
 

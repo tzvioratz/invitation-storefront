@@ -39,6 +39,7 @@ function normalizeInvitation(r) {
     formatAdjustments: parseJSON(r.formatAdjustments, {}),
     paperAdjustments: parseJSON(r.paperAdjustments, {}),
     customizationFees: parseJSON(r.customizationFees, {}),
+    designBaseFees: parseJSON(r.designBaseFees, {}),
 
     // New pricing fields from Google Sheets
 baseCharge: parseNumber(r.baseCharge),
