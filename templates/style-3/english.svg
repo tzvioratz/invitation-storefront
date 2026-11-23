@@ -1,12 +1,32 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="5.5in" height="8.5in" viewBox="0 0 396 612">
   
     
-  
-  <defs>
-    <style type="text/css">
-      
-    </style>
-  </defs>
+<metadata>
+  <font-declaration
+      data-font-family="Alex Brush"
+      data-font-provider="google"
+      data-font-source="https://fonts.googleapis.com/css2?family=Alex+Brush&amp;display=swap"
+      data-font-weight="400"
+      data-font-style="normal" />
+  <font-declaration
+      data-font-family="Frank Ruhl Libre"
+      data-font-provider="google"
+      data-font-source="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&amp;display=swap"
+      data-font-weight="400"
+      data-font-style="normal" />
+  <font-declaration
+      data-font-family="Frank Ruhl Libre"
+      data-font-provider="google"
+      data-font-source="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&amp;display=swap"
+      data-font-weight="500"
+      data-font-style="normal" />
+</metadata>
+<defs>
+  <style type="text/css"><![CDATA[
+    @import url("https://fonts.googleapis.com/css2?family=Alex+Brush&display=swap");
+    @import url("https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&display=swap");
+  ]]></style>
+</defs>
 
   <rect x="0" y="0" width="396" height="612" fill="#FFFFFF" />
 
