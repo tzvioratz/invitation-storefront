@@ -1,7 +1,7 @@
 import { getStoreData } from "./data.js";
 import { loadAddOnData } from "./addons-data.js";
 import { createHebrewKeyboard } from "./hebrew-keyboard.js";
-import { renderInvitation, updateRenderedWording, ensureGoogleFont } from "./template-renderer.js";
+import { renderInvitation, updateRenderedWording, ensureGoogleFont, centerAnchoredText } from "./template-renderer.js";
 import { sanitizeFieldStyles, setFieldStyle } from "./field-discovery.js";
 // Optional: used to load declared fonts for imported SVGs if template-renderer.js exports loadSvgFonts.
 import * as templateRenderer from "./template-renderer.js";
@@ -737,11 +737,13 @@ function drawPageView() {
 
         b.addEventListener("click", () => { activePiece = i; drawPageView(); });
         thumbs.append(b);
+        centerAnchoredText(frame);
     });
 
     const piece = pieces[activePiece];
     const clone = piece.element.cloneNode(true);
     large.append(clone);
+    centerAnchoredText(clone);
 
     if (activeFieldId && activeSourceId === piece.src.id) {
         highlightActiveField(clone, activeFieldId);
@@ -888,6 +890,16 @@ function exportPieceSVG(piece) {
     if (!svg) return;
 
     const clone = svg.cloneNode(true);
+    
+    
+    // Center before serializing. Needs a rendered (not display:none) host.
+    const host = document.createElement("div");
+    host.style.cssText = "position:absolute;left:-99999px;top:0;width:400px;height:600px;visibility:hidden";
+    host.append(clone);
+    document.body.append(host);
+    centerAnchoredText(host);
+    host.remove();
+    
     clone.querySelectorAll(".field-highlight-box").forEach(n => n.remove());
     clone.querySelectorAll(".field-highlight").forEach(n => n.classList.remove("field-highlight"));
 
@@ -1423,7 +1435,9 @@ function renderSheets() {
 
         container.append(sheet);
     });
-
+    // Measuring needs a visible element, so skip while the Sheets tab is hidden.
+    // setView("sheets") calls renderSheets() again once it's shown.
+    if (!$("#sheetsView").hidden) centerAnchoredText(container);
     updatePreviewScale(s);
 }
 
@@ -1526,6 +1540,7 @@ $("#tabSheets").addEventListener("click", () => setView("sheets"));
 
 $("#printButton").addEventListener("click", () => {
     if (!pieces.length) return;
+    if ($("#sheetsView").hidden) setView("sheets");
     renderSheets();
     window.print();
 });

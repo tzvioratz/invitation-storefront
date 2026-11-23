@@ -1,5 +1,5 @@
 import { getStoreData, getInvitation } from "./data.js";
-import { renderInvitation, updateRenderedWording } from "./template-renderer.js";
+import { renderInvitation, updateRenderedWording, centerAnchoredText } from "./template-renderer.js";
 import {
     calculateEstimate,
     calculateEffectiveUnitPrice,
@@ -342,6 +342,7 @@ async function buildAddOnControls() {
             noButton.setAttribute("aria-pressed", String(!enabled));
 
             configuration.hidden = !enabled;
+            if (enabled) centerAnchoredText(configuration);
             updatePrice();
         }
 
@@ -1342,12 +1343,14 @@ function drawPages() {
         });
 
         thumbs.append(b);
+        centerAnchoredText(thumbFrame);  
     });
 
     // Display only the selected page in the large preview.
     const activeElement = rendered.pages[activePage].element.cloneNode(true);
 
     large.append(activeElement);
+    centerAnchoredText(activeElement);
 
     if (activeFieldId) {
         highlightActiveField(activeElement);

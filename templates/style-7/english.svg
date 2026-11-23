@@ -1,0 +1,77 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" width="5.5in" height="8.5in" viewBox="0 0 396 612">
+
+<metadata>
+  <font-declaration
+      data-font-family="Alex Brush"
+      data-font-provider="google"
+      data-font-source="https://fonts.googleapis.com/css2?family=Alex+Brush&amp;display=swap"
+      data-font-weight="400"
+      data-font-style="normal" />
+  <font-declaration
+      data-font-family="Montserrat"
+      data-font-provider="google"
+      data-font-source="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&amp;display=swap"
+      data-font-weight="400"
+      data-font-style="normal" />
+  <font-declaration
+      data-font-family="Montserrat"
+      data-font-provider="google"
+      data-font-source="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&amp;display=swap"
+      data-font-weight="500"
+      data-font-style="normal" />
+  <font-declaration
+      data-font-family="Montserrat"
+      data-font-provider="google"
+      data-font-source="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&amp;display=swap"
+      data-font-weight="600"
+      data-font-style="normal" />
+</metadata>
+<defs>
+  <style type="text/css"><![CDATA[
+    @import url("https://fonts.googleapis.com/css2?family=Alex+Brush&display=swap");
+    @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap");
+  ]]></style>
+</defs>
+
+<rect x="0" y="0" width="396" height="612" fill="#FFFFFF" />
+
+<text x="177" y="84" font-family="Alex Brush" font-size="38" font-weight="400" font-style="normal" fill="#1E1E1E" text-anchor="middle"
+      data-field="card2_english_initial_b" data-label="Decorative Initial B" data-editor-hidden="true">B</text>
+<text x="198" y="106" font-family="Alex Brush" font-size="58" font-weight="400" font-style="normal" fill="#1E1E1E" text-anchor="middle"
+      data-field="card2_english_initial_f" data-label="Decorative Initial F" data-editor-hidden="true">F</text>
+<text x="220" y="114" font-family="Alex Brush" font-size="38" font-weight="400" font-style="normal" fill="#1E1E1E" text-anchor="middle"
+      data-field="card2_english_initial_a" data-label="Decorative Initial A" data-editor-hidden="true">A</text>
+
+<text x="198" y="160" font-family="Montserrat" font-size="8.2" font-weight="500" font-style="normal" letter-spacing="1.4" fill="#222222" text-anchor="middle"
+      data-field="card2_english_gratitude" data-label="Opening Religious Wording" data-editor-hidden="true">WITH GRATITUDE TO HASHEM YISBORACH</text>
+<text x="198" y="178" font-family="Montserrat" font-size="8.2" font-weight="500" font-style="normal" letter-spacing="1.4" fill="#222222" text-anchor="middle"
+      data-field="card2_english_groom_parents" data-label="Groom's Parents">RABBI AND MRS. AARON ROSENBAUM</text>
+<text x="198" y="196" font-family="Montserrat" font-size="8.2" font-weight="500" font-style="normal" letter-spacing="1.4" fill="#222222" text-anchor="middle"
+      data-field="card2_english_bride_parents" data-label="Bride's Parents">MR. AND MRS. YITZCHOK FELDMAN</text>
+<text x="198" y="214" font-family="Montserrat" font-size="8.2" font-weight="500" font-style="normal" letter-spacing="1.4" fill="#222222" text-anchor="middle"
+      data-field="card2_english_invitation_wording" data-label="Invitation Wording" data-editor-hidden="true">WOULD BE HONORED BY YOUR PRESENCE</text>
+<text x="198" y="232" font-family="Montserrat" font-size="8.2" font-weight="500" font-style="normal" letter-spacing="1.4" fill="#222222" text-anchor="middle"
+      data-field="card2_english_marriage_intro" data-label="Marriage Introduction" data-editor-hidden="true">AT THE MARRIAGE OF THEIR CHILDREN</text>
+
+<text x="198" y="294" font-family="Alex Brush" font-size="44" font-weight="400" font-style="normal" fill="#1E1E1E" text-anchor="middle"
+      data-field="card2_english_kallah" data-label="Bride's Name">Aliza</text>
+<text x="198" y="324" font-family="Alex Brush" font-size="22" font-weight="400" font-style="normal" fill="#1E1E1E" text-anchor="middle"
+      data-field="card2_english_name_connector" data-label="Name Connector" data-editor-hidden="true">&amp;</text>
+<text x="198" y="362" font-family="Alex Brush" font-size="44" font-weight="400" font-style="normal" fill="#1E1E1E" text-anchor="middle"
+      data-field="card2_english_chosson" data-label="Groom's Name">Boruch</text>
+
+<text x="198" y="408" font-family="Montserrat" font-size="8.2" font-weight="500" font-style="normal" letter-spacing="1.4" fill="#222222" text-anchor="middle"
+      data-field="card2_english_date" data-label="Wedding Date">SUNDAY, THE TWELFTH OF NOVEMBER</text>
+<text x="198" y="426" font-family="Montserrat" font-size="8.2" font-weight="500" font-style="normal" letter-spacing="1.4" fill="#222222" text-anchor="middle"
+      data-field="card2_english_year" data-label="Wedding Year">TWO THOUSAND TWENTY-FOUR</text>
+<text x="198" y="444" font-family="Montserrat" font-size="8.2" font-weight="500" font-style="normal" letter-spacing="1.4" fill="#222222" text-anchor="middle" xml:space="preserve"><tspan data-field="card2_english_reception_prefix" data-label="Reception Wording" data-editor-hidden="true">KABOLAS PONIM AT </tspan><tspan data-field="card2_english_reception_time" data-label="Reception Time">SIX-THIRTY</tspan></text>
+<text x="198" y="462" font-family="Montserrat" font-size="8.2" font-weight="500" font-style="normal" letter-spacing="1.4" fill="#222222" text-anchor="middle" xml:space="preserve"><tspan data-field="card2_english_chupah_prefix" data-label="Chupah Wording" data-editor-hidden="true">CHUPAH AT </tspan><tspan data-field="card2_english_chupah_time" data-label="Chupah Time">SEVEN-THIRTY</tspan></text>
+
+<text x="198" y="502" font-family="Montserrat" font-size="8.4" font-weight="600" font-style="normal" letter-spacing="1.5" fill="#1E1E1E" text-anchor="middle"
+      data-field="card2_english_venue" data-label="Venue">ATERES ELKA</text>
+<text x="198" y="520" font-family="Montserrat" font-size="8.2" font-weight="500" font-style="normal" letter-spacing="1.4" fill="#222222" text-anchor="middle"
+      data-field="card2_english_address" data-label="Street Address">2905 WALNUT AVENUE</text>
+<text x="198" y="538" font-family="Montserrat" font-size="8.2" font-weight="500" font-style="normal" letter-spacing="1.4" fill="#222222" text-anchor="middle"
+      data-field="card2_english_city" data-label="City and State">OWINGS MILLS, MARYLAND</text>
+</svg>

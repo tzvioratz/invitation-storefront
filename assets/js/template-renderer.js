@@ -436,6 +436,8 @@ const pages = await Promise.all(
         (performance.now() - totalStart).toFixed(0),
         "ms"
     );
+    
+    if (target.isConnected) centerAnchoredText(target);
 
     return { pages, fields };
 }
@@ -504,6 +506,9 @@ function fontValue(v) {
 
 export function updateRenderedWording(rendered, values, styles = {}) {
     applyWording(rendered.fields, values, styles);
+    rendered.pages.forEach(p => {
+        if (p.element.isConnected) centerAnchoredText(p.element);
+    });
 }
 // google fonts
 export async function ensureGoogleFont(family) {
@@ -745,4 +750,49 @@ export async function preloadInvitationTemplates(invitations) {
     console.log(
         `Preloaded ${uniquePages.length} invitation pages and their fonts.`
     );
+}
+
+// Shift each <text> so the tspan marked data-center sits on the text's original x.
+// Call only on elements that are attached to the document and visible.
+export function centerAnchoredText(root) {
+    root.querySelectorAll("text").forEach(text => {
+        const anchor = text.querySelector("[data-center]");
+        if (!anchor) return;
+
+        // Always start from the template's original x.
+        if (!text.hasAttribute("data-orig-x")) {
+            text.setAttribute("data-orig-x", text.getAttribute("x"));
+        }
+        const origX = parseFloat(text.getAttribute("data-orig-x"));
+        text.setAttribute("x", origX);
+
+        // Find the character range of the anchor tspan within the whole <text>.
+        const walker = document.createTreeWalker(text, NodeFilter.SHOW_TEXT);
+        let offset = 0, start = -1, end = -1, node;
+        while ((node = walker.nextNode())) {
+            if (anchor.contains(node)) {
+                if (start < 0) start = offset;
+                end = offset + node.data.length;
+            }
+            offset += node.data.length;
+        }
+        if (start < 0 || end <= start) return;
+
+        try {
+            // Union of the visual extents of the name's characters.
+            let minX = Infinity, maxX = -Infinity;
+            for (let i = start; i < end; i++) {
+                const r = text.getExtentOfChar(i);
+                if (!r.width) continue;
+                minX = Math.min(minX, r.x);
+                maxX = Math.max(maxX, r.x + r.width);
+            }
+            if (!isFinite(minX)) return;   // not rendered yet / hidden
+
+            const center = (minX + maxX) / 2;
+            text.setAttribute("x", origX + (origX - center));
+        } catch (e) {
+            console.warn("Could not center text:", e);
+        }
+    });
 }
