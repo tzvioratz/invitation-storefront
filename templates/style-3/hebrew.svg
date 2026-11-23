@@ -1,12 +1,38 @@
+
 <svg xmlns="http://www.w3.org/2000/svg" width="5.5in" height="8.5in" viewBox="0 0 396 612">
-  
-    
-    
-  
+
+    <metadata>
+  <font-declaration
+      data-font-family="Alex Brush"
+      data-font-provider="google"
+      data-font-source="https://fonts.googleapis.com/css2?family=Alex+Brush&amp;display=swap"
+      data-font-weight="400"
+      data-font-style="normal" />
+  <font-declaration
+      data-font-family="Frank Ruhl Libre"
+      data-font-provider="google"
+      data-font-source="https://fonts.googleapis.com/css2?family=David+Libre:wght@400;500;700&amp;display=swap"
+      data-font-weight="400"
+      data-font-style="normal" />
+  <font-declaration
+      data-font-family="Frank Ruhl Libre"
+      data-font-provider="google"
+      data-font-source="https://fonts.googleapis.com/css2?family=David+Libre:wght@400;500;700&amp;display=swap"
+      data-font-weight="500"
+      data-font-style="normal" />
+</metadata>
+<defs>
+  <style type="text/css"><![CDATA[
+    @import url("https://fonts.googleapis.com/css2?family=Alex+Brush&display=swap");
+    @import url("https://fonts.googleapis.com/css2?family=David+Libre:wght@400;500;700&display=swap");
+  ]]></style>
+</defs>
+
   <defs>
-    <style type="text/css">
-      500;700&amp;display=swap");
-    </style>
+<style type="text/css"><![CDATA[
+    @import url("https://fonts.googleapis.com/css2?family=Alex+Brush&display=swap");
+    @import url("https://fonts.googleapis.com/css2?family=David+Libre:wght@400;500;700&display=swap");
+  ]]></style>
     <path id="outer-arch" d="M 92,115 A 152,152 0 0,1 304,115" />
     <path id="inner-arch" d="M 101,136 A 130,130 0 0,1 295,136" />
     <path id="medallion-top" d="M 176,148 A 22,22 0 0,1 220,148" />
@@ -16,52 +42,71 @@
   <rect x="0" y="0" width="396" height="612" fill="#FFFFFF" />
   <rect x="11" y="10" width="374" height="592" fill="none" stroke="#000000" stroke-width="0.85" />
 
-  <text x="198" y="50" font-family="Frank Ruhl Libre" font-size="15.5" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">בעזהשי״ת</text>
+  <text x="198" y="50" font-family="Frank Ruhl Libre" font-size="15.5" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" data-field="card2_openingBlessing" data-label="Opening Blessing" data-editor-hidden="true">בעזהשי״ת</text>
 
   <text font-family="Frank Ruhl Libre" font-size="14" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">
-    <textPath href="#outer-arch" startOffset="50%">נעלה את ירושלים על ראש שמחתנו</textPath>
+    <textPath href="#outer-arch" startOffset="50%" data-field="card2_outerArchWording" data-label="Outer Arch Hebrew Wording" data-editor-hidden="true">נעלה את ירושלים על ראש שמחתנו</textPath>
   </text>
+
   <text font-family="Frank Ruhl Libre" font-size="14" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">
-    <textPath href="#inner-arch" startOffset="50%">עוד ישמע בערי יהודה ובחוצות ירושלים</textPath>
+    <textPath href="#inner-arch" startOffset="50%" data-field="card2_innerArchWording" data-label="Inner Arch Hebrew Wording" data-editor-hidden="true">עוד ישמע בערי יהודה ובחוצות ירושלים</textPath>
   </text>
 
   <text font-family="Frank Ruhl Libre" font-size="11.5" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">
-    <textPath href="#medallion-top" startOffset="50%">סימן טוב</textPath>
+    <textPath href="#medallion-top" startOffset="50%" data-field="card2_medallionTop" data-label="Medallion Top Hebrew Wording" data-editor-hidden="true">סימן טוב</textPath>
   </text>
+
   <circle cx="174" cy="149" r="1.4" fill="#000000" />
   <circle cx="222" cy="149" r="1.4" fill="#000000" />
+
   <text font-family="Frank Ruhl Libre" font-size="11.5" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">
-    <textPath href="#medallion-bottom" startOffset="50%">ומזל טוב</textPath>
+    <textPath href="#medallion-bottom" startOffset="50%" data-field="card2_medallionBottom" data-label="Medallion Bottom Hebrew Wording" data-editor-hidden="true">ומזל טוב</textPath>
   </text>
 
-  <text x="312" y="158" font-family="Frank Ruhl Libre" font-size="15.5" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">קול ששון</text>
-  <text x="291" y="179" font-family="Frank Ruhl Libre" font-size="15.5" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">קול חתן</text>
+  <text x="312" y="158" font-family="Frank Ruhl Libre" font-size="15.5" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" data-field="card2_rightTopWording" data-label="Right Upper Hebrew Wording" data-editor-hidden="true">קול ששון</text>
 
-  <text x="84" y="158" font-family="Frank Ruhl Libre" font-size="15.5" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">וקול שמחה</text>
-  <text x="105" y="179" font-family="Frank Ruhl Libre" font-size="15.5" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">וקול כלה</text>
+  <text x="291" y="179" font-family="Frank Ruhl Libre" font-size="15.5" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" data-field="card2_rightBottomWording" data-label="Right Lower Hebrew Wording" data-editor-hidden="true">קול חתן</text>
 
-  <text x="198" y="209" font-family="Frank Ruhl Libre" font-size="15.5" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">ברוב שבח והודאה להשי״ת ובלב מלא שמחה</text>
-  <text x="198" y="230" font-family="Frank Ruhl Libre" font-size="15.5" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">מתכבדים אנו להזמין את קרובינו וידידינו</text>
-  <text x="198" y="251" font-family="Frank Ruhl Libre" font-size="15.5" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">להשתתף בשמחת כלולת בנינו היקרים</text>
+  <text x="84" y="158" font-family="Frank Ruhl Libre" font-size="15.5" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" data-field="card2_leftTopWording" data-label="Left Upper Hebrew Wording" data-editor-hidden="true">וקול שמחה</text>
 
-  <text x="198" y="282" font-family="Frank Ruhl Libre" font-size="12" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">הבחור החתן</text>
-  <text x="198" y="310" font-family="Frank Ruhl Libre" font-size="33" font-weight="500" font-style="normal" fill="#000000" text-anchor="middle">משה <tspan font-size="10.5" font-weight="400">נ״י</tspan></text>
-  <text x="198" y="330" font-family="Frank Ruhl Libre" font-size="12.5" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">עב״ג</text>
-  <text x="198" y="351" font-family="Frank Ruhl Libre" font-size="12" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">הכלה הבתולה</text>
-  <text x="198" y="379" font-family="Frank Ruhl Libre" font-size="33" font-weight="500" font-style="normal" fill="#000000" text-anchor="middle">לאה מרים <tspan font-size="10.5" font-weight="400">תחי׳</tspan></text>
+  <text x="105" y="179" font-family="Frank Ruhl Libre" font-size="15.5" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" data-field="card2_leftBottomWording" data-label="Left Lower Hebrew Wording" data-editor-hidden="true">וקול כלה</text>
 
-  <text x="198" y="414" font-family="Frank Ruhl Libre" font-size="15" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">שתתקיים אי״ה בשעה טובה ומוצלחת</text>
-  <text x="198" y="434" font-family="Frank Ruhl Libre" font-size="15" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">ביום שלישי לפרשת ויקרא, כ״ח אדר תשפ״ד</text>
-  <text x="275" y="454" font-family="Frank Ruhl Libre" font-size="14.5" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">קבלת פנים בשעה שש וחצי</text>
-  <text x="121" y="454" font-family="Frank Ruhl Libre" font-size="14.5" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">החופה בשעה שבע וחצי</text>
-  <text x="198" y="474" font-family="Frank Ruhl Libre" font-size="14.5" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">שמחת חתן וכלה בשעה עשר</text>
+  <text x="198" y="209" font-family="Frank Ruhl Libre" font-size="15.5" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" data-field="card2_introLine1" data-label="Introduction Line 1" data-editor-hidden="true">ברוב שבח והודאה להשי״ת ובלב מלא שמחה</text>
 
-  <text x="198" y="505" font-family="Frank Ruhl Libre" font-size="15" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">עטרת עלקא</text>
-  <text x="198" y="525" font-family="Frank Ruhl Libre" font-size="15" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">אוויגס מילז, מרילנד</text>
+  <text x="198" y="230" font-family="Frank Ruhl Libre" font-size="15.5" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" data-field="card2_introLine2" data-label="Introduction Line 2" data-editor-hidden="true">מתכבדים אנו להזמין את קרובינו וידידינו</text>
 
-  <text x="284" y="551" font-family="Frank Ruhl Libre" font-size="13" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">הורי החתן</text>
-  <text x="284" y="569" font-family="Frank Ruhl Libre" font-size="15" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">אברהם ובתשבע פריד</text>
+  <text x="198" y="251" font-family="Frank Ruhl Libre" font-size="15.5" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" data-field="card2_introLine3" data-label="Introduction Line 3" data-editor-hidden="true">להשתתף בשמחת כלולת בנינו היקרים</text>
 
-  <text x="108" y="551" font-family="Frank Ruhl Libre" font-size="13" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">הורי הכלה</text>
-  <text x="108" y="569" font-family="Frank Ruhl Libre" font-size="15" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">רפאל ואסתר שרה גאלד</text>
+  <text x="198" y="282" font-family="Frank Ruhl Libre" font-size="12" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" data-field="card2_groomTitle" data-label="Groom's Hebrew Title" data-editor-hidden="true">הבחור החתן</text>
+
+  <text x="198" y="310" font-family="Frank Ruhl Libre" font-size="33" font-weight="500" font-style="normal" fill="#000000" text-anchor="middle" xml:space="preserve"><tspan data-field="card2_chossonHebrew" data-label="Groom's Hebrew Name">משה</tspan><tspan font-size="10.5" font-weight="400" data-field="card2_chossonHonorific" data-label="Groom's Hebrew Honorific" data-editor-hidden="true"> נ״י</tspan></text>
+
+  <text x="198" y="330" font-family="Frank Ruhl Libre" font-size="12.5" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" data-field="card2_marriageConnector" data-label="Marriage Connector" data-editor-hidden="true">עב״ג</text>
+
+  <text x="198" y="351" font-family="Frank Ruhl Libre" font-size="12" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" data-field="card2_brideTitle" data-label="Bride's Hebrew Title" data-editor-hidden="true">הכלה הבתולה</text>
+
+  <text x="198" y="379" font-family="Frank Ruhl Libre" font-size="33" font-weight="500" font-style="normal" fill="#000000" text-anchor="middle" xml:space="preserve"><tspan data-field="card2_kallahHebrew" data-label="Bride's Hebrew Name">לאה מרים</tspan><tspan font-size="10.5" font-weight="400" data-field="card2_kallahHonorific" data-label="Bride's Hebrew Honorific" data-editor-hidden="true"> תחי׳</tspan></text>
+
+  <text x="198" y="414" font-family="Frank Ruhl Libre" font-size="15" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" data-field="card2_eventIntroduction" data-label="Event Introduction" data-editor-hidden="true">שתתקיים אי״ה בשעה טובה ומוצלחת</text>
+
+  <text x="198" y="434" font-family="Frank Ruhl Libre" font-size="15" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" data-field="card2_hebrewDate" data-label="Hebrew Wedding Date">ביום שלישי לפרשת ויקרא, כ״ח אדר תשפ״ד</text>
+
+  <text x="275" y="454" font-family="Frank Ruhl Libre" font-size="14.5" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" data-field="card2_kabolasPonimHebrew" data-label="Kabolas Ponim Time">קבלת פנים בשעה שש וחצי</text>
+
+  <text x="121" y="454" font-family="Frank Ruhl Libre" font-size="14.5" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" data-field="card2_chupahHebrew" data-label="Chupah Time">החופה בשעה שבע וחצי</text>
+
+  <text x="198" y="474" font-family="Frank Ruhl Libre" font-size="14.5" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" data-field="card2_simchasHebrew" data-label="Simchas Chosson V'Kallah Time">שמחת חתן וכלה בשעה עשר</text>
+
+  <text x="198" y="505" font-family="Frank Ruhl Libre" font-size="15" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" data-field="card2_venueHebrew" data-label="Venue in Hebrew">עטרת עלקא</text>
+
+  <text x="198" y="525" font-family="Frank Ruhl Libre" font-size="15" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" data-field="card2_cityHebrew" data-label="City and State in Hebrew">אוויגס מילז, מרילנד</text>
+
+  <text x="284" y="551" font-family="Frank Ruhl Libre" font-size="13" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" data-field="card2_groomParentsTitle" data-label="Groom's Parents Heading" data-editor-hidden="true">הורי החתן</text>
+
+  <text x="284" y="569" font-family="Frank Ruhl Libre" font-size="15" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" data-field="card2_groomParentsHebrew" data-label="Groom's Parents' Names">אברהם ובתשבע פריד</text>
+
+  <text x="108" y="551" font-family="Frank Ruhl Libre" font-size="13" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" data-field="card2_brideParentsTitle" data-label="Bride's Parents Heading" data-editor-hidden="true">הורי הכלה</text>
+
+  <text x="108" y="569" font-family="Frank Ruhl Libre" font-size="15" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" data-field="card2_brideParentsHebrew" data-label="Bride's Parents' Names">רפאל ואסתר שרה גאלד</text>
+
 </svg>

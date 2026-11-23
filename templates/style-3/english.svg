@@ -1,6 +1,6 @@
+
 <svg xmlns="http://www.w3.org/2000/svg" width="5.5in" height="8.5in" viewBox="0 0 396 612">
-  
-    
+
 <metadata>
   <font-declaration
       data-font-family="Alex Brush"
@@ -30,21 +30,32 @@
 
   <rect x="0" y="0" width="396" height="612" fill="#FFFFFF" />
 
-  <text x="198" y="64" font-family="Alex Brush" font-size="22" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">Rabbi and Mrs. Raphael Gold</text>
-  <text x="198" y="92" font-family="Alex Brush" font-size="22" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">Rabbi and Mrs. Avi Fried</text>
-  <text x="198" y="120" font-family="Alex Brush" font-size="22" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">request the honor of your presence</text>
-  <text x="198" y="148" font-family="Alex Brush" font-size="22" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">at the marriage of their children</text>
+  <text x="198" y="64" font-family="Alex Brush" font-size="22" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" data-field="card1_groomParents" data-label="Groom's Parents">Rabbi and Mrs. Raphael Gold</text>
 
-  <text x="198" y="232" font-family="Alex Brush" font-size="56" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">Leah</text>
-  <text x="198" y="263" font-family="Alex Brush" font-size="22" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">and</text>
-  <text x="198" y="314" font-family="Alex Brush" font-size="56" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">Moshe</text>
+  <text x="198" y="92" font-family="Alex Brush" font-size="22" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" data-field="card1_brideParents" data-label="Bride's Parents">Rabbi and Mrs. Avi Fried</text>
 
-  <text x="198" y="373" font-family="Alex Brush" font-size="22" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">Tuesday, the twenty-fourth of March, 2024</text>
-  <text x="198" y="401" font-family="Alex Brush" font-size="22" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">Kabolas Ponim at six-thirty in the evening</text>
-  <text x="198" y="429" font-family="Alex Brush" font-size="22" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">Chupah at seven-thirty</text>
-  <text x="198" y="457" font-family="Alex Brush" font-size="22" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">Simchas Chosson V’Kallah at ten o’clock</text>
+  <text x="198" y="120" font-family="Alex Brush" font-size="22" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" data-field="card1_requestWording" data-label="Invitation Wording" data-editor-hidden="true">request the honor of your presence</text>
 
-  <text x="198" y="506" font-family="Alex Brush" font-size="22" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">Ateres Elka</text>
-  <text x="198" y="534" font-family="Alex Brush" font-size="22" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">2905 Walnut Avenue</text>
-  <text x="198" y="562" font-family="Alex Brush" font-size="22" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">Owings Mills, Maryland</text>
+  <text x="198" y="148" font-family="Alex Brush" font-size="22" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" data-field="card1_marriageWording" data-label="Marriage Introduction" data-editor-hidden="true">at the marriage of their children</text>
+
+  <text x="198" y="232" font-family="Alex Brush" font-size="56" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" data-field="card1_kallah" data-label="Bride's Name">Leah</text>
+
+  <text x="198" y="263" font-family="Alex Brush" font-size="22" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" data-field="card1_connector" data-label="Name Connector" data-editor-hidden="true">and</text>
+
+  <text x="198" y="314" font-family="Alex Brush" font-size="56" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" data-field="card1_chosson" data-label="Groom's Name">Moshe</text>
+
+  <text x="198" y="373" font-family="Alex Brush" font-size="22" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" data-field="card1_date" data-label="Wedding Date">Tuesday, the twenty-fourth of March, 2024</text>
+
+  <text x="198" y="401" font-family="Alex Brush" font-size="22" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" xml:space="preserve"><tspan data-field="card1_kabolasWording" data-label="Kabolas Ponim Wording" data-editor-hidden="true">Kabolas Ponim at </tspan><tspan data-field="card1_kabolasTime" data-label="Kabolas Ponim Time">six-thirty</tspan><tspan data-field="card1_kabolasSuffix" data-label="Kabolas Ponim Time Suffix" data-editor-hidden="true"> in the evening</tspan></text>
+
+  <text x="198" y="429" font-family="Alex Brush" font-size="22" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" xml:space="preserve"><tspan data-field="card1_chupahWording" data-label="Chupah Wording" data-editor-hidden="true">Chupah at </tspan><tspan data-field="card1_chupahTime" data-label="Chupah Time">seven-thirty</tspan></text>
+
+  <text x="198" y="457" font-family="Alex Brush" font-size="22" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" xml:space="preserve"><tspan data-field="card1_simchasWording" data-label="Simchas Chosson V'Kallah Wording" data-editor-hidden="true">Simchas Chosson V’Kallah at </tspan><tspan data-field="card1_simchasTime" data-label="Simchas Chosson V'Kallah Time">ten o’clock</tspan></text>
+
+  <text x="198" y="506" font-family="Alex Brush" font-size="22" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" data-field="card1_venue" data-label="Venue">Ateres Elka</text>
+
+  <text x="198" y="534" font-family="Alex Brush" font-size="22" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" data-field="card1_address" data-label="Street Address">2905 Walnut Avenue</text>
+
+  <text x="198" y="562" font-family="Alex Brush" font-size="22" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" data-field="card1_city" data-label="City and State">Owings Mills, Maryland</text>
+
 </svg>
