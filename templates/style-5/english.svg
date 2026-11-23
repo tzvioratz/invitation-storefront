@@ -1,0 +1,61 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" width="5.5in" height="8.5in" viewBox="0 0 396 612">
+  
+    
+    
+    
+  
+  <metadata>
+    <font-declaration
+        data-font-family="Montserrat"
+        data-font-provider="google"
+        data-font-source="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&amp;display=swap"
+        data-font-weight="400"
+        data-font-style="normal" />
+    <font-declaration
+        data-font-family="Montserrat"
+        data-font-provider="google"
+        data-font-source="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&amp;display=swap"
+        data-font-weight="500"
+        data-font-style="normal" />
+    <font-declaration
+        data-font-family="Alex Brush"
+        data-font-provider="google"
+        data-font-source="https://fonts.googleapis.com/css2?family=Alex+Brush&amp;display=swap"
+        data-font-weight="400"
+        data-font-style="normal" />
+  </metadata>
+  <defs>
+    <style type="text/css"><![CDATA[
+      @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap");
+      @import url("https://fonts.googleapis.com/css2?family=Alex+Brush&display=swap");
+    ]]></style>
+  </defs>
+
+  
+  <rect x="0" y="0" width="396" height="612" fill="#FFFFFF" />
+
+  
+  <text x="198" y="92" data-field="card1_opening" data-label="Opening Religious Wording" data-editor-hidden="true" font-family="&#39;Montserrat&#39;, sans-serif" font-size="7.2" font-weight="500" font-style="normal" fill="#222222" text-anchor="middle" letter-spacing="1.45">WITH MUCH GRATITUDE TO HASHEM</text>
+  <text x="198" y="112" data-field="card1_brideParents" data-label="Bride's Parents" font-family="&#39;Montserrat&#39;, sans-serif" font-size="7.2" font-weight="500" font-style="normal" fill="#222222" text-anchor="middle" letter-spacing="1.45">MR. AND MRS. CHAIM PERLSTEIN</text>
+  <text x="198" y="132" data-field="card1_groomParents" data-label="Groom's Parents" font-family="&#39;Montserrat&#39;, sans-serif" font-size="7.2" font-weight="500" font-style="normal" fill="#222222" text-anchor="middle" letter-spacing="1.45">MR. AND MRS. PINCHOS FRIEDMAN</text>
+  <text x="198" y="152" data-field="card1_invitationLine" data-label="Invitation Wording" data-editor-hidden="true" font-family="&#39;Montserrat&#39;, sans-serif" font-size="7.2" font-weight="500" font-style="normal" fill="#222222" text-anchor="middle" letter-spacing="1.45">WOULD BE HONOURED BY YOUR PRESENCE</text>
+  <text x="198" y="172" data-field="card1_marriageIntroduction" data-label="Marriage Introduction" data-editor-hidden="true" font-family="&#39;Montserrat&#39;, sans-serif" font-size="7.2" font-weight="500" font-style="normal" fill="#222222" text-anchor="middle" letter-spacing="1.45">AT THE MARRIAGE OF THEIR CHILDREN</text>
+
+  
+  <text x="150" y="250" data-field="card1_kallah" data-label="Bride's Name" font-family="&#39;Alex Brush&#39;, cursive" font-size="52" font-weight="400" font-style="normal" fill="#1E1E1E" text-anchor="middle">Dina</text>
+  <text x="218" y="272" data-field="card1_nameConnector" data-label="Name Connector" data-editor-hidden="true" font-family="&#39;Alex Brush&#39;, cursive" font-size="25" font-weight="400" font-style="normal" fill="#1E1E1E" text-anchor="middle">&amp;</text>
+  <text x="198" y="305" data-field="card1_chosson" data-label="Groom's Name" font-family="&#39;Alex Brush&#39;, cursive" font-size="52" font-weight="400" font-style="normal" fill="#1E1E1E" text-anchor="middle">Menachem</text>
+
+  
+  <text x="198" y="362" data-field="card1_date" data-label="Wedding Date" font-family="&#39;Montserrat&#39;, sans-serif" font-size="7.2" font-weight="500" font-style="normal" fill="#222222" text-anchor="middle" letter-spacing="1.45">MONDAY, THE SEVENTH OF SEPTEMBER</text>
+  <text x="198" y="382" data-field="card1_year" data-label="Wedding Year" font-family="&#39;Montserrat&#39;, sans-serif" font-size="7.2" font-weight="500" font-style="normal" fill="#222222" text-anchor="middle" letter-spacing="1.45">TWO THOUSAND TWENTY-FOUR</text>
+  <text x="198" y="402" data-field="card1_kabolasPanim" data-label="Kabolas Ponim Time" font-family="&#39;Montserrat&#39;, sans-serif" font-size="7.2" font-weight="500" font-style="normal" fill="#222222" text-anchor="middle" letter-spacing="1.45">KABOLAS PONIM AT SIX O'CLOCK</text>
+  <text x="198" y="422" data-field="card1_chupahTime" data-label="Chupah Time" font-family="&#39;Montserrat&#39;, sans-serif" font-size="7.2" font-weight="500" font-style="normal" fill="#222222" text-anchor="middle" letter-spacing="1.45">CHUPAH AT SEVEN O'CLOCK</text>
+  <text x="198" y="442" data-field="card1_simchaTime" data-label="Simchas Chosson V'Kallah Time" font-family="&#39;Montserrat&#39;, sans-serif" font-size="7.2" font-weight="500" font-style="normal" fill="#222222" text-anchor="middle" letter-spacing="1.45">SIMCHAS CHOSSON V'KALLAH AT NINE-THIRTY</text>
+
+  
+  <text x="198" y="478" data-field="card1_venue" data-label="Venue Name" font-family="&#39;Montserrat&#39;, sans-serif" font-size="7.2" font-weight="500" font-style="normal" fill="#222222" text-anchor="middle" letter-spacing="1.45">ATERES ELKA</text>
+  <text x="198" y="498" data-field="card1_address" data-label="Street Address" font-family="&#39;Montserrat&#39;, sans-serif" font-size="7.2" font-weight="500" font-style="normal" fill="#222222" text-anchor="middle" letter-spacing="1.45">2905 WALNUT AVENUE</text>
+  <text x="198" y="518" data-field="card1_cityState" data-label="City and State" font-family="&#39;Montserrat&#39;, sans-serif" font-size="7.2" font-weight="500" font-style="normal" fill="#222222" text-anchor="middle" letter-spacing="1.45">OWINGS MILLS, MARYLAND</text>
+</svg>

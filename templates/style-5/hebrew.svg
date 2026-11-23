@@ -1,0 +1,103 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" width="5.5in" height="8.5in" viewBox="0 0 396 612">
+  
+    
+    
+    
+    
+    <metadata>
+    <font-declaration
+        data-font-family="Frank Ruhl Libre"
+        data-font-provider="google"
+        data-font-source="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700&amp;display=swap"
+        data-font-weight="500"
+        data-font-style="normal" />
+    <font-declaration
+        data-font-family="Frank Ruhl Libre"
+        data-font-provider="google"
+        data-font-source="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700&amp;display=swap"
+        data-font-weight="700"
+        data-font-style="normal" />
+    <font-declaration
+        data-font-family="Noto Serif Hebrew"
+        data-font-provider="google"
+        data-font-source="https://fonts.googleapis.com/css2?family=Noto+Serif+Hebrew:wght@400;500;600&amp;display=swap"
+        data-font-weight="400"
+        data-font-style="normal" />
+    <font-declaration
+        data-font-family="Noto Serif Hebrew"
+        data-font-provider="google"
+        data-font-source="https://fonts.googleapis.com/css2?family=Noto+Serif+Hebrew:wght@400;500;600&amp;display=swap"
+        data-font-weight="500"
+        data-font-style="normal" />
+    <font-declaration
+        data-font-family="Noto Serif Hebrew"
+        data-font-provider="google"
+        data-font-source="https://fonts.googleapis.com/css2?family=Noto+Serif+Hebrew:wght@400;500;600&amp;display=swap"
+        data-font-weight="600"
+        data-font-style="normal" />
+  </metadata>
+  
+  <defs>
+    <style type="text/css"><![CDATA[
+      @import url("https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700&display=swap");
+      @import url("https://fonts.googleapis.com/css2?family=Noto+Serif+Hebrew:wght@400;500;600&display=swap");
+    ]]></style>
+    <path id="arch-verse-path" d="M 114,124 A 118,86 0 0,1 282,124" fill="none" />
+  </defs>
+
+  
+  <rect x="0" y="0" width="396" height="612" fill="#FFFFFF" />
+
+  
+  <text x="198" y="82" data-field="card2_openingAbbreviation" data-label="Opening Abbreviation" data-editor-hidden="true" font-family="&#39;Noto Serif Hebrew&#39;, serif" font-size="8.5" font-weight="500" font-style="normal" fill="#222222" text-anchor="middle">בעזהשי"ת</text>
+
+  
+  <text font-family="&#39;Noto Serif Hebrew&#39;, serif" font-size="8.5" font-weight="500" font-style="normal" fill="#222222" text-anchor="middle">
+    <textPath href="#arch-verse-path" startOffset="50%" data-field="card2_archVerse" data-label="Hebrew Verse" data-editor-hidden="true">נעלה את ירושלים על ראש שמחתנו</textPath>
+  </text>
+
+  
+  <text x="198" y="150" data-field="card2_hebrewMonogram" data-label="Hebrew Monogram" data-editor-hidden="true" font-family="&#39;Frank Ruhl Libre&#39;, serif" font-size="38" font-weight="700" font-style="normal" fill="#1E1E1E" text-anchor="middle">פ</text>
+
+  
+  <text x="198" y="179" data-field="card2_openingGratitude" data-label="Opening Gratitude Wording" data-editor-hidden="true" font-family="&#39;Noto Serif Hebrew&#39;, serif" font-size="9.2" font-weight="500" font-style="normal" fill="#222222" text-anchor="middle">ברוב שבח והודאה להשי"ת</text>
+  <text x="198" y="196" data-field="card2_invitationIntroduction" data-label="Invitation Introduction" data-editor-hidden="true" font-family="&#39;Noto Serif Hebrew&#39;, serif" font-size="9.2" font-weight="500" font-style="normal" fill="#222222" text-anchor="middle">מתכבדים אנו להזמין את קרובינו וידידינו</text>
+  <text x="198" y="213" data-field="card2_marriageIntroduction" data-label="Marriage Introduction" data-editor-hidden="true" font-family="&#39;Noto Serif Hebrew&#39;, serif" font-size="9.2" font-weight="500" font-style="normal" fill="#222222" text-anchor="middle">להשתתף בשמחת כלולת בנינו היקרים</text>
+
+  
+  <text x="198" y="258" font-family="&#39;Noto Serif Hebrew&#39;, serif" font-size="8.5" font-weight="500" font-style="normal" fill="#1E1E1E" text-anchor="middle" xml:space="preserve">
+    <tspan font-family="&#39;Noto Serif Hebrew&#39;, serif" font-size="8.5" font-weight="500" font-style="normal" fill="#222222" data-field="card2_groomTitle" data-label="Groom Title" data-editor-hidden="true">החתן </tspan>
+    <tspan font-family="&#39;Frank Ruhl Libre&#39;, serif" font-size="21" font-weight="700" font-style="normal" fill="#1E1E1E" data-field="card2_chosson" data-label="Groom's Name">מנחם דוד</tspan>
+    <tspan font-family="&#39;Noto Serif Hebrew&#39;, serif" font-size="7.5" font-weight="500" font-style="normal" fill="#222222" data-field="card2_groomSuffix" data-label="Groom Name Suffix" data-editor-hidden="true"> נ"י</tspan>
+  </text>
+
+  <text x="198" y="278" data-field="card2_nameConnector" data-label="Hebrew Name Connector" data-editor-hidden="true" font-family="&#39;Noto Serif Hebrew&#39;, serif" font-size="7.5" font-weight="500" font-style="normal" fill="#222222" text-anchor="middle">עב"ג</text>
+
+  <text x="198" y="305" font-family="&#39;Noto Serif Hebrew&#39;, serif" font-size="8.5" font-weight="500" font-style="normal" fill="#1E1E1E" text-anchor="middle" xml:space="preserve">
+    <tspan font-family="&#39;Noto Serif Hebrew&#39;, serif" font-size="8.5" font-weight="500" font-style="normal" fill="#222222" data-field="card2_brideTitle" data-label="Bride Title" data-editor-hidden="true">הכלה </tspan>
+    <tspan font-family="&#39;Frank Ruhl Libre&#39;, serif" font-size="21" font-weight="700" font-style="normal" fill="#1E1E1E" data-field="card2_kallah" data-label="Bride's Name">דינה</tspan>
+    <tspan font-family="&#39;Noto Serif Hebrew&#39;, serif" font-size="7.5" font-weight="500" font-style="normal" fill="#222222" data-field="card2_brideSuffix" data-label="Bride Name Suffix" data-editor-hidden="true"> תחי'</tspan>
+  </text>
+
+  
+  <text x="198" y="346" data-field="card2_eventIntroduction" data-label="Event Introduction" data-editor-hidden="true" font-family="&#39;Noto Serif Hebrew&#39;, serif" font-size="9.0" font-weight="500" font-style="normal" fill="#222222" text-anchor="middle">שתתקיים אי"ה בשעה טובה ומוצלחת</text>
+  <text x="198" y="363" data-field="card2_date" data-label="Hebrew Wedding Date" font-family="&#39;Noto Serif Hebrew&#39;, serif" font-size="9.0" font-weight="500" font-style="normal" fill="#222222" text-anchor="middle">ביום שני לפרשת נצבים-וילך, י"ח אלול תשפ"ד</text>
+  <text x="198" y="380" data-field="card2_kabolasPanimAndChupah" data-label="Kabolas Ponim and Chupah Times" font-family="&#39;Noto Serif Hebrew&#39;, serif" font-size="9.0" font-weight="500" font-style="normal" fill="#222222" text-anchor="middle">קבלת פנים בשעה שש בערב  החופה בשעה שבע</text>
+  <text x="198" y="397" data-field="card2_simchaTime" data-label="Simchas Chosson V'Kallah Time" font-family="&#39;Noto Serif Hebrew&#39;, serif" font-size="9.0" font-weight="500" font-style="normal" fill="#222222" text-anchor="middle">שמחת חתן וכלה בשעה תשע וחצי</text>
+
+  
+  <text x="198" y="430" data-field="card2_venue" data-label="Hebrew Venue Name" font-family="&#39;Noto Serif Hebrew&#39;, serif" font-size="9.2" font-weight="600" font-style="normal" fill="#222222" text-anchor="middle">עטרת עלקא</text>
+  <text x="198" y="447" data-field="card2_cityState" data-label="Hebrew City and State" font-family="&#39;Noto Serif Hebrew&#39;, serif" font-size="9.2" font-weight="500" font-style="normal" fill="#222222" text-anchor="middle">אוויגס מילז, מרילנד</text>
+
+  
+  <text x="274" y="484" data-field="card2_groomParentsTitle" data-label="Groom's Parents Title" data-editor-hidden="true" font-family="&#39;Noto Serif Hebrew&#39;, serif" font-size="8.0" font-weight="500" font-style="normal" fill="#222222" text-anchor="middle">הורי החתן</text>
+  <text x="274" y="500" data-field="card2_groomParents" data-label="Groom's Parents" font-family="&#39;Noto Serif Hebrew&#39;, serif" font-size="9.0" font-weight="500" font-style="normal" fill="#222222" text-anchor="middle">פנחס ופייגא פרידמאן</text>
+
+  <text x="122" y="484" data-field="card2_brideParentsTitle" data-label="Bride's Parents Title" data-editor-hidden="true" font-family="&#39;Noto Serif Hebrew&#39;, serif" font-size="8.0" font-weight="500" font-style="normal" fill="#222222" text-anchor="middle">הורי הכלה</text>
+  <text x="122" y="500" data-field="card2_brideParents" data-label="Bride's Parents" font-family="&#39;Noto Serif Hebrew&#39;, serif" font-size="9.0" font-weight="500" font-style="normal" fill="#222222" text-anchor="middle">חיים והדסה פערלשטיין</text>
+
+  
+  <text x="198" y="534" data-field="card2_closingPhrase" data-label="Closing Phrase" data-editor-hidden="true" font-family="&#39;Noto Serif Hebrew&#39;, serif" font-size="7.5" font-weight="500" font-style="normal" fill="#222222" text-anchor="middle">תפארת בנים אבותם</text>
+  <text x="198" y="548" data-field="card2_grandparents" data-label="Grandparents' Names" font-family="&#39;Noto Serif Hebrew&#39;, serif" font-size="7.8" font-weight="400" font-style="normal" fill="#222222" text-anchor="middle">אהרן וליבא רובין • דוד ורחל פערלשטיין</text>
+</svg>
