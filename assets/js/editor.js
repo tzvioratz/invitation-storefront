@@ -27,6 +27,19 @@ let selectedAddOns = {};
 let fieldStyles = {};
 let revealedHiddenFieldIds = new Set();
 
+
+let zoomPreview = null;
+let zoomStage = null;
+let zoomArtwork = null;
+let zoomSlider = null;
+let zoomLevel = 1;
+let zoomFitScale = 1;
+let zoomX = 0;
+let zoomY = 0;
+let zoomPointers = new Map();
+let zoomDrag = null;
+let zoomPinch = null;
+
 try {
     const data = await getStoreData();
     invitation = getInvitation(data, id);
@@ -52,6 +65,7 @@ try {
         options: selection
     });
     buildFields();
+    setupZoomPreview();
     drawPages();
     // Load and display optional add-ons.
     availableAddOns = await getActiveAddOns();
@@ -1351,6 +1365,7 @@ function drawPages() {
 
     large.append(activeElement);
     centerAnchoredText(activeElement);
+    syncZoomPreview();
 
     if (activeFieldId) {
         highlightActiveField(activeElement);
@@ -1703,4 +1718,325 @@ function esc(s) {
         (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]
     );
 }
+
+
+/* =========================================
+   FULL-SCREEN INVITATION ZOOM PREVIEW
+========================================= */
+
+
+function setupZoomPreview() {
+    const previewWrap = document.querySelector(".large-preview-wrap");
+
+    if (!previewWrap || zoomPreview) return;
+
+    // Add the zoom button
+    const zoomButton = document.createElement("button");
+    zoomButton.type = "button";
+    zoomButton.className = "preview-zoom-button";
+    zoomButton.textContent = "⤢";
+    zoomButton.title = "View invitation full screen";
+    zoomButton.setAttribute("aria-label", "View invitation full screen");
+
+    previewWrap.appendChild(zoomButton);
+
+    // Build the full-screen overlay
+    zoomPreview = document.createElement("div");
+    zoomPreview.className = "zoom-preview-overlay";
+    zoomPreview.hidden = true;
+
+    zoomPreview.innerHTML = `
+        <button type="button" class="zoom-close" aria-label="Close preview">×</button>
+
+        <div class="zoom-stage">
+            <div class="zoom-artwork"></div>
+        </div>
+
+        <div class="zoom-toolbar">
+            <button type="button" class="zoom-minus" aria-label="Zoom out">−</button>
+            <input
+                class="zoom-slider"
+                type="range"
+                min="100"
+                max="400"
+                value="100"
+                step="5"
+                aria-label="Zoom level"
+            >
+            <button type="button" class="zoom-plus" aria-label="Zoom in">+</button>
+            <span class="zoom-percentage">100%</span>
+            <button type="button" class="zoom-reset">Reset</button>
+        </div>
+    `;
+
+    document.body.appendChild(zoomPreview);
+
+    zoomStage = zoomPreview.querySelector(".zoom-stage");
+    zoomArtwork = zoomPreview.querySelector(".zoom-artwork");
+    zoomSlider = zoomPreview.querySelector(".zoom-slider");
+
+    zoomButton.addEventListener("click", openZoomPreview);
+
+    zoomPreview.querySelector(".zoom-close")
+        .addEventListener("click", closeZoomPreview);
+
+    zoomPreview.querySelector(".zoom-minus")
+        .addEventListener("click", () => changeZoom(-0.25));
+
+    zoomPreview.querySelector(".zoom-plus")
+        .addEventListener("click", () => changeZoom(0.25));
+
+    zoomPreview.querySelector(".zoom-reset")
+        .addEventListener("click", resetZoom);
+
+    zoomSlider.addEventListener("input", () => {
+        setZoom(Number(zoomSlider.value) / 100);
+    });
+
+    // Mouse wheel zoom
+    zoomStage.addEventListener("wheel", event => {
+        event.preventDefault();
+
+        const rect = zoomStage.getBoundingClientRect();
+
+        zoomAtPoint(
+            event.clientX - rect.left,
+            event.clientY - rect.top,
+            event.deltaY < 0 ? 1.15 : 1 / 1.15
+        );
+    }, { passive: false });
+
+    // Drag and touch gestures
+    zoomStage.addEventListener("pointerdown", event => {
+        if (!zoomPreview || zoomPreview.hidden) return;
+
+        zoomStage.setPointerCapture(event.pointerId);
+
+        zoomPointers.set(event.pointerId, {
+            x: event.clientX,
+            y: event.clientY
+        });
+
+        if (zoomPointers.size === 1) {
+            zoomDrag = {
+                pointerX: event.clientX,
+                pointerY: event.clientY,
+                startX: zoomX,
+                startY: zoomY
+            };
+        } else if (zoomPointers.size === 2) {
+            const points = [...zoomPointers.values()];
+
+            zoomPinch = {
+                distance: pointerDistance(points[0], points[1]),
+                midpoint: pointerMidpoint(points[0], points[1]),
+                scale: zoomLevel
+            };
+
+            zoomDrag = null;
+        }
+    });
+
+    zoomStage.addEventListener("pointermove", event => {
+        if (!zoomPointers.has(event.pointerId)) return;
+
+        zoomPointers.set(event.pointerId, {
+            x: event.clientX,
+            y: event.clientY
+        });
+
+        if (zoomPointers.size === 1 && zoomDrag) {
+            zoomX = zoomDrag.startX + event.clientX - zoomDrag.pointerX;
+            zoomY = zoomDrag.startY + event.clientY - zoomDrag.pointerY;
+            updateZoomTransform();
+        }
+
+        if (zoomPointers.size === 2 && zoomPinch) {
+            const points = [...zoomPointers.values()];
+            const distance = pointerDistance(points[0], points[1]);
+            const midpoint = pointerMidpoint(points[0], points[1]);
+
+            const factor = distance / zoomPinch.distance;
+
+            const rect = zoomStage.getBoundingClientRect();
+
+            zoomAtPoint(
+                midpoint.x - rect.left,
+                midpoint.y - rect.top,
+                factor,
+                zoomPinch.scale
+            );
+        }
+    });
+
+    function finishPointer(event) {
+        zoomPointers.delete(event.pointerId);
+
+        if (zoomPointers.size === 0) {
+            zoomDrag = null;
+            zoomPinch = null;
+        } else if (zoomPointers.size === 1) {
+            const remaining = [...zoomPointers.values()][0];
+
+            zoomDrag = {
+                pointerX: remaining.x,
+                pointerY: remaining.y,
+                startX: zoomX,
+                startY: zoomY
+            };
+
+            zoomPinch = null;
+        }
+    }
+
+    zoomStage.addEventListener("pointerup", finishPointer);
+    zoomStage.addEventListener("pointercancel", finishPointer);
+
+    // Escape closes the overlay
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape" && !zoomPreview.hidden) {
+            closeZoomPreview();
+        }
+    });
+
+    // Recalculate fit if the screen changes size
+    window.addEventListener("resize", () => {
+        if (!zoomPreview.hidden) {
+            resetZoom();
+        }
+    });
+}
+
+function pointerDistance(a, b) {
+    return Math.hypot(a.x - b.x, a.y - b.y);
+}
+
+function pointerMidpoint(a, b) {
+    return {
+        x: (a.x + b.x) / 2,
+        y: (a.y + b.y) / 2
+    };
+}
+
+function syncZoomPreview() {
+    if (!zoomArtwork) return;
+
+    const currentPage = document.querySelector("#largePreview .invitation-page");
+
+    if (!currentPage) {
+        zoomArtwork.replaceChildren();
+        return;
+    }
+
+    const clone = currentPage.cloneNode(true);
+
+    // Remove editor-only selection highlights
+    clone.querySelectorAll(".field-highlight, .field-highlight-box")
+        .forEach(element => {
+            if (element.classList.contains("field-highlight-box")) {
+                element.remove();
+            } else {
+                element.classList.remove("field-highlight");
+            }
+        });
+
+    zoomArtwork.replaceChildren(clone);
+
+    if (!zoomPreview.hidden) {
+        resetZoom();
+    }
+}
+
+function openZoomPreview() {
+    if (!zoomPreview || !zoomArtwork) return;
+
+    syncZoomPreview();
+
+    if (!zoomArtwork.firstElementChild) return;
+
+    zoomPreview.hidden = false;
+    document.body.classList.add("zoom-preview-open");
+
+    zoomPointers.clear();
+    zoomDrag = null;
+    zoomPinch = null;
+
+    requestAnimationFrame(resetZoom);
+}
+
+function closeZoomPreview() {
+    if (!zoomPreview) return;
+
+    zoomPreview.hidden = true;
+    document.body.classList.remove("zoom-preview-open");
+
+    zoomPointers.clear();
+    zoomDrag = null;
+    zoomPinch = null;
+}
+
+function resetZoom() {
+    if (!zoomStage || !zoomArtwork) return;
+
+    const rect = zoomStage.getBoundingClientRect();
+
+    if (!rect.width || !rect.height) return;
+
+    zoomFitScale = Math.min(
+        rect.width * 0.84 / 400,
+        rect.height * 0.84 / 600
+    );
+
+    zoomLevel = 1;
+
+    zoomX = (rect.width - 400 * zoomFitScale) / 2;
+    zoomY = (rect.height - 600 * zoomFitScale) / 2;
+
+    updateZoomTransform();
+}
+
+function updateZoomTransform() {
+    const scale = zoomFitScale * zoomLevel;
+
+    zoomArtwork.style.transform =
+        `translate(${zoomX}px, ${zoomY}px) scale(${scale})`;
+
+    zoomSlider.value = Math.round(zoomLevel * 100);
+
+    zoomPreview.querySelector(".zoom-percentage").textContent =
+        `${Math.round(zoomLevel * 100)}%`;
+}
+
+function setZoom(newLevel) {
+    const rect = zoomStage.getBoundingClientRect();
+
+    zoomAtPoint(
+        rect.width / 2,
+        rect.height / 2,
+        newLevel / zoomLevel
+    );
+}
+
+function changeZoom(amount) {
+    setZoom(Math.max(1, Math.min(4, zoomLevel + amount)));
+}
+
+function zoomAtPoint(x, y, factor, startingLevel = zoomLevel) {
+    const newLevel = Math.max(
+        1,
+        Math.min(4, startingLevel * factor)
+    );
+
+    const oldScale = zoomFitScale * startingLevel;
+    const newScale = zoomFitScale * newLevel;
+
+    // Keep the point under the cursor/fingers stationary
+    zoomX = x - (x - zoomX) * (newScale / oldScale);
+    zoomY = y - (y - zoomY) * (newScale / oldScale);
+
+    zoomLevel = newLevel;
+
+    updateZoomTransform();
+}
+
 

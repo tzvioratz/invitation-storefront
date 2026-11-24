@@ -1044,3 +1044,212 @@
     font-size: 12px;
     border-top: 1px solid #ddd;
 }
+
+
+/* =========================================
+   FULL-SCREEN INVITATION ZOOM PREVIEW
+========================================= */
+
+/* Zoom button on the regular preview */
+.large-preview-wrap {
+    position: relative;
+}
+
+.preview-zoom-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 5;
+
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #d8d5cf;
+    border-radius: 6px;
+
+    background: rgba(255,255,255,.94);
+    color: #26384d;
+
+    font-size: 23px;
+    cursor: pointer;
+
+    box-shadow: 0 2px 8px rgba(0,0,0,.12);
+}
+
+.preview-zoom-button:hover {
+    background: white;
+    transform: scale(1.05);
+}
+
+/* Full-screen black background */
+.zoom-preview-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 20000;
+
+    display: flex;
+    flex-direction: column;
+
+    background: #000;
+    overflow: hidden;
+}
+
+.zoom-preview-overlay[hidden] {
+    display: none;
+}
+
+body.zoom-preview-open {
+    overflow: hidden;
+}
+
+/* Close button */
+.zoom-close {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    z-index: 10;
+
+    width: 44px;
+    height: 44px;
+
+    border: none;
+    background: transparent;
+    color: white;
+
+    font-size: 38px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+/* Main viewing area */
+.zoom-stage {
+    position: absolute;
+    inset: 0 0 76px 0;
+
+    overflow: hidden;
+
+    touch-action: none;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.zoom-stage:active {
+    cursor: grabbing;
+}
+
+/* Invitation artwork */
+.zoom-artwork {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 400px;
+    height: 600px;
+
+    transform-origin: 0 0;
+
+    background: white;
+    box-shadow: 0 10px 50px rgba(255,255,255,.12);
+
+    will-change: transform;
+}
+
+.zoom-artwork .invitation-page {
+    width: 400px !important;
+    height: 600px !important;
+    max-width: none !important;
+    aspect-ratio: 2 / 3;
+    box-shadow: none !important;
+}
+
+.zoom-artwork .invitation-page.html-page {
+    width: 400px !important;
+    height: 600px !important;
+}
+
+.zoom-artwork .invitation-page svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* Bottom zoom controls */
+.zoom-toolbar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    min-height: 76px;
+    padding: 12px 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+
+    background: #151515;
+    border-top: 1px solid #333;
+    color: white;
+}
+
+.zoom-toolbar button {
+    border: 1px solid #555;
+    border-radius: 5px;
+
+    background: #292929;
+    color: white;
+
+    min-width: 38px;
+    height: 36px;
+
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.zoom-toolbar button:hover {
+    background: #444;
+}
+
+.zoom-toolbar .zoom-reset {
+    font-size: 12px;
+    padding: 0 12px;
+}
+
+.zoom-slider {
+    width: min(35vw, 280px);
+    accent-color: #d0b47b;
+    cursor: pointer;
+}
+
+.zoom-percentage {
+    min-width: 48px;
+    font-size: 12px;
+    color: #ccc;
+    text-align: center;
+}
+
+@media (max-width: 600px) {
+    .zoom-toolbar {
+        gap: 8px;
+        padding: 10px;
+    }
+
+    .zoom-slider {
+        width: min(38vw, 180px);
+    }
+
+    .zoom-toolbar .zoom-reset {
+        padding: 0 8px;
+    }
+
+    .zoom-close {
+        top: 8px;
+        right: 10px;
+    }
+}
