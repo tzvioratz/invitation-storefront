@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="5.5in" height="8.5in" viewBox="0 0 396 612">
+  <metadata>
+    <font-declaration
+        data-font-family="Frank Ruhl Libre"
+        data-font-provider="google"
+        data-font-source="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500&amp;display=swap"
+        data-font-weight="400"
+        data-font-style="normal" />
+    <font-declaration
+        data-font-family="Frank Ruhl Libre"
+        data-font-provider="google"
+        data-font-source="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500&amp;display=swap"
+        data-font-weight="500"
+        data-font-style="normal" />
+  </metadata>
+
+  <defs>
+    <style type="text/css"><![CDATA[
+      @import url("https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500&display=swap");
+    ]]></style>
+  </defs>
+
+  <rect x="0" y="0" width="396" height="612" fill="#FFFFFF" />
+
+  <text id="heb_opening_hashem" data-field="heb_opening_hashem" data-label="Opening Hashem Wording" data-editor-hidden="true" x="198" y="80" text-anchor="middle" font-family="Frank Ruhl Libre" font-size="10.5" font-weight="500" font-style="normal" fill="#262626">בעזהשי"ת</text>
+
+  <text id="heb_opening_jerusalem" data-field="heb_opening_jerusalem" data-label="Jerusalem Wording" data-editor-hidden="true" x="198" y="99" text-anchor="middle" font-family="Frank Ruhl Libre" font-size="10.5" font-weight="400" font-style="normal" fill="#262626">נעלה את ירושלים על ראש שמחתנו</text>
+
+  <text id="heb_wedding_verses" data-field="heb_wedding_verses" data-label="Wedding Verses" data-editor-hidden="true" x="198" y="126" text-anchor="middle" font-family="Frank Ruhl Libre" font-size="10.5" font-weight="400" font-style="normal" fill="#262626">קול ששון • קול שמחה • קול חתן • קול כלה</text>
+
+  <text id="heb_opening_gratitude" data-field="heb_opening_gratitude" data-label="Opening Gratitude" data-editor-hidden="true" x="198" y="154" text-anchor="middle" font-family="Frank Ruhl Libre" font-size="11" font-weight="400" font-style="normal" fill="#262626">ברוב שבח והודאה להשי"ת</text>
+
+  <text id="heb_invitation_wording" data-field="heb_invitation_wording" data-label="Invitation Wording" data-editor-hidden="true" x="198" y="173" text-anchor="middle" font-family="Frank Ruhl Libre" font-size="11" font-weight="400" font-style="normal" fill="#262626">מתכבדים אנו להזמין את קרובינו וידידינו</text>
+
+  <text id="heb_marriage_intro" data-field="heb_marriage_intro" data-label="Marriage Introduction" data-editor-hidden="true" x="198" y="192" text-anchor="middle" font-family="Frank Ruhl Libre" font-size="11" font-weight="400" font-style="normal" fill="#262626">להשתתף בשמחת כלולת בנינו היקרים</text>
+
+  <text x="198" y="246" text-anchor="middle" font-family="Frank Ruhl Libre" font-size="28" font-weight="400" font-style="normal" fill="#232323"><tspan id="heb_chosson_honorific" data-field="heb_chosson_honorific" data-label="Chosson's Hebrew Honorific" data-editor-hidden="true" font-size="9.5" font-weight="400">החתן </tspan><tspan id="heb_chosson" data-field="heb_chosson" data-label="Chosson's Name" data-center="true" font-size="28" font-weight="400">שמואל</tspan><tspan id="heb_chosson_suffix" data-field="heb_chosson_suffix" data-label="Chosson's Hebrew Suffix" data-editor-hidden="true" font-size="9.5" font-weight="400"> נ"י</tspan></text>
+
+  <text id="heb_name_connector" data-field="heb_name_connector" data-label="Wedding Name Connector" data-editor-hidden="true" x="198" y="271" text-anchor="middle" font-family="Frank Ruhl Libre" font-size="9.5" font-weight="500" font-style="normal" fill="#262626">עב"ג</text>
+
+  <text x="198" y="299" text-anchor="middle" font-family="Frank Ruhl Libre" font-size="28" font-weight="400" font-style="normal" fill="#232323"><tspan id="heb_kallah_honorific" data-field="heb_kallah_honorific" data-label="Kalah's Hebrew Honorific" data-editor-hidden="true" font-size="9.5" font-weight="400">הכלה </tspan><tspan id="heb_kallah" data-field="heb_kallah" data-label="Kalah's Name" data-center="true" font-size="28" font-weight="400">שרה</tspan><tspan id="heb_kallah_suffix" data-field="heb_kallah_suffix" data-label="Kalah's Hebrew Suffix" data-editor-hidden="true" font-size="9.5" font-weight="400"> תחי'</tspan></text>
+
+  <text id="heb_wedding_intro" data-field="heb_wedding_intro" data-label="Wedding Introduction Wording" data-editor-hidden="true" x="198" y="349" text-anchor="middle" font-family="Frank Ruhl Libre" font-size="10.5" font-weight="400" font-style="normal" fill="#262626">שתתקיים אי"ה בשעה טובה ומוצלחת</text>
+
+  <text x="198" y="368" text-anchor="middle" font-family="Frank Ruhl Libre" font-size="10.5" font-weight="400" font-style="normal" fill="#262626"><tspan id="heb_date" data-field="heb_date" data-label="Wedding Date">ביום שלישי </tspan><tspan id="heb_parsha" data-field="heb_parsha" data-label="Parsha">לפרשת שופטים</tspan><tspan id="heb_date_details" data-field="heb_date_details" data-label="Hebrew Date Details" data-editor-hidden="true">, אור לא' אלול תשפ"ד</tspan></text>
+
+  <text x="198" y="387" text-anchor="middle" font-family="Frank Ruhl Libre" font-size="10.5" font-weight="400" font-style="normal" fill="#262626"><tspan id="heb_kabulas_punim_prefix" data-field="heb_kabulas_punim_prefix" data-label="Kabulas Punim Wording" data-editor-hidden="true">קבלת פנים בשעה </tspan><tspan id="heb_kabulas_punim" data-field="heb_kabulas_punim" data-label="Kabulas Punim Time">שש בערב</tspan><tspan id="heb_chuppah_prefix" data-field="heb_chuppah_prefix" data-label="Chuppah Wording" data-editor-hidden="true"> החופה בשעה </tspan><tspan id="heb_chuppah" data-field="heb_chuppah" data-label="Chuppah Time">שבע</tspan></text>
+
+  <text id="heb_simchas_time" data-field="heb_simchas_time" data-label="Simchas Chosson V'Kallah Time" data-editor-hidden="true" x="198" y="406" text-anchor="middle" font-family="Frank Ruhl Libre" font-size="10.5" font-weight="400" font-style="normal" fill="#262626">שמחת חתן וכלה בשעה תשע וחצי</text>
+
+  <text id="heb_venu" data-field="heb_venu" data-label="Venue" x="198" y="443" text-anchor="middle" font-family="Frank Ruhl Libre" font-size="11.5" font-weight="500" font-style="normal" fill="#262626">עטרת עלקא</text>
+
+  <text id="heb_city_state" data-field="heb_city_state" data-label="City and State" x="198" y="463" text-anchor="middle" font-family="Frank Ruhl Libre" font-size="11" font-weight="400" font-style="normal" fill="#262626">אוויגס מילז, מרילנד</text>
+
+  <text id="heb_chosson_parents_label" data-field="heb_chosson_parents_label" data-label="Chosson's Parents Caption" data-editor-hidden="true" x="272" y="499" text-anchor="middle" font-family="Frank Ruhl Libre" font-size="8.8" font-weight="500" font-style="normal" fill="#262626">הורי החתן</text>
+
+  <text id="heb_chosson_parents" data-field="heb_chosson_parents" data-label="Chosson's Parents" x="272" y="515" text-anchor="middle" font-family="Frank Ruhl Libre" font-size="10.2" font-weight="400" font-style="normal" fill="#262626">בנימין ורחל קרמר</text>
+
+  <text id="heb_kallahs_parents_label" data-field="heb_kallahs_parents_label" data-label="Kalah's Parents Caption" data-editor-hidden="true" x="124" y="499" text-anchor="middle" font-family="Frank Ruhl Libre" font-size="8.8" font-weight="500" font-style="normal" fill="#262626">הורי הכלה</text>
+
+  <text id="heb_kallahs_parents" data-field="heb_kallahs_parents" data-label="Kalah's Parents" x="124" y="515" text-anchor="middle" font-family="Frank Ruhl Libre" font-size="10.2" font-weight="400" font-style="normal" fill="#262626">יהושע ולאה עפשטיין</text>
+
+  <text id="heb_grandparents" data-field="heb_grandparents" data-label="Grandparents' Names" data-multiline="true" x="198" y="560" text-anchor="middle" font-family="Frank Ruhl Libre" font-size="9.5" font-weight="400" font-style="normal" fill="#262626">גדליה וטובה קרמר • אליהו וליבא עפשטיין</text>
+</svg>

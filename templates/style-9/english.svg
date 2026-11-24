@@ -1,0 +1,61 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" width="5.5in" height="8.5in" viewBox="0 0 396 612">
+  
+  <metadata>
+    <font-declaration
+        data-font-family="Cormorant Garamond"
+        data-font-provider="google"
+        data-font-source="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&amp;display=swap"
+        data-font-weight="400"
+        data-font-style="normal" />
+    <font-declaration
+        data-font-family="Cormorant Garamond"
+        data-font-provider="google"
+        data-font-source="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&amp;display=swap"
+        data-font-weight="500"
+        data-font-style="normal" />
+  </metadata>
+
+  <defs>
+    <style type="text/css"><![CDATA[
+      @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&display=swap");
+    ]]></style>
+  </defs>
+
+  <rect x="0" y="0" width="396" height="612" fill="#FFFFFF" />
+
+  <text id="eng_monogram" data-field="eng_monogram" data-label="Monogram" data-editor-hidden="true" x="62" y="86" font-family="&#39;Cormorant Garamond&#39;, Georgia, serif" font-size="35" font-weight="400" font-style="normal" fill="#1F1F1F" text-anchor="start">M</text>
+
+  <line id="en-monogram-rule" x1="97" y1="74" x2="152" y2="74" stroke="#4A4A4A" stroke-width="0.6" />
+
+  <text id="eng_kallahs_parents" data-field="eng_kallahs_parents" data-label="Kallah's Parents" x="62" y="152" font-family="&#39;Cormorant Garamond&#39;, Georgia, serif" font-size="8.2" font-weight="500" font-style="normal" letter-spacing="1.15" fill="#1F1F1F" text-anchor="start">RABBI AND MRS. YEHUDA FISCHER</text>
+
+  <text id="eng_chosson_parents" data-field="eng_chosson_parents" data-label="Chosson's Parents" x="62" y="172" font-family="&#39;Cormorant Garamond&#39;, Georgia, serif" font-size="8.2" font-weight="500" font-style="normal" letter-spacing="1.15" fill="#1F1F1F" text-anchor="start">RABBI AND MRS. ELIYAHU MANDELBAUM</text>
+
+  <text id="eng_request_line_1" data-field="eng_request_line_1" data-label="Opening Invitation Wording" data-editor-hidden="true" x="62" y="192" font-family="&#39;Cormorant Garamond&#39;, Georgia, serif" font-size="8.2" font-weight="500" font-style="normal" letter-spacing="1.15" fill="#1F1F1F" text-anchor="start">REQUEST THE HONOUR OF YOUR PRESENCE</text>
+
+  <text id="eng_request_line_2" data-field="eng_request_line_2" data-label="Marriage Introduction Wording" data-editor-hidden="true" x="62" y="212" font-family="&#39;Cormorant Garamond&#39;, Georgia, serif" font-size="8.2" font-weight="500" font-style="normal" letter-spacing="1.15" fill="#1F1F1F" text-anchor="start">AT THE MARRIAGE OF THEIR CHILDREN</text>
+
+  <text id="eng_kallah" data-field="eng_kallah" data-label="Kalah's Name" x="62" y="258" font-family="&#39;Cormorant Garamond&#39;, Georgia, serif" font-size="18.5" font-weight="400" font-style="normal" letter-spacing="2.1" fill="#1F1F1F" text-anchor="start">DEVORAH</text>
+
+  <text id="eng_conjunction" data-field="eng_conjunction" data-label="Name Conjunction" data-editor-hidden="true" x="62" y="281" font-family="&#39;Cormorant Garamond&#39;, Georgia, serif" font-size="7.8" font-weight="500" font-style="normal" letter-spacing="1.2" fill="#1F1F1F" text-anchor="start">AND</text>
+
+  <text id="eng_chosson" data-field="eng_chosson" data-label="Chosson's Name" x="62" y="314" font-family="&#39;Cormorant Garamond&#39;, Georgia, serif" font-size="18.5" font-weight="400" font-style="normal" letter-spacing="2.1" fill="#1F1F1F" text-anchor="start">YANKY</text>
+
+  <text id="eng_date" data-field="eng_date" data-label="Wedding Date" x="62" y="366" font-family="&#39;Cormorant Garamond&#39;, Georgia, serif" font-size="8.2" font-weight="500" font-style="normal" letter-spacing="1.15" fill="#1F1F1F" text-anchor="start">MONDAY, THE NINETEENTH OF FEBRUARY</text>
+
+  <text id="eng_date_year" data-field="eng_date_year" data-label="Wedding Year" x="62" y="386" font-family="&#39;Cormorant Garamond&#39;, Georgia, serif" font-size="8.2" font-weight="500" font-style="normal" letter-spacing="1.15" fill="#1F1F1F" text-anchor="start">TWO THOUSAND TWENTY-FOUR</text>
+
+  <text x="62" y="406" font-family="&#39;Cormorant Garamond&#39;, Georgia, serif" font-size="8.2" font-weight="500" font-style="normal" letter-spacing="1.15" fill="#1F1F1F" text-anchor="start" xml:space="preserve"><tspan id="eng_kabulas_punim_prefix" data-field="eng_kabulas_punim_prefix" data-label="Kabulas Punim Wording" data-editor-hidden="true">KABOLAS PONIM AT </tspan><tspan id="eng_kabulas_punim" data-field="eng_kabulas_punim" data-label="Kabulas Punim Time">SIX O’CLOCK</tspan><tspan id="eng_kabulas_punim_suffix" data-field="eng_kabulas_punim_suffix" data-label="Kabulas Punim Time Suffix" data-editor-hidden="true"> IN THE EVENING</tspan></text>
+
+  <text x="62" y="426" font-family="&#39;Cormorant Garamond&#39;, Georgia, serif" font-size="8.2" font-weight="500" font-style="normal" letter-spacing="1.15" fill="#1F1F1F" text-anchor="start" xml:space="preserve"><tspan id="eng_chuppah_prefix" data-field="eng_chuppah_prefix" data-label="Chuppah Wording" data-editor-hidden="true">CHUPAH AT </tspan><tspan id="eng_chuppah" data-field="eng_chuppah" data-label="Chuppah Time">SEVEN O’CLOCK</tspan></text>
+
+  <text id="eng_simchas_chosson_vkallah" data-field="eng_simchas_chosson_vkallah" data-label="Simchas Chosson V'Kallah Time" x="62" y="446" font-family="&#39;Cormorant Garamond&#39;, Georgia, serif" font-size="8.2" font-weight="500" font-style="normal" letter-spacing="1.15" fill="#1F1F1F" text-anchor="start">SIMCHAS CHOSSON V’KALLAH AT TEN O’CLOCK</text>
+
+  <text id="eng_venue" data-field="eng_venue" data-label="Venue" x="62" y="486" font-family="&#39;Cormorant Garamond&#39;, Georgia, serif" font-size="8.2" font-weight="500" font-style="normal" letter-spacing="1.15" fill="#1F1F1F" text-anchor="start">ATERES ELKA</text>
+
+  <text id="eng_address" data-field="eng_address" data-label="Street Address" x="62" y="506" font-family="&#39;Cormorant Garamond&#39;, Georgia, serif" font-size="8.2" font-weight="500" font-style="normal" letter-spacing="1.15" fill="#1F1F1F" text-anchor="start">2905 WALNUT AVENUE</text>
+
+  <text id="eng_city_state" data-field="eng_city_state" data-label="City and State" x="62" y="526" font-family="&#39;Cormorant Garamond&#39;, Georgia, serif" font-size="8.2" font-weight="500" font-style="normal" letter-spacing="1.15" fill="#1F1F1F" text-anchor="start">OWINGS MILLS, MARYLAND</text>
+
+</svg>

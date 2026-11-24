@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="5.5in" height="8.5in" viewBox="0 0 396 612">
+  <metadata>
+    <font-declaration
+        data-font-family="Cormorant Garamond"
+        data-font-provider="google"
+        data-font-source="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&amp;display=swap"
+        data-font-weight="400"
+        data-font-style="normal" />
+    <font-declaration
+        data-font-family="Cormorant Garamond"
+        data-font-provider="google"
+        data-font-source="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&amp;display=swap"
+        data-font-weight="500"
+        data-font-style="normal" />
+    <font-declaration
+        data-font-family="Cinzel"
+        data-font-provider="google"
+        data-font-source="https://fonts.googleapis.com/css2?family=Cinzel:wght@400&amp;display=swap"
+        data-font-weight="400"
+        data-font-style="normal" />
+    <font-declaration
+        data-font-family="Alex Brush"
+        data-font-provider="google"
+        data-font-source="https://fonts.googleapis.com/css2?family=Alex+Brush&amp;display=swap"
+        data-font-weight="400"
+        data-font-style="normal" />
+  </metadata>
+
+  <defs>
+    <style type="text/css"><![CDATA[
+      @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&display=swap");
+      @import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400&display=swap");
+      @import url("https://fonts.googleapis.com/css2?family=Alex+Brush&display=swap");
+    ]]></style>
+  </defs>
+
+  <rect x="0" y="0" width="396" height="612" fill="#FFFFFF" />
+
+  <text id="eng_opening_gratitude" data-field="eng_opening_gratitude" data-label="Opening Gratitude" data-editor-hidden="true" x="198" y="84" text-anchor="middle" font-family="Cormorant Garamond" font-size="9.5" font-weight="500" font-style="normal" fill="#262626" letter-spacing="1.35">WITH GRATITUDE TO HASHEM YISBORACH</text>
+
+  <text id="eng_kallah_parents" data-field="eng_kallah_parents" data-label="Kalah's Parents" x="198" y="105" text-anchor="middle" font-family="Cormorant Garamond" font-size="9.5" font-weight="500" font-style="normal" fill="#262626" letter-spacing="1.35">RABBI AND MRS. YEHOSHUA EPSTEIN</text>
+
+  <text id="eng_chosson_parents" data-field="eng_chosson_parents" data-label="Chosson's Parents" x="198" y="126" text-anchor="middle" font-family="Cormorant Garamond" font-size="9.5" font-weight="500" font-style="normal" fill="#262626" letter-spacing="1.35">RABBI AND MRS. BINYOMIN KRAMER</text>
+
+  <text id="eng_request_presence" data-field="eng_request_presence" data-label="Invitation Wording" data-editor-hidden="true" x="198" y="147" text-anchor="middle" font-family="Cormorant Garamond" font-size="9.5" font-weight="500" font-style="normal" fill="#262626" letter-spacing="1.35">REQUEST THE HONOUR OF YOUR PRESENCE</text>
+
+  <text id="eng_marriage_intro" data-field="eng_marriage_intro" data-label="Marriage Introduction" data-editor-hidden="true" x="198" y="168" text-anchor="middle" font-family="Cormorant Garamond" font-size="9.5" font-weight="500" font-style="normal" fill="#262626" letter-spacing="1.35">AT THE MARRIAGE OF THEIR CHILDREN</text>
+
+  <text id="eng_kallah" data-field="eng_kallah" data-label="Kalah's Name" x="198" y="232" text-anchor="middle" font-family="Cinzel" font-size="23" font-weight="400" font-style="normal" fill="#232323" letter-spacing="2.2">SARALA</text>
+
+  <text id="eng_name_connector" data-field="eng_name_connector" data-label="Name Connector" data-editor-hidden="true" x="198" y="264" text-anchor="middle" font-family="Alex Brush" font-size="23" font-weight="400" font-style="normal" fill="#262626">and</text>
+
+  <text id="eng_chosson" data-field="eng_chosson" data-label="Chosson's Name" x="198" y="295" text-anchor="middle" font-family="Cinzel" font-size="23" font-weight="400" font-style="normal" fill="#232323" letter-spacing="2.2">SHMULI</text>
+
+  <text id="eng_date" data-field="eng_date" data-label="Wedding Date" x="198" y="364" text-anchor="middle" font-family="Cormorant Garamond" font-size="9.5" font-weight="500" font-style="normal" fill="#262626" letter-spacing="1.35">TUESDAY, THE THIRD OF SEPTEMBER</text>
+
+  <text id="eng_date_year" data-field="eng_date_year" data-label="Wedding Year" data-editor-hidden="true" x="198" y="385" text-anchor="middle" font-family="Cormorant Garamond" font-size="9.5" font-weight="500" font-style="normal" fill="#262626" letter-spacing="1.35">TWO THOUSAND TWENTY-FOUR</text>
+
+  <text x="198" y="406" text-anchor="middle" font-family="Cormorant Garamond" font-size="9.5" font-weight="500" font-style="normal" fill="#262626" letter-spacing="1.35"><tspan id="eng_kabulas_punim_prefix" data-field="eng_kabulas_punim_prefix" data-label="Kabulas Punim Wording" data-editor-hidden="true">KABOLAS PANIM AT </tspan><tspan id="eng_kabulas_punim" data-field="eng_kabulas_punim" data-label="Kabulas Punim Time">SIX O'CLOCK</tspan><tspan id="eng_kabulas_punim_suffix" data-field="eng_kabulas_punim_suffix" data-label="Kabulas Punim Time Wording" data-editor-hidden="true"> IN THE EVENING</tspan></text>
+
+  <text x="198" y="427" text-anchor="middle" font-family="Cormorant Garamond" font-size="9.5" font-weight="500" font-style="normal" fill="#262626" letter-spacing="1.35"><tspan id="eng_chuppah_prefix" data-field="eng_chuppah_prefix" data-label="Chuppah Wording" data-editor-hidden="true">CHUPAH AT </tspan><tspan id="eng_chuppah" data-field="eng_chuppah" data-label="Chuppah Time">SEVEN O'CLOCK</tspan></text>
+
+  <text id="eng_simchas_time" data-field="eng_simchas_time" data-label="Simchas Chosson V'Kallah Time" data-editor-hidden="true" x="198" y="448" text-anchor="middle" font-family="Cormorant Garamond" font-size="9.5" font-weight="500" font-style="normal" fill="#262626" letter-spacing="1.35">SIMCHAS CHOSSON V'KALLAH AT NINE-THIRTY</text>
+
+  <text id="eng_venue" data-field="eng_venue" data-label="Venue" x="198" y="487" text-anchor="middle" font-family="Cormorant Garamond" font-size="9.5" font-weight="500" font-style="normal" fill="#262626" letter-spacing="1.35">ATERES ELKA</text>
+
+  <text id="eng_address" data-field="eng_address" data-label="Street Address" x="198" y="507" text-anchor="middle" font-family="Cormorant Garamond" font-size="9.5" font-weight="500" font-style="normal" fill="#262626" letter-spacing="1.35">2905 WALNUT AVENUE</text>
+
+  <text id="eng_city_state" data-field="eng_city_state" data-label="City and State" x="198" y="527" text-anchor="middle" font-family="Cormorant Garamond" font-size="9.5" font-weight="500" font-style="normal" fill="#262626" letter-spacing="1.35">OWINGS MILLS, MARYLAND</text>
+</svg>
