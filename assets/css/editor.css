@@ -1253,3 +1253,61 @@ body.zoom-preview-open {
         right: 10px;
     }
 }
+
+
+/* Full-screen preview page navigation */
+
+.zoom-page-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+
+    width: 48px;
+    height: 64px;
+
+    border: 1px solid rgba(255,255,255,.25);
+    border-radius: 7px;
+
+    background: rgba(255,255,255,.10);
+    color: white;
+
+    font-size: 42px;
+    line-height: 1;
+    cursor: pointer;
+
+    transition: background .2s ease;
+}
+
+.zoom-page-arrow:hover {
+    background: rgba(255,255,255,.25);
+}
+
+.zoom-page-prev {
+    left: 18px;
+}
+
+.zoom-page-next {
+    right: 18px;
+}
+
+.zoom-page-arrow:disabled {
+    opacity: .2;
+    cursor: default;
+}
+
+@media (max-width: 600px) {
+    .zoom-page-arrow {
+        width: 34px;
+        height: 50px;
+        font-size: 32px;
+    }
+
+    .zoom-page-prev {
+        left: 5px;
+    }
+
+    .zoom-page-next {
+        right: 5px;
+    }
+}

@@ -1745,29 +1745,30 @@ function setupZoomPreview() {
     zoomPreview.className = "zoom-preview-overlay";
     zoomPreview.hidden = true;
 
-    zoomPreview.innerHTML = `
-        <button type="button" class="zoom-close" aria-label="Close preview">×</button>
+    
+zoomPreview.innerHTML = `
+    <button type="button" class="zoom-close" aria-label="Close preview">×</button>
 
-        <div class="zoom-stage">
-            <div class="zoom-artwork"></div>
-        </div>
+    <button type="button" class="zoom-page-arrow zoom-page-prev"
+        aria-label="Previous page">‹</button>
 
-        <div class="zoom-toolbar">
-            <button type="button" class="zoom-minus" aria-label="Zoom out">−</button>
-            <input
-                class="zoom-slider"
-                type="range"
-                min="100"
-                max="400"
-                value="100"
-                step="5"
-                aria-label="Zoom level"
-            >
-            <button type="button" class="zoom-plus" aria-label="Zoom in">+</button>
-            <span class="zoom-percentage">100%</span>
-            <button type="button" class="zoom-reset">Reset</button>
-        </div>
-    `;
+    <div class="zoom-stage">
+        <div class="zoom-artwork"></div>
+    </div>
+
+    <button type="button" class="zoom-page-arrow zoom-page-next"
+        aria-label="Next page">›</button>
+
+    <div class="zoom-toolbar">
+        <button type="button" class="zoom-minus" aria-label="Zoom out">−</button>
+        <input class="zoom-slider" type="range"
+            min="100" max="400" value="100" step="5"
+            aria-label="Zoom level">
+        <button type="button" class="zoom-plus" aria-label="Zoom in">+</button>
+        <span class="zoom-percentage">100%</span>
+        <button type="button" class="zoom-reset">Reset</button>
+    </div>
+`;
 
     document.body.appendChild(zoomPreview);
 
@@ -1788,6 +1789,24 @@ function setupZoomPreview() {
 
     zoomPreview.querySelector(".zoom-reset")
         .addEventListener("click", resetZoom);
+    
+    zoomPreview.querySelector(".zoom-page-prev")
+    .addEventListener("click", () => {
+        if (activePage > 0) {
+            activePage--;
+            drawPages();
+            resetZoom();
+        }
+    });
+
+zoomPreview.querySelector(".zoom-page-next")
+    .addEventListener("click", () => {
+        if (activePage < rendered.pages.length - 1) {
+            activePage++;
+            drawPages();
+            resetZoom();
+        }
+    });
 
     zoomSlider.addEventListener("input", () => {
         setZoom(Number(zoomSlider.value) / 100);
@@ -1945,6 +1964,12 @@ function syncZoomPreview() {
     if (!zoomPreview.hidden) {
         resetZoom();
     }
+    
+    zoomPreview.querySelector(".zoom-page-prev").disabled =
+    activePage === 0;
+
+zoomPreview.querySelector(".zoom-page-next").disabled =
+    activePage === rendered.pages.length - 1;
 }
 
 function openZoomPreview() {

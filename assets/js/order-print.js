@@ -54,6 +54,24 @@ const printState = new Map(); // piece key -> { include, copies }
 let printOrder = [];          // piece keys in the order they print
 const overrides = new Map();  // piece key -> { element, name } for imported SVGs
 
+
+// Full-screen page zoom preview
+let printZoomOverlay = null;
+let printZoomStage = null;
+let printZoomArt = null;
+let printZoomSlider = null;
+let printZoomPageLabel = null;
+let printZoomPrev = null;
+let printZoomNext = null;
+
+let printZoom = 1;
+let printZoomFit = 1;
+let printZoomX = 0;
+let printZoomY = 0;
+let printZoomDragging = false;
+let printZoomDragStart = null;
+let previousBodyOverflow = "";
+
 // ------------------------------------------------------------
 // Helpers
 // ------------------------------------------------------------
@@ -752,6 +770,264 @@ function drawPageView() {
     $("#pageLabel").textContent = `${piece.label} · Page ${activePiece + 1} of ${pieces.length}`;
     $("#prevPage").disabled = activePiece === 0;
     $("#nextPage").disabled = activePiece === pieces.length - 1;
+    // Keep the full-screen preview synchronized with the selected page.
+if (printZoomOverlay && !printZoomOverlay.hidden) {
+    renderPrintZoomPage();
+}
+}
+
+
+
+// ------------------------------------------------------------
+// Full-screen zoom preview
+// ------------------------------------------------------------
+
+function initPrintZoom() {
+    const large = $("#largePreview");
+    if (!large || printZoomOverlay) return;
+
+    // Add the zoom button beside the regular preview.
+    const previewParent = large.parentElement;
+    if (getComputedStyle(previewParent).position === "static") {
+        previewParent.style.position = "relative";
+    }
+
+    const trigger = el("button", "print-zoom-trigger", "⛶");
+    trigger.type = "button";
+    trigger.title = "Open full-screen preview";
+    trigger.setAttribute("aria-label", "Open full-screen preview");
+    trigger.addEventListener("click", openPrintZoom);
+    previewParent.append(trigger);
+
+    // Create the full-screen overlay.
+    printZoomOverlay = el("div", "print-zoom-overlay");
+    printZoomOverlay.hidden = true;
+
+    const close = el("button", "print-zoom-close", "×");
+    close.type = "button";
+    close.title = "Close preview";
+    close.setAttribute("aria-label", "Close preview");
+    close.addEventListener("click", closePrintZoom);
+
+    printZoomStage = el("div", "print-zoom-stage");
+    printZoomArt = el("div", "print-zoom-art");
+
+    printZoomStage.append(printZoomArt);
+
+    printZoomPrev = el("button", "print-zoom-arrow print-zoom-prev", "‹");
+    printZoomPrev.type = "button";
+    printZoomPrev.title = "Previous page";
+    printZoomPrev.setAttribute("aria-label", "Previous page");
+    printZoomPrev.addEventListener("click", () => changePrintZoomPage(-1));
+
+    printZoomNext = el("button", "print-zoom-arrow print-zoom-next", "›");
+    printZoomNext.type = "button";
+    printZoomNext.title = "Next page";
+    printZoomNext.setAttribute("aria-label", "Next page");
+    printZoomNext.addEventListener("click", () => changePrintZoomPage(1));
+
+    const controls = el("div", "print-zoom-controls");
+
+    const minus = el("button", "print-zoom-adjust", "−");
+    minus.type = "button";
+    minus.addEventListener("click", () => setPrintZoom(printZoom - 0.25));
+
+    printZoomSlider = document.createElement("input");
+    printZoomSlider.type = "range";
+    printZoomSlider.min = "1";
+    printZoomSlider.max = "4";
+    printZoomSlider.step = "0.05";
+    printZoomSlider.value = "1";
+    printZoomSlider.setAttribute("aria-label", "Zoom level");
+    printZoomSlider.addEventListener("input", () => {
+        setPrintZoom(Number(printZoomSlider.value));
+    });
+
+    const plus = el("button", "print-zoom-adjust", "+");
+    plus.type = "button";
+    plus.addEventListener("click", () => setPrintZoom(printZoom + 0.25));
+
+    printZoomPageLabel = el("span", "print-zoom-page-label");
+
+    controls.append(minus, printZoomSlider, plus, printZoomPageLabel);
+
+    printZoomOverlay.append(
+        close,
+        printZoomStage,
+        printZoomPrev,
+        printZoomNext,
+        controls
+    );
+
+    document.body.append(printZoomOverlay);
+
+    // Mouse-wheel zoom, centered around the pointer.
+    printZoomStage.addEventListener("wheel", e => {
+        e.preventDefault();
+
+        const rect = printZoomStage.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+
+        const oldZoom = printZoom;
+        const nextZoom = Math.max(
+            1,
+            Math.min(4, oldZoom * (e.deltaY < 0 ? 1.15 : 1 / 1.15))
+        );
+
+        if (nextZoom === oldZoom) return;
+
+        const ratio = nextZoom / oldZoom;
+        printZoomX = x - (x - printZoomX) * ratio;
+        printZoomY = y - (y - printZoomY) * ratio;
+
+        setPrintZoom(nextZoom);
+    }, { passive: false });
+
+    // Drag to pan.
+    printZoomStage.addEventListener("pointerdown", e => {
+        if (e.button !== 0) return;
+
+        printZoomDragging = true;
+        printZoomDragStart = {
+            x: e.clientX,
+            y: e.clientY,
+            panX: printZoomX,
+            panY: printZoomY
+        };
+
+        printZoomStage.classList.add("dragging");
+        printZoomStage.setPointerCapture(e.pointerId);
+    });
+
+    printZoomStage.addEventListener("pointermove", e => {
+        if (!printZoomDragging || !printZoomDragStart) return;
+
+        printZoomX = printZoomDragStart.panX +
+            e.clientX - printZoomDragStart.x;
+
+        printZoomY = printZoomDragStart.panY +
+            e.clientY - printZoomDragStart.y;
+
+        applyPrintZoomTransform();
+    });
+
+    const stopDragging = () => {
+        printZoomDragging = false;
+        printZoomDragStart = null;
+        printZoomStage.classList.remove("dragging");
+    };
+
+    printZoomStage.addEventListener("pointerup", stopDragging);
+    printZoomStage.addEventListener("pointercancel", stopDragging);
+
+    // Clicking the black background closes the preview.
+    printZoomOverlay.addEventListener("click", e => {
+        if (e.target === printZoomOverlay) closePrintZoom();
+    });
+
+    // Escape closes the preview.
+    document.addEventListener("keydown", e => {
+        if (e.key === "Escape" && !printZoomOverlay.hidden) {
+            closePrintZoom();
+        }
+    });
+}
+
+function openPrintZoom() {
+    if (!pieces.length || !printZoomOverlay) return;
+
+    previousBodyOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    printZoomOverlay.hidden = false;
+
+    printZoom = 1;
+    printZoomX = 0;
+    printZoomY = 0;
+
+    renderPrintZoomPage();
+    fitPrintZoom();
+}
+
+function closePrintZoom() {
+    if (!printZoomOverlay) return;
+
+    printZoomOverlay.hidden = true;
+    document.body.style.overflow = previousBodyOverflow;
+}
+
+function renderPrintZoomPage() {
+    if (!printZoomOverlay || printZoomOverlay.hidden) return;
+
+    const piece = pieces[activePiece];
+    if (!piece) return;
+
+    printZoomArt.replaceChildren();
+
+    const clone = piece.element.cloneNode(true);
+    printZoomArt.append(clone);
+
+    // Match the normal preview's SVG/text positioning.
+    centerAnchoredText(clone);
+
+    printZoomPageLabel.textContent =
+        `${activePiece + 1} of ${pieces.length} · ${piece.shortLabel}`;
+
+    printZoomPrev.disabled = activePiece === 0;
+    printZoomNext.disabled = activePiece === pieces.length - 1;
+
+    applyPrintZoomTransform();
+}
+
+function changePrintZoomPage(delta) {
+    const next = activePiece + delta;
+
+    if (next < 0 || next >= pieces.length) return;
+
+    activePiece = next;
+    printZoom = 1;
+    printZoomX = 0;
+    printZoomY = 0;
+
+    drawPageView();
+    fitPrintZoom();
+}
+
+function fitPrintZoom() {
+    if (!printZoomStage) return;
+
+    const rect = printZoomStage.getBoundingClientRect();
+
+    printZoomFit = Math.min(
+        (rect.width - 40) / ART_W,
+        (rect.height - 40) / ART_H
+    );
+
+    applyPrintZoomTransform();
+}
+
+function setPrintZoom(value) {
+    printZoom = Math.max(1, Math.min(4, value));
+
+    if (printZoomSlider) {
+        printZoomSlider.value = String(printZoom);
+    }
+
+    applyPrintZoomTransform();
+}
+
+function applyPrintZoomTransform() {
+    if (!printZoomArt) return;
+
+    const scale = printZoomFit * printZoom;
+
+    printZoomArt.style.transform =
+        `translate(-50%, -50%) translate(${printZoomX}px, ${printZoomY}px) scale(${scale})`;
+
+    if (printZoomSlider) {
+        printZoomSlider.value = String(printZoom);
+    }
 }
 
 // ------------------------------------------------------------
@@ -1564,6 +1840,7 @@ window.addEventListener("resize", debounce(() => {
 // Start up
 loadSavedSettings();
 $$custom();
+initPrintZoom();
 
 try {
     store = await getStoreData();
