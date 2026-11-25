@@ -1160,16 +1160,15 @@ body.zoom-preview-open {
 }
 
 .zoom-artwork .invitation-page {
-    width: 400px !important;
-    height: 600px !important;
+    width: 100% !important;
+    height: 100% !important;
     max-width: none !important;
-    aspect-ratio: 2 / 3;
     box-shadow: none !important;
 }
 
 .zoom-artwork .invitation-page.html-page {
-    width: 400px !important;
-    height: 600px !important;
+    width: 100% !important;
+    height: 100% !important;
 }
 
 .zoom-artwork .invitation-page svg {

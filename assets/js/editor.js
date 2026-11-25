@@ -2024,6 +2024,7 @@ function syncZoomPreview() {
         });
 
     zoomArtwork.replaceChildren(clone);
+    sizeZoomArtwork(); 
 
     if (!zoomPreview.hidden) {
         resetZoom();
@@ -2068,20 +2069,41 @@ function resetZoom() {
     if (!zoomStage || !zoomArtwork) return;
 
     const rect = zoomStage.getBoundingClientRect();
-
     if (!rect.width || !rect.height) return;
 
+    const { w, h } = getZoomArtSize();
+
     zoomFitScale = Math.min(
-        rect.width * 0.84 / 400,
-        rect.height * 0.84 / 600
+        rect.width * 0.84 / w,
+        rect.height * 0.84 / h
     );
 
     zoomLevel = 1;
 
-    zoomX = (rect.width - 400 * zoomFitScale) / 2;
-    zoomY = (rect.height - 600 * zoomFitScale) / 2;
+    zoomX = (rect.width - w * zoomFitScale) / 2;
+    zoomY = (rect.height - h * zoomFitScale) / 2;
 
     updateZoomTransform();
+}
+
+function getZoomArtSize() {
+    const svg = zoomArtwork?.querySelector("svg");
+    const vb = svg?.viewBox?.baseVal;
+    return vb && vb.width && vb.height
+        ? { w: vb.width, h: vb.height }
+        : { w: 400, h: 600 }; // fallback for non-SVG pages
+}
+
+function sizeZoomArtwork() {
+    const { w, h } = getZoomArtSize();
+    zoomArtwork.style.width = `${w}px`;
+    zoomArtwork.style.height = `${h}px`;
+
+    // Make sure the page fills the artwork box exactly.
+    const page = zoomArtwork.querySelector(".invitation-page");
+    const svg = zoomArtwork.querySelector("svg");
+    if (page) { page.style.width = "100%"; page.style.height = "100%"; }
+    if (svg) { svg.style.width = "100%"; svg.style.height = "100%"; }
 }
 
 function updateZoomTransform() {
@@ -2159,6 +2181,7 @@ function removeLine(id) {
     if (activeFieldId === id) activeFieldId = null;
     refresh().then(buildFields);
 }
+
 function removeTemplateLine(id) {
     if (!removedFields.includes(id)) removedFields = [...removedFields, id];
     revealedHiddenFieldIds.delete(id);
