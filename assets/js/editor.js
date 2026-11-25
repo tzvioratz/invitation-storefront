@@ -28,6 +28,7 @@ let selectedAddOns = {};
 let fieldStyles = {};
 let revealedHiddenFieldIds = new Set();
 let extraLines = [];  
+let removedFields = [];
 
 let zoomPreview = null;
 let zoomStage = null;
@@ -975,6 +976,8 @@ function getHiddenFieldGroups(fields) {
 function buildFields() {
     const container = $("#fieldControls");
     container.replaceChildren();
+    
+    const activeFields = rendered.fields.filter((f) => !removedFields.includes(f.id));
 
     if (!rendered.fields.length) {
         container.textContent =
@@ -996,7 +999,7 @@ function buildFields() {
     });
 
     // Identify separate groups of consecutive hidden fields.
-    const hiddenGroups = getHiddenFieldGroups(rendered.fields);
+    const hiddenGroups = getHiddenFieldGroups(activeFields);
     const hiddenGroupByField = new Map();
 
     hiddenGroups.forEach(group => {
@@ -1007,7 +1010,7 @@ function buildFields() {
 
     const revealedContainers = new Map();
     // Render fields in their original order.
-    rendered.fields.forEach(f => {
+    activeFields.forEach(f => {
 
         if (
             f.hiddenFromEditor &&
@@ -1097,17 +1100,23 @@ function buildFields() {
         labelRow.className = "field-label-row";
         labelRow.appendChild(label);
         
-        if (getLineHost(f.occurrences[0]?.node)) {
-    const tools = document.createElement("span");
-    tools.className = "field-line-tools";
+const isExtra = extraLines.some((e) => e.id === f.id);
+const tools = document.createElement("span");
+tools.className = "field-line-tools";
+
+if (getLineHost(f.occurrences[0]?.node)) {
     tools.append(
         lineButton("↑ Add line", "Add a line above", () => insertLine(f.id, "above")),
         lineButton("↓ Add line", "Add a line below", () => insertLine(f.id, "below"))
     );
-    if (extraLines.some((e) => e.id === f.id))
-        tools.append(lineButton("✕ Remove", "Remove this line", () => removeLine(f.id), "danger"));
-    labelRow.append(tools);
 }
+if (isExtra) {
+    tools.append(lineButton("✕ Remove", "Remove this line", () => removeLine(f.id), "danger"));
+} else if (!f.required) {
+    tools.append(lineButton("✕ Remove", "Remove this line from the invitation", () => removeTemplateLine(f.id), "danger"));
+}
+
+
         
 
         inputRow.append(input, keyboardButton);
@@ -1128,7 +1137,9 @@ function buildFields() {
 
             labelRow.append(adv.toggle);
             advancedPanel = adv.panel;
+            if (tools.children.length) advancedPanel.append(tools);         
         }
+        if (!advancedPanel && tools.children.length) labelRow.append(tools);
 
         const keyboard = createHebrewKeyboard(input, updateField);
 
@@ -1162,7 +1173,7 @@ function buildFields() {
 
   // Add one hide button after the last revealed field on each page.
 sections.forEach((section, pageIndex) => {
-    const revealedInSection = rendered.fields.filter(f =>
+    const revealedInSection = activeFields.filter(f =>
         f.hiddenFromEditor &&
         revealedHiddenFieldIds.has(f.id) &&
         (f.occurrences[0]?.pageIndex ?? 0) === pageIndex
@@ -1195,6 +1206,32 @@ sections.forEach((section, pageIndex) => {
 
     lastWrapper.after(hideButton);
 });
+sections.forEach((section, pageIndex) => {
+    const gone = rendered.fields.filter(
+        (f) => removedFields.includes(f.id) && (f.occurrences[0]?.pageIndex ?? 0) === pageIndex
+    );
+    if (!gone.length) return;
+
+    const box = document.createElement("div");
+    box.className = "removed-lines";
+
+    const title = document.createElement("strong");
+    title.textContent = `Removed lines (${gone.length})`;
+    box.appendChild(title);
+
+    gone.forEach((f) => {
+        const row = document.createElement("div");
+        row.className = "removed-line-row";
+
+        const name = document.createElement("span");
+        name.textContent = f.label;
+
+        row.append(name, lineButton("↺ Restore", `Restore ${f.label}`, () => restoreLine(f.id)));
+        box.appendChild(row);
+    });
+
+    section.appendChild(box);
+});    
 }
 
 function createHebrewKeyboard(input, updateField) {
@@ -1403,6 +1440,7 @@ function refresh() {
         wording,
         styles: fieldStyles,
         extraLines,
+        removedFields,
         options: selection
     }).then((r) => {
         rendered = r;
@@ -1671,7 +1709,8 @@ $("#reviewButton").addEventListener("click", () => {
             phone: $("#customerPhone").value,
             notes: $("#orderNotes").value
         },
-        extraLines: extraLines.map((e) => ({ ...e }))
+        extraLines: extraLines.map((e) => ({ ...e })),
+        removedFields: [...removedFields]
     };
 
     $("#reviewSummary").innerHTML =
@@ -2118,5 +2157,16 @@ function removeLine(id) {
     delete fieldStyles[id];
     revealedHiddenFieldIds.delete(id);
     if (activeFieldId === id) activeFieldId = null;
+    refresh().then(buildFields);
+}
+function removeTemplateLine(id) {
+    if (!removedFields.includes(id)) removedFields = [...removedFields, id];
+    revealedHiddenFieldIds.delete(id);
+    if (activeFieldId === id) activeFieldId = null;
+    refresh().then(buildFields);
+}
+
+function restoreLine(id) {
+    removedFields = removedFields.filter((x) => x !== id);
     refresh().then(buildFields);
 }

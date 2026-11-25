@@ -16,6 +16,10 @@
 //    scaled down together (never below MIN_SCALE). Removing lines scales back
 //    up, but never past the template's original size (k <= 1).
 //  - Nothing is rewritten: reflow only sets a `transform` on each <text>.
+//  - Template lines can be removed too. They are only hidden (display="none")
+//    and listed in `removedFields`, so the customer can restore them. The rows
+//    below close up; any added line anchored to a removed line re-attaches to
+//    the nearest remaining line.
 
 import { getLineStep } from "./field-discovery.js";
 
@@ -46,6 +50,11 @@ export function sanitizeExtraLines(raw) {
         out.push({ id: e.id, ref: e.ref, position: e.position });
     }
     return out;
+}
+
+export function sanitizeRemovedFields(raw) {
+    if (!Array.isArray(raw)) return [];
+    return [...new Set(raw.filter((id) => typeof id === "string" && ID_RE.test(id)))].slice(0, 200);
 }
 
 export function createExtraLine(extraLines, refId, position) {
@@ -173,6 +182,21 @@ export function applyExtraLines(pages, extraLines = []) {
     }
 }
 
+// Hides the removed fields. They stay in the DOM (so the editor can list them
+// for restoring) but are skipped by the reflow. Call before discoverFields().
+export function applyRemovedFields(pages, removedFields = []) {
+    if (!removedFields.length) return;
+
+    pages.forEach(({ element }) => {
+        removedFields.forEach((id) => {
+            element.querySelectorAll(`[data-field="${CSS.escape(id)}"]`).forEach((n) => {
+                n.setAttribute("display", "none");
+                n.setAttribute("data-line-removed", "true");
+            });
+        });
+    });
+}
+
 // ---------------------------------------------------------------------------
 // Pure layout (no DOM) -- exported so it can be unit tested
 // ---------------------------------------------------------------------------
@@ -196,31 +220,65 @@ function linePitch(seq, idx, position, size) {
 // extraLines: saved list; findRec(fieldId) -> rec | undefined
 // Each rec needs { size }.
 export function layoutPage(rows, extraLines, findRec, limitBottom) {
-    if (!rows.length) return null;
+    // Removed rows drop out. The row after them closes up using the gap that
+    // sat before the first removed row.
+    const seq = [];
+    let pending = null;
 
-    const seq = rows.map((r, i) => ({
-        recs: r.recs,
-        origTop: r.top,
-        h: r.hNow,
-        gapBefore: i ? Math.max(0, r.top - (rows[i - 1].top + rows[i - 1].hOrig)) : 0
-    }));
+    rows.forEach((r, i) => {
+        const gap = i ? Math.max(0, r.top - (rows[i - 1].top + rows[i - 1].hOrig)) : 0;
 
-    const T0 = rows[0].top;
-    const last = rows[rows.length - 1];
-    const origBottom = last.top + last.hOrig;
+        if (r.removed) {
+            if (pending === null) pending = gap;
+            return;
+        }
+
+        seq.push({
+            recs: r.recs,
+            origTop: r.top,
+            h: r.hNow,
+            gapBefore: seq.length ? (pending ?? gap) : 0
+        });
+        pending = null;
+    });
+
+    if (!seq.length) return null;
+
+    const T0 = seq[0].origTop;
+    const lastRow = rows[rows.length - 1];
+    const origBottom = lastRow.top + lastRow.hOrig;
 
     for (const extra of extraLines) {
         const rec = findRec(extra.id);
         const refRec = findRec(extra.ref);
         if (!rec || !refRec) continue;
 
-        const idx = seq.findIndex((e) => e.recs.includes(refRec));
-        if (idx < 0) continue;
+        let idx = seq.findIndex((e) => e.recs.includes(refRec));
+        let position = extra.position;
 
-        const p = linePitch(seq, idx, extra.position, rec.size);
+        if (idx < 0) {
+            // Anchored to a removed row: attach to the nearest remaining row.
+            const ri = rows.findIndex((r) => r.recs.includes(refRec));
+            if (ri < 0) continue;
+
+            let target = -1;
+            position = "below";
+            for (let j = ri - 1; j >= 0 && target < 0; j--) if (!rows[j].removed) target = j;
+
+            if (target < 0) {
+                position = "above";
+                for (let j = ri + 1; j < rows.length && target < 0; j++) if (!rows[j].removed) target = j;
+            }
+            if (target < 0) continue;
+
+            idx = seq.findIndex((e) => e.recs === rows[target].recs);
+            if (idx < 0) continue;
+        }
+
+        const p = linePitch(seq, idx, position, rec.size);
         const entry = { recs: [rec], origTop: undefined, h: 0, gapBefore: 0 };
 
-        if (extra.position === "above") {
+        if (position === "above") {
             entry.gapBefore = seq[idx].gapBefore;
             seq[idx].gapBefore = p;
             seq.splice(idx, 0, entry);
@@ -320,12 +378,16 @@ function reflowPage(pageElement, pageIndex, fields, extraLines, styles) {
                     x: parseFloat(host.getAttribute("data-orig-x") ?? host.getAttribute("x")) || 0,
                     y: parseFloat(host.getAttribute("y")),
                     hOrig: 0,
-                    hNow: 0
+                    hNow: 0,
+                    total: 0,
+                    gone: 0
                 };
                 recs.set(host, rec);
             }
 
             rec.fields.push(field);
+            rec.total++;
+            if (o.node.closest("[data-line-removed]")) rec.gone++;
 
             const size = effectiveSize(field, styles);
             rec.size = Math.max(rec.size, size);
@@ -352,12 +414,15 @@ function reflowPage(pageElement, pageIndex, fields, extraLines, styles) {
     const rows = [];
     templateRecs.forEach((rec) => {
         const row = rows[rows.length - 1];
+        const removed = rec.total > 0 && rec.gone === rec.total;
+
         if (row && Math.abs(rec.y - row.top) <= ROW_TOLERANCE) {
             row.recs.push(rec);
             row.hOrig = Math.max(row.hOrig, rec.hOrig);
             row.hNow = Math.max(row.hNow, rec.hNow);
+            row.removed = row.removed && removed;
         } else {
-            rows.push({ recs: [rec], top: rec.y, hOrig: rec.hOrig, hNow: rec.hNow });
+            rows.push({ recs: [rec], top: rec.y, hOrig: rec.hOrig, hNow: rec.hNow, removed });
         }
     });
 

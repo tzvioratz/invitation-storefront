@@ -1314,3 +1314,11 @@ body.zoom-preview-open {
 .field-line-tools { display: inline-flex; gap: .25rem; margin-left: .5rem; }
 .field-line-button { font-size: .72rem; padding: .1rem .4rem; border: 1px solid #ccc; background: #fff; border-radius: 4px; cursor: pointer; }
 .field-line-button.danger { color: #a33; }
+.field-advanced .field-line-tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .35rem;
+    margin: .6rem 0 0;
+    padding-top: .6rem;
+    border-top: 1px solid #e5e5e5;
+}

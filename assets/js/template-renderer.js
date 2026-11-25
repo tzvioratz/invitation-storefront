@@ -1,6 +1,6 @@
 
 import { discoverFields, applyWording } from "./field-discovery.js";
-import { applyExtraLines, reflowPages } from "./line-manager.js";
+import { applyExtraLines, applyRemovedFields, reflowPages } from "./line-manager.js";
 
 const cache = new Map();
 const SVG_CACHE_NAME = "invitation-templates-v1";
@@ -340,6 +340,7 @@ export async function renderInvitation({
     wording = {},
     styles = {},
     extraLines = [],
+    removedFields = [],
     options = {},
     target,
     size = "large"
@@ -389,6 +390,7 @@ const pages = await Promise.all(
     const fieldStart = performance.now();
     
     applyExtraLines(pages, extraLines);
+    applyRemovedFields(pages, removedFields);
     const fields = discoverFields(pages);
 
     console.log(
@@ -758,8 +760,10 @@ export async function preloadInvitationTemplates(invitations) {
 // Call only on elements that are attached to the document and visible.
 export function centerAnchoredText(root) {
     root.querySelectorAll("text").forEach(text => {
+        if (text.closest("[data-line-removed]")) return;   
         const anchor = text.querySelector("[data-center]");
         if (!anchor) return;
+        if (anchor.closest("[data-line-removed]")) return; 
 
         // Always start from the template's original x.
         if (!text.hasAttribute("data-orig-x")) {
