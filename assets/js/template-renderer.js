@@ -1,5 +1,6 @@
 
 import { discoverFields, applyWording } from "./field-discovery.js";
+import { applyExtraLines, reflowPages } from "./line-manager.js";
 
 const cache = new Map();
 const SVG_CACHE_NAME = "invitation-templates-v1";
@@ -338,6 +339,7 @@ export async function renderInvitation({
     invitation,
     wording = {},
     styles = {},
+    extraLines = [],
     options = {},
     target,
     size = "large"
@@ -385,7 +387,8 @@ const pages = await Promise.all(
 
     // 2. Measure field discovery.
     const fieldStart = performance.now();
-
+    
+    applyExtraLines(pages, extraLines);
     const fields = discoverFields(pages);
 
     console.log(
@@ -398,6 +401,7 @@ const pages = await Promise.all(
     const wordingStart = performance.now();
 
     applyWording(fields, wording, styles);
+    reflowPages(pages, fields, extraLines, styles);
 
     console.log(
         `${invitation.title} - APPLY WORDING:`,
@@ -503,11 +507,10 @@ function fontValue(v) {
 // UPDATE WORDING
 // --------------------------------------------------
 
-export function updateRenderedWording(rendered, values, styles = {}) {
+export function updateRenderedWording(rendered, values, styles = {}, extraLines = []) {
     applyWording(rendered.fields, values, styles);
-    rendered.pages.forEach(p => {
-        if (p.element.isConnected) centerAnchoredText(p.element);
-    });
+    reflowPages(rendered.pages, rendered.fields, extraLines, styles);
+    rendered.pages.forEach(p => { if (p.element.isConnected) centerAnchoredText(p.element); });
 }
 // google fonts
 export async function ensureGoogleFont(family) {
@@ -795,3 +798,4 @@ export function centerAnchoredText(root) {
         }
     });
 }
+

@@ -12,6 +12,7 @@ import {
 import { CONFIG } from "./config.js";
 import { getActiveAddOns, isAddOnAvailableForInvitation } from "./addons-data.js";
 import { createAdvancedControls } from "./field-advanced.js";
+import { getLineHost, createExtraLine, removeExtraLine } from "./line-manager.js";
 
 const $ = (s) => document.querySelector(s),
     params = new URLSearchParams(location.search),
@@ -26,7 +27,7 @@ let availableAddOns = [];
 let selectedAddOns = {};
 let fieldStyles = {};
 let revealedHiddenFieldIds = new Set();
-
+let extraLines = [];  
 
 let zoomPreview = null;
 let zoomStage = null;
@@ -1067,7 +1068,7 @@ function buildFields() {
 
         const updateField = () => {
             wording[f.id] = input.value;
-            updateRenderedWording(rendered, wording, fieldStyles);
+            updateRenderedWording(rendered, wording, fieldStyles, extraLines);
             drawPages();
         };
 
@@ -1095,6 +1096,19 @@ function buildFields() {
         const labelRow = document.createElement("div");
         labelRow.className = "field-label-row";
         labelRow.appendChild(label);
+        
+        if (getLineHost(f.occurrences[0]?.node)) {
+    const tools = document.createElement("span");
+    tools.className = "field-line-tools";
+    tools.append(
+        lineButton("↑ Add line", "Add a line above", () => insertLine(f.id, "above")),
+        lineButton("↓ Add line", "Add a line below", () => insertLine(f.id, "below"))
+    );
+    if (extraLines.some((e) => e.id === f.id))
+        tools.append(lineButton("✕ Remove", "Remove this line", () => removeLine(f.id), "danger"));
+    labelRow.append(tools);
+}
+        
 
         inputRow.append(input, keyboardButton);
 
@@ -1106,9 +1120,7 @@ function buildFields() {
                 fieldStyles,
                 () => {
                     updateRenderedWording(
-                        rendered,
-                        wording,
-                        fieldStyles
+                        rendered, wording, fieldStyles, extraLines
                     );
                     drawPages();
                 }
@@ -1315,6 +1327,8 @@ function highlightActiveField(activeElement) {
             rect.setAttribute("height", bounds.height + 16);
             rect.setAttribute("rx", "5");
             rect.setAttribute("class", "field-highlight-box");
+            const t = el.closest("text")?.getAttribute("transform");
+            if (t) rect.setAttribute("transform", t);
 
             svg.appendChild(rect);
         } catch (error) {
@@ -1373,6 +1387,9 @@ function drawPages() {
 
     $("#pageLabel").textContent =
         `${rendered.pages[activePage].page.label} · Page ${activePage + 1} of ${rendered.pages.length}`;
+    
+    const k = Number(activeElement.querySelector("svg")?.dataset.flowScale || 1);
+if (k < 0.995) $("#pageLabel").textContent += ` · text scaled to ${Math.round(k * 100)}%`;
 
     $("#prevPage").disabled = activePage === 0;
     $("#nextPage").disabled = activePage === rendered.pages.length - 1;
@@ -1380,7 +1397,14 @@ function drawPages() {
 
 function refresh() {
     const target = document.createElement("div");
-    renderInvitation({ invitation, target, wording, styles: fieldStyles, options: selection }).then((r) => {
+    return renderInvitation({
+        invitation,
+        target,
+        wording,
+        styles: fieldStyles,
+        extraLines,
+        options: selection
+    }).then((r) => {
         rendered = r;
         drawPages();
         updatePrice();
@@ -1646,7 +1670,8 @@ $("#reviewButton").addEventListener("click", () => {
             email,
             phone: $("#customerPhone").value,
             notes: $("#orderNotes").value
-        }
+        },
+        extraLines: extraLines.map((e) => ({ ...e }))
     };
 
     $("#reviewSummary").innerHTML =
@@ -2064,4 +2089,34 @@ function zoomAtPoint(x, y, factor, startingLevel = zoomLevel) {
     updateZoomTransform();
 }
 
+function lineButton(label, title, onClick, extra = "") {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "field-line-button " + extra;
+    b.textContent = label;
+    b.title = title;
+    b.setAttribute("aria-label", title);
+    b.addEventListener("click", onClick);
+    return b;
+}
 
+async function insertLine(refId, position) {
+    const entry = createExtraLine(extraLines, refId, position);
+    extraLines = [...extraLines, entry];
+    if (fieldStyles[refId]) fieldStyles[entry.id] = { ...fieldStyles[refId] };
+    activeFieldId = entry.id;
+    await refresh();
+    buildFields();
+    const input = document.querySelector(`#fieldControls [data-field="${CSS.escape(entry.id)}"]`);
+    input?.focus();
+    input?.select();
+}
+
+function removeLine(id) {
+    extraLines = removeExtraLine(extraLines, id);
+    delete wording[id];
+    delete fieldStyles[id];
+    revealedHiddenFieldIds.delete(id);
+    if (activeFieldId === id) activeFieldId = null;
+    refresh().then(buildFields);
+}

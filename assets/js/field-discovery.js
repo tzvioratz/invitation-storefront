@@ -80,7 +80,7 @@ const lineSteps = new WeakMap();
 
 // Reads the template's own line spacing once, before the tspans are rebuilt.
 // Handles both dy="17" and absolute y="560" / y="577" styles.
-function getLineStep(node) {
+export function getLineStep(node) {
     if (lineSteps.has(node)) return lineSteps.get(node);
 
     const tspans = [...node.children].filter(c => c.localName === "tspan");
