@@ -1171,23 +1171,16 @@ if (isExtra) {
         section.appendChild(fieldWrap);
     });
 
-  // Add one hide button after the last revealed field on each page.
-sections.forEach((section, pageIndex) => {
-    const revealedInSection = activeFields.filter(f =>
-        f.hiddenFromEditor &&
-        revealedHiddenFieldIds.has(f.id) &&
-        (f.occurrences[0]?.pageIndex ?? 0) === pageIndex
-    );
+// One "Hide optional fields" button after each revealed group.
+hiddenGroups.forEach((group) => {
+    const revealed = group.filter((f) => revealedHiddenFieldIds.has(f.id));
+    if (!revealed.length) return;
 
-    if (!revealedInSection.length) return;
+    const lastField = revealed[revealed.length - 1];
 
-    const fieldWrappers = [...section.querySelectorAll(".field-control-wrap")];
-
-    const lastRevealedField = revealedInSection[revealedInSection.length - 1];
-
-    const lastWrapper = fieldWrappers.find(wrap =>
-        wrap.querySelector(`[data-field="${CSS.escape(lastRevealedField.id)}"]`)
-    );
+    const lastWrapper = container
+        .querySelector(`[data-field="${CSS.escape(lastField.id)}"]`)
+        ?.closest(".field-control-wrap");
 
     if (!lastWrapper) return;
 
@@ -1197,10 +1190,8 @@ sections.forEach((section, pageIndex) => {
     hideButton.textContent = "Hide optional fields";
 
     hideButton.addEventListener("click", () => {
-        revealedInSection.forEach(f => {
-            revealedHiddenFieldIds.delete(f.id);
-        });
-
+        // Only this group is hidden again; other open groups stay open.
+        group.forEach((f) => revealedHiddenFieldIds.delete(f.id));
         buildFields();
     });
 
