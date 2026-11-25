@@ -1321,3 +1321,71 @@ body.zoom-preview-open {
     padding-top: .6rem;
     border-top: 1px solid #e5e5e5;
 }
+
+body.order-overlay-open { overflow: hidden; }
+
+/* Review order: full-screen */
+#reviewPanel.review-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    overflow-y: auto;
+    box-sizing: border-box;
+    padding: 2rem 1rem 3rem;
+    background: #fff;
+}
+#reviewPanel.review-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    max-width: none !important;
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    transform: none !important;
+    z-index: 100000 !important;
+    overflow-y: auto;
+    box-sizing: border-box;
+    padding: 2rem 1rem 3rem;
+    background: #fff;
+}
+
+.order-state {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    background: #fff;
+    text-align: center;
+    z-index: 100001;   /* keep the rest of this rule as it was */
+}
+.order-state[hidden] { display: none; }
+
+.order-state-box {
+    max-width: 460px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+.order-state h2,
+.order-state p { margin: 0; line-height: 1.5; }
+
+.order-spinner {
+    width: 54px;
+    height: 54px;
+    border: 5px solid #e3e0da;
+    border-top-color: #26384d;
+    border-radius: 50%;
+    animation: order-spin .9s linear infinite;
+}
+@keyframes order-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+    .order-spinner { animation-duration: 3s; }
+}

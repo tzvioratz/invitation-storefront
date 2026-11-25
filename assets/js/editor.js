@@ -42,6 +42,17 @@ let zoomPointers = new Map();
 let zoomDrag = null;
 let zoomPinch = null;
 
+// Where "Start over" goes. Change this if your home screen is elsewhere.
+const HOME_URL = new URL("../", location.href).href;
+
+// Move the review panel to the end of <body> so it can cover the whole screen.
+$("#reviewPanel").classList.add("review-overlay");
+document.body.append($("#reviewPanel"));
+
+// Make "Continue editing" look like the Submit button.
+$("#editOrder").className = $("#submitOrder").className;
+$("#editOrder").textContent = "Continue editing";
+
 try {
     const data = await getStoreData();
     invitation = getInvitation(data, id);
@@ -80,6 +91,77 @@ try {
 } catch (e) {
     $("#editorTitle").textContent = "Unable to load invitation";
     $("#fieldControls").textContent = e.message;
+}
+
+function setOverlayOpen(open) {
+    document.body.classList.toggle("order-overlay-open", open);
+}
+
+function showReview() {
+    const panel = $("#reviewPanel");
+    $("#submitStatus").textContent = "";
+    panel.hidden = false;
+    panel.scrollTop = 0;
+    setOverlayOpen(true);
+    panel.setAttribute("tabindex", "-1");
+    panel.focus();
+}
+
+function hideReview() {
+    $("#reviewPanel").hidden = true;
+    setOverlayOpen(false);
+}
+
+let orderState = null;
+
+function showOrderState(kind, reference) {
+    if (!orderState) {
+        orderState = document.createElement("div");
+        orderState.className = "order-state";
+        orderState.setAttribute("role", "status");
+        orderState.setAttribute("aria-live", "polite");
+        document.body.append(orderState);
+    }
+
+    const box = document.createElement("div");
+    box.className = "order-state-box";
+
+    if (kind === "loading") {
+        const spinner = document.createElement("div");
+        spinner.className = "order-spinner";
+
+        const text = document.createElement("p");
+        text.textContent = "Submitting your order…";
+
+        box.append(spinner, text);
+    } else {
+        const title = document.createElement("h2");
+        title.textContent = "Order request received";
+
+        const ref = document.createElement("p");
+        ref.innerHTML = "Reference: <strong></strong>";
+        ref.querySelector("strong").textContent = reference;
+
+        const note = document.createElement("p");
+        note.textContent =
+            "We will prepare a proof for your approval. Printing begins only after approval.";
+
+        const startOver = document.createElement("button");
+        startOver.type = "button";
+        startOver.className = $("#submitOrder").className;
+        startOver.textContent = "Start over";
+        startOver.addEventListener("click", () => { location.href = HOME_URL; });
+
+        box.append(title, ref, note, startOver);
+    }
+
+    orderState.replaceChildren(box);
+    orderState.hidden = false;
+    setOverlayOpen(true);
+}
+
+function hideOrderState() {
+    if (orderState) orderState.hidden = true;
 }
 
 function activateField(fieldId) {
@@ -1735,33 +1817,40 @@ $("#reviewButton").addEventListener("click", () => {
             .join("") +
         "</dl>";
 
-    $("#reviewPanel").hidden = false;
-    $("#reviewPanel").scrollIntoView({ behavior: "smooth" });
+    showReview();
 });
 
-$("#editOrder").addEventListener("click", () => ($("#reviewPanel").hidden = true));
+$("#editOrder").addEventListener("click", hideReview);
 $("#submitOrder").addEventListener("click", async () => {
     const status = $("#submitStatus");
-    status.textContent = "Submitting…";
+    status.textContent = "";
     $("#submitOrder").disabled = true;
+
+    $("#reviewPanel").hidden = true;   // the page stays locked; the loader takes over
+    showOrderState("loading");
+
     try {
         if (!CONFIG.backendUrl || CONFIG.backendUrl.includes("REPLACE_WITH"))
             throw new Error("The order backend has not been configured. No order was submitted.");
+
         const response = await fetch(CONFIG.backendUrl, {
             method: "POST",
             headers: { "Content-Type": "text/plain;charset=utf-8" },
             body: JSON.stringify(window.pendingOrder)
         });
+
         const result = await response.json();
+
         if (!result.success || !result.reference)
             throw new Error(result.error || "The server did not confirm the order.");
-        status.style.whiteSpace = "pre-line";
-        status.textContent = `Order request received. 
-        Reference: ${result.reference}. 
-        We will prepare a proof for your approval. 
-        Printing begins only after approval.`;
+
+        showOrderState("done", result.reference);
     } catch (e) {
-        status.textContent = `We could not confirm your order: ${e.message}. Please try again or contact the business. Do not assume your request was received.`;
+        // Back to the review screen so they can try again.
+        hideOrderState();
+        $("#reviewPanel").hidden = false;
+        status.textContent =
+            `We could not confirm your order: ${e.message}. Please try again or contact the business. Do not assume your request was received.`;
     } finally {
         $("#submitOrder").disabled = false;
     }
