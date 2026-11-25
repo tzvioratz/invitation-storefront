@@ -99,7 +99,7 @@ async function render() {
             </p>
 
             <small class="muted">
-                Per-invitation price varies by quantity and options.
+                Invitation price varies by quantity and options.
             </small>
 
             <a class="button"

@@ -6,6 +6,7 @@ import { sanitizeFieldStyles, setFieldStyle } from "./field-discovery.js";
 // Optional: used to load declared fonts for imported SVGs if template-renderer.js exports loadSvgFonts.
 import * as templateRenderer from "./template-renderer.js";
 import { createAdvancedControls } from "./field-advanced.js"
+import { getLineHost, createExtraLine, removeExtraLine, sanitizeExtraLines, sanitizeRemovedFields } from "./line-manager.js";
 
 const $ = s => document.querySelector(s);
 
@@ -18,7 +19,8 @@ const ORDER_COLUMNS = [
     "Estimated Order Total", "Base Charge", "Unit Price", "Format Adjustment",
     "Paper Adjustment", "Customization Fee", "Intermediate Premium", "Adjusted Unit Price",
     "Effective Price Per Invitation", "Add-ons JSON", "Add-on Total", "customFields",
-    "Add-ons JSON", "Add-on Total", "customFields", "Field Styles JSON"
+    "Add-ons JSON", "Add-on Total", "customFields", "Field Styles JSON", "DesignBaseFees", 
+    "Extra Lines JSON", "Removed Fields JSON"
 ];
 
 const SHEET_SIZES = {
@@ -147,6 +149,12 @@ function normalizeOrder(raw) {
     
     const styles = safeJSON(raw["Field Styles JSON"], {});
     if (styles.error) warnings.push("Field Styles JSON could not be read (" + styles.error + ").");
+    
+    const extra = safeJSON(raw["Extra Lines JSON"], []);
+    if (extra.error) warnings.push("Extra Lines JSON could not be read (" + extra.error + ").");
+
+    const removed = safeJSON(raw["Removed Fields JSON"], []);
+    if (removed.error) warnings.push("Removed Fields JSON could not be read (" + removed.error + ").");
 
     return {
         raw,
@@ -161,6 +169,8 @@ function normalizeOrder(raw) {
         wording: wording.value && typeof wording.value === "object" && !Array.isArray(wording.value)
             ? wording.value : {},
         fieldStyles: sanitizeFieldStyles(styles.value),
+        extraLines: sanitizeExtraLines(extra.value),
+        removedFields: sanitizeRemovedFields(removed.value),
         addOns: Array.isArray(addOns.value) ? addOns.value : []
         
     };
@@ -190,6 +200,8 @@ async function renderSource(src) {
         target: document.createElement("div"),
         wording: src.wording,
         styles: src.styles || {},
+        extraLines: src.extraLines || [], 
+        removedFields: src.removedFields || [], 
         options: src.type === "invitation" ? selection : {}
     });
 }
@@ -213,7 +225,8 @@ async function loadOrder(o) {
     sources = [{
         id: "inv", type: "invitation", title: invitation.title,
         quantity: o.quantity, wording: { ...o.wording },     
-        styles: { ...o.fieldStyles }, rendered: null
+        styles: { ...o.fieldStyles },extraLines: [...o.extraLines],
+        removedFields: [...o.removedFields], rendered: null
     }];
 
     o.addOns.forEach((a, index) => {
@@ -409,9 +422,12 @@ function fillSourceBlock(src) {
         });
 
         const revealedIds = getRevealedIds(src);
+        
+        const removed = src.removedFields || [];
+        const activeFields = src.rendered.fields.filter(f => !removed.includes(f.id));
 
         // Identify consecutive groups of hidden fields.
-        const hiddenGroups = getHiddenFieldGroups(src.rendered.fields);
+        const hiddenGroups = getHiddenFieldGroups(activeFields);
         const hiddenGroupByField = new Map();
 
         hiddenGroups.forEach(group => {
@@ -423,7 +439,7 @@ function fillSourceBlock(src) {
         const fieldWrappers = new Map();
 
         // Render fields in their original positions.
-        src.rendered.fields.forEach(f => {
+        activeFields.forEach(f => {
             const pageIndex = f.occurrences[0]?.pageIndex ?? 0;
             const section = sections[pageIndex];
 
@@ -466,38 +482,44 @@ function fillSourceBlock(src) {
             fieldWrappers.set(f.id, fieldWrap);
         });
 
-        // One hide button per page, immediately after its last revealed field.
-        sections.forEach((section, pageIndex) => {
-            const revealedInSection = src.rendered.fields.filter(f =>
-                f.hiddenFromEditor &&
-                revealedIds.has(f.id) &&
-                (f.occurrences[0]?.pageIndex ?? 0) === pageIndex
-            );
+        // One "Hide optional fields" button after each revealed group.
+        hiddenGroups.forEach(group => {
+            const revealed = group.filter(f => revealedIds.has(f.id));
+            if (!revealed.length) return;
 
-            if (!revealedInSection.length) return;
-
-            const lastField = revealedInSection[revealedInSection.length - 1];
-            const lastWrapper = fieldWrappers.get(lastField.id);
-
+            const lastWrapper = fieldWrappers.get(revealed[revealed.length - 1].id);
             if (!lastWrapper) return;
 
-            const hideButton = el(
-                "button",
-                "hide-revealed-fields",
-                "Hide optional fields"
-            );
-
+            const hideButton = el("button", "hide-revealed-fields", "Hide optional fields");
             hideButton.type = "button";
-
             hideButton.addEventListener("click", () => {
-                revealedInSection.forEach(f => {
-                    revealedIds.delete(f.id);
-                });
-
+                group.forEach(f => revealedIds.delete(f.id));
                 fillSourceBlock(src);
             });
 
             lastWrapper.after(hideButton);
+        });
+
+        // Removed lines, with a Restore button each.
+        sections.forEach((section, pageIndex) => {
+            const gone = src.rendered.fields.filter(f =>
+                removed.includes(f.id) && (f.occurrences[0]?.pageIndex ?? 0) === pageIndex
+            );
+            if (!gone.length) return;
+
+            const box = el("div", "removed-lines");
+            box.append(el("strong", "", `Removed lines (${gone.length})`));
+
+            gone.forEach(f => {
+                const row = el("div", "removed-line-row");
+                row.append(
+                    el("span", "", f.label),
+                    lineButton("↺ Restore", `Restore ${f.label}`, () => restoreLine(src, f.id))
+                );
+                box.append(row);
+            });
+
+            section.append(box);
         });
 
         if (!src.rendered.fields.length) {
@@ -600,7 +622,7 @@ function buildFieldControl(src, f, scope) {
 
     const updateField = () => {
         src.wording[f.id] = input.value;
-        updateRenderedWording(src.rendered, src.wording, src.styles);
+        updateRenderedWording(src.rendered, src.wording, src.styles, src.extraLines || []);
         applyImportedWording(src);
         drawPageView();
         scheduleSheets();
@@ -635,7 +657,7 @@ labelRow.append(label);
 let panel = null;
 if (f.advanced) {
     const adv = createAdvancedControls(f, src.styles, () => {
-        updateRenderedWording(src.rendered, src.wording, src.styles);
+        updateRenderedWording(src.rendered, src.wording, src.styles, src.extraLines || []);
         applyImportedStyle(src, f.id); 
         drawPageView();
         scheduleSheets();
@@ -644,10 +666,105 @@ if (f.advanced) {
     panel = adv.panel;
 }
 
-wrap.append(labelRow, row, keyboard);
-if (panel) wrap.append(panel);    return wrap;
+    const tools = el("span", "field-line-tools");
+
+    // Lines only apply to the invitation itself, not add-ons.
+    if (src.type === "invitation") {
+        const isExtra = (src.extraLines || []).some(e => e.id === f.id);
+
+        if (getLineHost(f.occurrences[0]?.node)) {
+            tools.append(
+                lineButton("↑ Add line", "Add a line above", () => insertLine(src, f.id, "above")),
+                lineButton("↓ Add line", "Add a line below", () => insertLine(src, f.id, "below"))
+            );
+        }
+        if (isExtra) {
+            tools.append(lineButton("✕ Remove", "Remove this line", () => removeLine(src, f.id), "danger"));
+        } else if (!f.required) {
+            tools.append(lineButton("✕ Remove", "Remove this line", () => removeTemplateLine(src, f.id), "danger"));
+        }
+    }
+
+    if (panel && tools.children.length) panel.append(tools);
+    else if (tools.children.length) labelRow.append(tools);
+
+    wrap.append(labelRow, row, keyboard);
+    if (panel) wrap.append(panel);
+    return wrap;
+}
+function lineButton(label, title, onClick, extra = "") {
+    const b = el("button", "field-line-button " + extra, label);
+    b.type = "button";
+    b.title = title;
+    b.setAttribute("aria-label", title);
+    b.addEventListener("click", onClick);
+    return b;
 }
 
+// An imported SVG is a frozen copy, so line changes can't update it.
+function discardImports(src) {
+    const keys = [...overrides.keys()].filter(k => k.startsWith(src.id + "#"));
+    if (!keys.length) return true;
+
+    if (!confirm("This page uses an imported SVG. Adding or removing lines switches it back to the original template. Continue?")) {
+        return false;
+    }
+    keys.forEach(k => overrides.delete(k));
+    return true;
+}
+
+async function rerenderSource(src, focusId = null) {
+    await renderSource(src);
+    fillSourceBlock(src);
+    refreshPieces();
+
+    if (focusId) {
+        const input = src.block.querySelector(`[data-field="${CSS.escape(focusId)}"]`);
+        input?.focus();
+        input?.select();
+    }
+}
+
+async function insertLine(src, refId, position) {
+    if (!discardImports(src)) return;
+
+    const entry = createExtraLine(src.extraLines, refId, position);
+    src.extraLines = [...src.extraLines, entry];
+    if (src.styles[refId]) src.styles[entry.id] = { ...src.styles[refId] };
+
+    activeSourceId = src.id;
+    activeFieldId = entry.id;
+    await rerenderSource(src, entry.id);
+}
+
+async function removeLine(src, id) {
+    if (!discardImports(src)) return;
+
+    src.extraLines = removeExtraLine(src.extraLines, id);
+    delete src.wording[id];
+    delete src.styles[id];
+    getRevealedIds(src).delete(id);
+    if (activeFieldId === id) activeFieldId = null;
+
+    await rerenderSource(src);
+}
+
+async function removeTemplateLine(src, id) {
+    if (!discardImports(src)) return;
+
+    if (!src.removedFields.includes(id)) src.removedFields = [...src.removedFields, id];
+    getRevealedIds(src).delete(id);
+    if (activeFieldId === id) activeFieldId = null;
+
+    await rerenderSource(src);
+}
+
+async function restoreLine(src, id) {
+    if (!discardImports(src)) return;
+
+    src.removedFields = src.removedFields.filter(x => x !== id);
+    await rerenderSource(src);
+}
 function activateField(src, fieldId) {
     activeSourceId = src.id;
     activeFieldId = fieldId;
@@ -725,6 +842,8 @@ function highlightActiveField(root, fieldId) {
                 rect.setAttribute("height", b.height + 16);
                 rect.setAttribute("rx", "5");
                 rect.setAttribute("class", "field-highlight-box");
+                const t = node.closest("text")?.getAttribute("transform");
+                if (t) rect.setAttribute("transform", t);
                 svg.appendChild(rect);
             } catch (e) {
                 console.warn("Could not highlight SVG field:", e);
@@ -1278,7 +1397,8 @@ function bindImportedFields(piece, wrapper) {
     const missing = [];
 
     src.rendered.fields
-        .filter(f => f.occurrences.some(o => o.pageIndex === piece.pageIndex))
+        .filter(f => f.occurrences.some(o => o.pageIndex === piece.pageIndex) &&
+             !(src.removedFields || []).includes(f.id))
         .forEach(f => {
             const nodes = findImportedFieldNodes(wrapper, f.id)
                 .map(n => {
@@ -1832,6 +1952,19 @@ $("#copyAddOns").addEventListener("click", e => {
 $("#copyStyles").addEventListener("click", e => {
     if (order) copyText(JSON.stringify(sources[0].styles), e.currentTarget);
 });
+
+function addCopyButton(after, label, getText) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = after.className;
+    b.textContent = label;
+    b.addEventListener("click", e => { if (order) copyText(getText(), e.currentTarget); });
+    after.after(b);
+    return b;
+}
+
+const copyExtra = addCopyButton($("#copyStyles"), "Copy extra lines", () => JSON.stringify(sources[0].extraLines));
+addCopyButton(copyExtra, "Copy removed lines", () => JSON.stringify(sources[0].removedFields));
 
 window.addEventListener("resize", debounce(() => {
     if (order) updatePreviewScale(getSettings());
