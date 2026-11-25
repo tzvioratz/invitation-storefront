@@ -213,12 +213,35 @@ function buildOptions() {
                     option.append(name, price);
 
                     option.addEventListener("click", () => {
-                        selection[key] = value;
-                        updateTrigger();
-                        updateMenu();
-                        closeMenu();
-                        refresh();
-                    });
+    selection[key] = value;
+
+    // Switching to plain Black resets all custom field colors.
+    if (
+        key === "design" &&
+        String(value).trim().toLowerCase() === "black"
+    ) {
+        Object.keys(fieldStyles).forEach(fieldId => {
+            if (fieldStyles[fieldId]) {
+                delete fieldStyles[fieldId].color;
+
+                if (Object.keys(fieldStyles[fieldId]).length === 0) {
+                    delete fieldStyles[fieldId];
+                }
+            }
+        });
+    }
+
+    updateTrigger();
+    updateMenu();
+    closeMenu();
+
+    refresh();
+
+    // Rebuild advanced panels to show/hide the color controls.
+    if (key === "design") {
+        buildFields();
+    }
+});
 
                     menu.appendChild(option);
                 });
@@ -1132,7 +1155,8 @@ if (isExtra) {
                         rendered, wording, fieldStyles, extraLines
                     );
                     drawPages();
-                }
+                },
+                selection.design
             );
 
             labelRow.append(adv.toggle);

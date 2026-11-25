@@ -15,7 +15,8 @@ function toHex(color) {
     return "#000000";
 }
 
-export function createAdvancedControls(field, styles, onChange) {
+export function createAdvancedControls(field, styles, onChange, designOption = "") {
+    const showColor = String(designOption).trim().toLowerCase() !== "black";
     const defaults = field.styleDefaults || {};
 
     const toggle = document.createElement("button");
@@ -29,14 +30,15 @@ export function createAdvancedControls(field, styles, onChange) {
     panel.className = "field-advanced";
     panel.hidden = true;
 
-    function row(text, control) {
-        const wrap = document.createElement("label");
-        wrap.className = "field-advanced-row";
-        const span = document.createElement("span");
-        span.textContent = text;
-        wrap.append(span, control);
-        panel.appendChild(wrap);
-    }
+ function row(text, control) {
+    const wrap = document.createElement("label");
+    wrap.className = "field-advanced-row";
+    const span = document.createElement("span");
+    span.textContent = text;
+    wrap.append(span, control);
+    panel.appendChild(wrap);
+    return wrap;
+}
 
     function update(patch) {
         const next = { ...(styles[field.id] || {}), ...patch };
@@ -52,13 +54,15 @@ export function createAdvancedControls(field, styles, onChange) {
         onChange();
     }
 
-    // Color
-    const color = document.createElement("input");
-    color.type = "color";
-    color.value = toHex(defaults.color);
-    color.addEventListener("input", () => update({ color: color.value }));
-    row("Color", color);
+// Color
+const color = document.createElement("input");
+color.type = "color";
+color.value = toHex(defaults.color);
+color.addEventListener("input", () => update({ color: color.value }));
 
+const colorRow = row("Color", color);
+colorRow.style.display = showColor ? "" : "none";
+    
     // Font controls
     const fontControls = document.createElement("div");
     fontControls.className = "field-advanced-font-controls";
@@ -143,7 +147,7 @@ export function createAdvancedControls(field, styles, onChange) {
             fontStatus.textContent = "Enter a font name first.";
             return;
         }
-
+//createAdvancedControls
         applyFontButton.disabled = true;
         fontStatus.textContent = "Loading font...";
 
