@@ -478,7 +478,6 @@ async function buildAddOnControls() {
 
         toggle.append(yesButton, noButton);
 
-        // Quantity dropdown.
         // Custom quantity dropdown with price differences.
         const quantityLabel = document.createElement("label");
         quantityLabel.className = "addon-quantity-label";
@@ -618,15 +617,7 @@ async function buildAddOnControls() {
                 if (!radio.checked) return;
 
                 state.design = design.id;
-                
-                // Shows or hides a section's content together with the <h4> heading right before it.
 
-                function setAddOnSectionVisible(container, visible) {
-    
-                    container.hidden = !visible;
-    const heading = container.previousElementSibling;
-    if (heading?.tagName === "H4") heading.hidden = !visible;
-}
                 // Render the newly selected design and its editable fields.
                 await renderAddOnSelection(addOn, state, selectedPreview, fieldsContainer);
                 updateAddOnPriceDisplays();
@@ -656,6 +647,7 @@ async function buildAddOnControls() {
         customFieldsContainer.className = "addon-custom-fields";
 
         buildAddOnCustomFields(addOn, state, customFieldsContainer);
+
         function updateAddOnPriceDisplays() {
             updateQuantityTrigger();
             updateQuantityMenu();
@@ -696,7 +688,8 @@ async function buildAddOnControls() {
             setAddOnSectionVisible(selectedPreview, false);
             setAddOnSectionVisible(fieldsContainer, false);
         }
-    }
+    } // end of for loop
+}     // end of buildAddOnControls
         
 // Shows or hides a section's content together with the <h4> heading right before it.
 function setAddOnSectionVisible(container, visible) {
@@ -748,7 +741,7 @@ async function renderAddOnSelection(addOn, state, previewContainer, fieldsContai
 function buildAddOnWordingFields(state,rendered,wording,container) {
     container.replaceChildren();
 
-
+if (!rendered?.fields?.length) {
         return;
     }
 

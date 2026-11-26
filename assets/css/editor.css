@@ -853,8 +853,7 @@
 }
 
 .show-more-fields {
-    display: inline-block;
-    margin: 10px 0 16px;
+    display: flex;              /* centers the text inside the button, vertically and horizontally */    margin: 10px 0 16px;
     padding: 5px 9px;
     border: 1px solid #ded5c8;
     border-radius: 4px;
@@ -864,6 +863,12 @@
     font-size: 0.8rem;
     cursor: pointer;
     transition: background 0.2s ease;
+        align-items: center;
+    justify-content: center;
+    width: fit-content;         /* keeps the button from stretching full width */
+    margin: 14px auto;          /* auto = centered horizontally; equal top/bottom = even vertical spacing */
+    line-height: 1.2;
+    text-align: center;
 }
 
 .show-more-fields:hover {
