@@ -430,3 +430,23 @@ a.journey-link:hover span {
     }
 }
 
+.hero-card-image {
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 14px;
+    background: #fff;
+    box-shadow: 0 20px 55px rgba(0, 0, 0, .13);
+    transform: rotate(3deg);
+    transition: transform .6s ease;
+}
+
+.hero-card-image:hover {
+    transform: rotate(0deg) translateY(-4px);
+}
+
+.hero-card-image img {
+    display: block;
+    width: 100%;
+    height: auto;
+}

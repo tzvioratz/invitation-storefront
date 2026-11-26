@@ -8,6 +8,7 @@ import {
     preloadInvitationTemplates
 } from "./template-renderer.js";
 
+
 try {
     const data = await getStoreData();
     const active = getActiveInvitations(data);
