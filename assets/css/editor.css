@@ -1335,7 +1335,6 @@ body.order-overlay-open { overflow: hidden; }
     background: #fff;
 }
 #reviewPanel.review-overlay {
-    position: fixed !important;
     top: 0 !important;
     left: 0 !important;
     right: 0 !important;
@@ -1352,6 +1351,7 @@ body.order-overlay-open { overflow: hidden; }
     box-sizing: border-box;
     padding: 2rem 1rem 3rem;
     background: #fff;
+    text-align: center;
 }
 
 .order-state {
@@ -1362,8 +1362,7 @@ body.order-overlay-open { overflow: hidden; }
     justify-content: center;
     padding: 1.5rem;
     background: #fff;
-    text-align: center;
-    z-index: 100001;   /* keep the rest of this rule as it was */
+    z-index: 100001;   
 }
 .order-state[hidden] { display: none; }
 
@@ -1388,4 +1387,32 @@ body.order-overlay-open { overflow: hidden; }
 @keyframes order-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) {
     .order-spinner { animation-duration: 3s; }
+}
+/* Summary as a centered two-column list: labels on the left, values on the right */
+#reviewPanel #reviewSummary dl {
+    display: grid;
+    grid-template-columns: minmax(7rem, max-content) minmax(0, 28rem);
+    justify-content: center;
+    column-gap: 1.25rem;
+    row-gap: .6rem;
+    margin: 1.5rem auto;
+    text-align: left;
+}
+#reviewPanel #reviewSummary dt {
+    margin: 0;
+    font-weight: 600;
+    text-align: right;
+}
+#reviewPanel #reviewSummary dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+/* Space between the buttons */
+.review-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin: 1.5rem 0 .75rem;
 }

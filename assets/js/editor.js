@@ -53,6 +53,12 @@ document.body.append($("#reviewPanel"));
 $("#editOrder").className = $("#submitOrder").className;
 $("#editOrder").textContent = "Continue editing";
 
+// Put both buttons in one row so they can be spaced and centered.
+const reviewActions = document.createElement("div");
+reviewActions.className = "review-actions";
+$("#editOrder").before(reviewActions);
+reviewActions.append($("#editOrder"), $("#submitOrder"));
+
 try {
     const data = await getStoreData();
     invitation = getInvitation(data, id);

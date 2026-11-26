@@ -9,49 +9,19 @@ import {
 } from "./template-renderer.js";
 
 try {
-
     const data = await getStoreData();
     const active = getActiveInvitations(data);
 
-    const occasions = [
-        ...new Set(active.flatMap(i => i.occasions))
-    ];
-
-    const styles = [
-        ...new Set(active.flatMap(i => i.styles))
-    ];
-
-    document.querySelector("#occasionLinks").innerHTML =
-        occasions.map(x =>
-            `<a href="catalog/?occasion=${encodeURIComponent(x)}">${escapeHTML(x)}</a>`
-        ).join("");
-
-    document.querySelector("#styleLinks").innerHTML =
-        styles.map(x =>
-            `<a href="catalog/?style=${encodeURIComponent(x)}">${escapeHTML(x)}</a>`
-        ).join("");
-
     console.time("HOMEPAGE SVG PRELOAD");
 
-preloadInvitationTemplates(active).then(() => {
-    console.timeEnd("HOMEPAGE SVG PRELOAD");
-}).catch(error => {
-    console.warn("Invitation preloading failed:", error);
-});
-    
+    preloadInvitationTemplates(active)
+        .then(() => {
+            console.timeEnd("HOMEPAGE SVG PRELOAD");
+        })
+        .catch(error => {
+            console.warn("Invitation preloading failed:", error);
+        });
 
-} catch (e) {
-
-    document.querySelector("#occasionLinks").textContent = e.message;
-
-}
-
-function escapeHTML(s) {
-    return String(s).replace(/[&<>"']/g, c => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;"
-    }[c]));
+} catch (error) {
+    console.error("Homepage initialization failed:", error);
 }

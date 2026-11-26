@@ -30,6 +30,8 @@ const BOTTOM_MARGIN = 36; // default safe bottom = viewBox height - this
 const ROW_TOLERANCE = 0.75; // y values this close are the same row
 const EPS = 1e-6;
 const ID_RE = /^[A-Za-z0-9_-]{1,80}$/;
+const MAX_SCALE = 1.2; // how far text may grow past template size when rows are removed
+const SIDE_MARGIN = 24;   // growth stops when the widest line gets this close to the page edge
 
 export const NEW_LINE_TEXT = "New line";
 
@@ -219,9 +221,7 @@ function linePitch(seq, idx, position, size) {
 // rows: [{ recs, top, hOrig, hNow }]  (template rows, top to bottom)
 // extraLines: saved list; findRec(fieldId) -> rec | undefined
 // Each rec needs { size }.
-export function layoutPage(rows, extraLines, findRec, limitBottom) {
-    // Removed rows drop out. The row after them closes up using the gap that
-    // sat before the first removed row.
+export function layoutPage(rows, extraLines, findRec, limitBottom, maxScale = MAX_SCALE) {
     const seq = [];
     let pending = null;
 
@@ -255,6 +255,7 @@ export function layoutPage(rows, extraLines, findRec, limitBottom) {
 
         let idx = seq.findIndex((e) => e.recs.includes(refRec));
         let position = extra.position;
+        let reattached = false;
 
         if (idx < 0) {
             // Anchored to a removed row: attach to the nearest remaining row.
@@ -273,10 +274,32 @@ export function layoutPage(rows, extraLines, findRec, limitBottom) {
 
             idx = seq.findIndex((e) => e.recs === rows[target].recs);
             if (idx < 0) continue;
+            reattached = true;
+        }
+
+        // Side-by-side columns: if the neighbouring slot already holds an added
+        // line from ANOTHER column of this same row, share that row.
+        if (!reattached) {
+            const here = seq[idx];
+            const nb = seq[position === "above" ? idx - 1 : idx + 1];
+            const sameLane = (r) => Math.abs((r.x ?? 0) - (rec.x ?? 0)) <= ROW_TOLERANCE;
+
+            if (
+                here.recs.length > 1 &&
+                nb && nb.extra &&
+                nb.anchor === here && nb.anchorPos === position &&
+                !nb.recs.some(sameLane)
+            ) {
+                nb.recs.push(rec);
+                continue;
+            }
         }
 
         const p = linePitch(seq, idx, position, rec.size);
-        const entry = { recs: [rec], origTop: undefined, h: 0, gapBefore: 0 };
+        const entry = {
+            recs: [rec], origTop: undefined, h: 0, gapBefore: 0,
+            extra: true, anchor: seq[idx], anchorPos: position
+        };
 
         if (position === "above") {
             entry.gapBefore = seq[idx].gapBefore;
@@ -290,13 +313,19 @@ export function layoutPage(rows, extraLines, findRec, limitBottom) {
 
     const limit = Math.max(limitBottom, origBottom);
     const room = limit - T0;
+    const origSpan = origBottom - T0;
 
     let span = 0;
     seq.forEach((e, i) => {
         span += e.h + (i ? e.gapBefore : 0);
     });
 
-    const k = span > room && span > 0 ? Math.max(MIN_SCALE, room / span) : 1;
+    let k = 1;
+    if (span > room && span > 0) {
+        k = Math.max(MIN_SCALE, room / span);                  // too tall: shrink
+    } else if (span > 0 && span < origSpan - 0.01) {
+        k = Math.min(MAX_SCALE, origSpan / span);              // rows removed: grow into the freed space
+    }
 
     const tops = [];
     let bottom = T0;
@@ -306,7 +335,7 @@ export function layoutPage(rows, extraLines, findRec, limitBottom) {
         bottom = top + k * e.h;
     });
 
-    return { seq, tops, k, bottom };
+    return { seq, tops, k, bottom, span, origSpan, room };
 }
 
 // ---------------------------------------------------------------------------
@@ -430,17 +459,47 @@ function reflowPage(pageElement, pageIndex, fields, extraLines, styles) {
     const vbHeight = vb && vb.height ? vb.height : parseFloat(svg.getAttribute("height")) || 612;
     const flowBottom = parseFloat(svg.getAttribute("data-flow-bottom")) || vbHeight - BOTTOM_MARGIN;
 
-    const layout = layoutPage(rows, extraLines, (id) => recByFieldId.get(id), flowBottom);
+    
+    // Per-line growth cap: each line may grow until it nears the page's side margins.
+    const vbW = vb && vb.width ? vb.width : parseFloat(svg.getAttribute("width")) || 396;
+
+    recs.forEach((rec) => {
+        rec.cap = MAX_SCALE;
+        if (rec.total > 0 && rec.gone === rec.total) return; // removed
+
+        let w = 0;
+        try { w = rec.el.getBBox().width; } catch { /* not rendered */ }
+        if (!(w > 0)) return;
+
+        const anchor = getComputedStyle(rec.el).textAnchor || "start"; // handles inherited anchors
+        const left = rec.x - SIDE_MARGIN;
+        const right = vbW - SIDE_MARGIN - rec.x;
+        const room = anchor === "middle" ? 2 * Math.min(left, right)
+                   : anchor === "end" ? left
+                   : right;
+
+        rec.cap = Math.max(1, Math.min(MAX_SCALE, room / w));
+    });
+    
+    const layout = layoutPage(rows, extraLines, (id) => recByFieldId.get(id), flowBottom);    
+    
     if (!layout) return null;
 
+        if (window.__flowDebug) {
+        console.log("flow", { k: layout.k, span: layout.span, origSpan: layout.origSpan, room: layout.room,
+            rows: rows.map((r) => ({ top: r.top, removed: r.removed })) });
+    }
+    
     layout.seq.forEach((entry, i) => {
         entry.recs.forEach((rec) => {
             const rowTop = entry.origTop ?? rec.y;
-            setTransform(rec, layout.tops[i] - rowTop, layout.k);
+            const textK = layout.k > 1 ? Math.min(layout.k, rec.cap ?? 1) : layout.k;
+            setTransform(rec, layout.tops[i] - rowTop, textK);
         });
     });
-
-    if (layout.k < 1 - EPS) svg.dataset.flowScale = String(round(layout.k));
+    
+    
+    if (Math.abs(layout.k - 1) > EPS) svg.dataset.flowScale = String(round(layout.k));
     else delete svg.dataset.flowScale;
 
     return { pageIndex, k: layout.k };
