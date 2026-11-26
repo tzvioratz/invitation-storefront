@@ -150,7 +150,8 @@ function showOrderState(kind, reference) {
 
         const note = document.createElement("p");
         note.textContent =
-            "We will prepare a proof for your approval. Printing begins only after approval.";
+            `We will email you a proof within 72 hours for approval. 
+            Printing begins only after approval and payment.`;
 
         const startOver = document.createElement("button");
         startOver.type = "button";
