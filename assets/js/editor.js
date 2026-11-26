@@ -618,7 +618,15 @@ async function buildAddOnControls() {
                 if (!radio.checked) return;
 
                 state.design = design.id;
+                
+                // Shows or hides a section's content together with the <h4> heading right before it.
 
+                function setAddOnSectionVisible(container, visible) {
+    
+                    container.hidden = !visible;
+    const heading = container.previousElementSibling;
+    if (heading?.tagName === "H4") heading.hidden = !visible;
+}
                 // Render the newly selected design and its editable fields.
                 await renderAddOnSelection(addOn, state, selectedPreview, fieldsContainer);
                 updateAddOnPriceDisplays();
@@ -685,9 +693,16 @@ async function buildAddOnControls() {
         if (state.design) {
             await renderAddOnSelection(addOn, state, selectedPreview, fieldsContainer);
         } else {
-            selectedPreview.textContent = "No design available.";
+            setAddOnSectionVisible(selectedPreview, false);
+            setAddOnSectionVisible(fieldsContainer, false);
         }
     }
+        
+// Shows or hides a section's content together with the <h4> heading right before it.
+function setAddOnSectionVisible(container, visible) {
+    container.hidden = !visible;
+    const heading = container.previousElementSibling;
+    if (heading?.tagName === "H4") heading.hidden = !visible;
 }
 
 async function renderAddOnSelection(addOn, state, previewContainer, fieldsContainer) {
@@ -697,11 +712,13 @@ async function renderAddOnSelection(addOn, state, previewContainer, fieldsContai
     fieldsContainer.replaceChildren();
 
     if (!design || !design.pages?.length) {
-        previewContainer.textContent = "No preview available.";
-        fieldsContainer.textContent = "Nothing to personalize ";
+        setAddOnSectionVisible(previewContainer, false);
+        setAddOnSectionVisible(fieldsContainer, false);
         state.rendered = null;
         return;
     }
+
+    setAddOnSectionVisible(previewContainer, true);
 
     // Keep wording separate for each design.
     if (!state.wordingByDesign[state.design]) {
@@ -723,14 +740,15 @@ async function renderAddOnSelection(addOn, state, previewContainer, fieldsContai
         previewContainer.textContent = "Preview unavailable.";
         console.error(`Could not render ${addOn.title}:`, error);
     }
+
+    // Only show "Personalize this add-on" if there is something in it.
+    setAddOnSectionVisible(fieldsContainer, fieldsContainer.childElementCount > 0);
 }
 
 function buildAddOnWordingFields(state,rendered,wording,container) {
     container.replaceChildren();
 
-    if (!rendered?.fields?.length) {
-        container.textContent =
-            "This design has no editable wording fields.";
+
         return;
     }
 
