@@ -13,6 +13,7 @@ import { CONFIG } from "./config.js";
 import { getActiveAddOns, isAddOnAvailableForInvitation } from "./addons-data.js";
 import { createAdvancedControls } from "./field-advanced.js";
 import { getLineHost, createExtraLine, removeExtraLine } from "./line-manager.js";
+import { mountEventPicker } from "./event-autofill.js";
 
 const $ = (s) => document.querySelector(s),
     params = new URLSearchParams(location.search),
@@ -86,6 +87,37 @@ try {
     buildFields();
     setupZoomPreview();
     drawPages();
+    
+    // Date & times picker (autofills fields tagged with data-autofill)
+const pickerSlot = document.createElement("div");
+$("#fieldControls").before(pickerSlot);
+
+mountEventPicker({
+    container: pickerSlot,
+    getTargets: () =>
+        rendered.fields
+            .filter((f) => !removedFields.includes(f.id))
+            .map((f) => [
+                f.id,
+                f.autofill ??
+                    f.occurrences
+                        .map((o) => o.node?.getAttribute?.("data-autofill"))
+                        .find(Boolean)
+            ])
+            .filter(([, tpl]) => tpl),
+    setField: (fieldId, value) => {
+        wording[fieldId] = value;
+        const input = document.querySelector(
+            `#fieldControls [data-field="${CSS.escape(fieldId)}"]`
+        );
+        if (input) input.value = value;
+    },
+    onApplied: () => {
+        updateRenderedWording(rendered, wording, fieldStyles, extraLines);
+        drawPages();
+    }
+});
+    
     // Load and display optional add-ons.
     availableAddOns = await getActiveAddOns();
 
