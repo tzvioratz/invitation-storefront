@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="5.5in" height="8.5in" viewBox="0 0 396 612">
+  <metadata>
+    <font-declaration
+      data-font-family="Frank Ruhl Libre"
+      data-font-provider="google"
+      data-font-source="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&amp;display=swap"
+      data-font-weight="400"
+      data-font-style="normal" />
+    <font-declaration
+      data-font-family="Frank Ruhl Libre"
+      data-font-provider="google"
+      data-font-source="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&amp;display=swap"
+      data-font-weight="500"
+      data-font-style="normal" />
+    <font-declaration
+      data-font-family="Frank Ruhl Libre"
+      data-font-provider="google"
+      data-font-source="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&amp;display=swap"
+      data-font-weight="700"
+      data-font-style="normal" />
+    <font-declaration
+      data-font-family="Suez One"
+      data-font-provider="google"
+      data-font-source="https://fonts.googleapis.com/css2?family=Suez+One&amp;display=swap"
+      data-font-weight="400"
+      data-font-style="normal" />
+  </metadata>
+  <defs>
+    <style type="text/css"><![CDATA[
+@import url("https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Suez+One&display=swap");
+]]></style>
+  </defs>
+
+  <rect x="0" y="0" width="396" height="612" fill="#FFFFFF" />
+
+  <!-- Top Blessing Couplet -->
+  <text x="198" y="84" font-family="Frank Ruhl Libre" font-size="11" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed">בעזרת השם יתברך</text>
+  <text x="198" y="101" font-family="Frank Ruhl Libre" font-size="11" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed">נעלה את ירושלים על ראש שמחתנו</text>
+
+  <!-- Invitation Opening Block -->
+  <text x="198" y="128" font-family="Frank Ruhl Libre" font-size="11" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed">ברוב שבח והודאה להשי"ת</text>
+  <text x="198" y="145" font-family="Frank Ruhl Libre" font-size="11" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed">מתכבדים אנו להזמין את קרובינו וידידינו</text>
+  <text x="198" y="162" font-family="Frank Ruhl Libre" font-size="11" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed">להשתתף בשמחת כלולות בנינו היקרים</text>
+
+  <!-- Groom & Bride Block -->
+  <text x="198" y="210" text-anchor="middle" direction="rtl" unicode-bidi="embed" fill="#1A1A1A">
+    <tspan font-family="Frank Ruhl Libre" font-size="9.5" font-weight="400" font-style="normal">החתן </tspan>
+    <tspan font-family="Suez One" font-size="22" font-weight="400" font-style="normal">משה נתן</tspan>
+    <tspan font-family="Frank Ruhl Libre" font-size="9.5" font-weight="400" font-style="normal"> נ"י</tspan>
+  </text>
+
+  <text x="198" y="230" font-family="Frank Ruhl Libre" font-size="9" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed">עב"ג</text>
+
+  <text x="198" y="259" text-anchor="middle" direction="rtl" unicode-bidi="embed" fill="#1A1A1A">
+    <tspan font-family="Frank Ruhl Libre" font-size="9.5" font-weight="400" font-style="normal">הכלה </tspan>
+    <tspan font-family="Suez One" font-size="22" font-weight="400" font-style="normal">מירל</tspan>
+    <tspan font-family="Frank Ruhl Libre" font-size="9.5" font-weight="400" font-style="normal"> תחי'</tspan>
+  </text>
+
+  <!-- Date & Time Block -->
+  <text x="198" y="298" font-family="Frank Ruhl Libre" font-size="11" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed">שתתקיים אי"ה למזל טוב בשעה טובה ומוצלחת</text>
+  <text x="198" y="315" font-family="Frank Ruhl Libre" font-size="11" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed">ביום שני לפרשת ויקרא, אור לכ"ח אדר תשפ"ד</text>
+  <text x="198" y="332" font-family="Frank Ruhl Libre" font-size="11" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed">קבלת פנים בשעה שש וחצי בערב</text>
+  <text x="198" y="349" font-family="Frank Ruhl Libre" font-size="11" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed">החופה בשעה שבע וחצי</text>
+
+  <!-- Venue & Location Block (Section 4A Override) -->
+  <text x="198" y="376" font-family="Frank Ruhl Libre" font-size="11" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed">עטרת עלקא</text>
+  <text x="198" y="393" font-family="Frank Ruhl Libre" font-size="11" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed">אוויגס מילז, מרילנד</text>
+
+  <!-- Parents Section (Two Columns) -->
+  <text x="276" y="423" font-family="Frank Ruhl Libre" font-size="9.5" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed">הורי החתן</text>
+  <text x="276" y="439" font-family="Frank Ruhl Libre" font-size="10.5" font-weight="500" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed">פנחס וחיה בערגער</text>
+
+  <text x="120" y="423" font-family="Frank Ruhl Libre" font-size="9.5" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed">הורי הכלה</text>
+  <text x="120" y="439" font-family="Frank Ruhl Libre" font-size="10.5" font-weight="500" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed">דוד וגיטל בראון</text>
+
+  <!-- Grandparents Section (Original Reference Preserved) -->
+  <text x="198" y="468" font-family="Frank Ruhl Libre" font-size="9.5" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed">תפארת בנים אבותם</text>
+
+  <text x="276" y="485" font-family="Frank Ruhl Libre" font-size="10" font-weight="500" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed">
+    <tspan x="276" dy="0">הרב חיים מנחם וחוה בערגער</tspan>
+    <tspan x="276" dy="15">מרת יהודית רייך</tspan>
+  </text>
+
+  <text x="120" y="485" font-family="Frank Ruhl Libre" font-size="10" font-weight="500" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed">
+    <tspan x="120" dy="0">הרב משה ולאה בראון</tspan>
+    <tspan x="120" dy="15">הרב יצחק מאיר ושרה פרידמאן</tspan>
+  </text>
+</svg>

@@ -44,15 +44,7 @@
 
   <text x="198" y="314" font-family="Alex Brush" font-size="56" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" data-field="card1_chosson" data-label="Groom's Name">Moshe</text>
 
-    <text x="198" y="373" font-family="Alex Brush" font-size="22" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle">
-  <tspan x="198" dy="0" data-field="card1_day" data-label="Day of Week" data-autofill="day-en">Tuesday,</tspan>
-	<tspan data-field="card1_date_the" data-label="Date_the">the </tspan>
-  <tspan data-field="card1_date_day" data-label="Date_day" data-autofill="date-ordinal-words">twenty-fourth</tspan>
-<tspan data-field="card1_date_of" data-label="Date_of"> of </tspan>
-<tspan data-field="card1_date_month" data-label="Date_month" data-autofill="month-en">March</tspan>
-<tspan data-field="card1_date_comma" data-label="Date_comma">,</tspan>
-  <tspan  data-field="card1_year" data-label="Year" data-autofill="year">2024</tspan>
-</text>
+    <text x="198" y="373" font-family="Alex Brush" font-size="22" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" data-field="card1_date" data-label="Wedding Date" data-autofill="date-styled">Tuesday, the twenty-fourth of March, 2024</text>
 
   <text x="198" y="401" font-family="Alex Brush" font-size="22" font-weight="400" font-style="normal" fill="#000000" text-anchor="middle" xml:space="preserve"><tspan data-field="card1_kabolasWording" data-label="Kabolas Ponim Wording" data-editor-hidden="true">Kabolas Ponim at </tspan><tspan data-field="card1_kabolasTime" data-label="Kabolas Ponim Time">six-thirty</tspan><tspan data-field="card1_kabolasSuffix" data-label="Kabolas Ponim Time Suffix" data-editor-hidden="true"> in the evening</tspan></text>
 

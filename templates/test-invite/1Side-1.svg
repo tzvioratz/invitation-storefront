@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="5.5in" height="8.5in" viewBox="0 0 396 612">
+  <metadata>
+    <font-declaration
+      data-font-family="Cormorant Garamond"
+      data-font-provider="google"
+      data-font-source="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&amp;display=swap"
+      data-font-weight="500"
+      data-font-style="normal" />
+    <font-declaration
+      data-font-family="Cormorant Garamond"
+      data-font-provider="google"
+      data-font-source="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&amp;display=swap"
+      data-font-weight="600"
+      data-font-style="normal" />
+    <font-declaration
+      data-font-family="Alex Brush"
+      data-font-provider="google"
+      data-font-source="https://fonts.googleapis.com/css2?family=Alex+Brush&amp;display=swap"
+      data-font-weight="400"
+      data-font-style="normal" />
+  </metadata>
+  <defs>
+    <style type="text/css"><![CDATA[
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Alex+Brush&display=swap");
+]]></style>
+  </defs>
+
+  <rect x="0" y="0" width="396" height="612" fill="#FFFFFF" />
+
+  <!-- Top Header & Host Block -->
+  <text x="198" y="92" font-family="Cormorant Garamond" font-size="9" font-weight="600" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.75">WITH GRATITUDE TO HASHEM YISBORACH</text>
+  <text x="198" y="114" font-family="Cormorant Garamond" font-size="9" font-weight="600" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.75">MR. AND MRS. DOVID BRAUN</text>
+  <text x="198" y="136" font-family="Cormorant Garamond" font-size="9" font-weight="600" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.75">RABBI AND MRS. PINCHAS BERGER</text>
+  <text x="198" y="158" font-family="Cormorant Garamond" font-size="9" font-weight="600" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.75">REQUEST THE HONOUR OF YOUR PRESENCE</text>
+  <text x="198" y="180" font-family="Cormorant Garamond" font-size="9" font-weight="600" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.75">AT THE MARRIAGE OF THEIR CHILDREN</text>
+
+  <!-- Couple Names Block -->
+  <text x="172" y="254" font-family="Alex Brush" font-size="56" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle">Miri</text>
+  <text x="242" y="254" font-family="Alex Brush" font-size="28" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle">and</text>
+  <text x="200" y="306" font-family="Alex Brush" font-size="56" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle">Moishe</text>
+
+  <!-- Date & Time Block -->
+  <text x="198" y="368" font-family="Cormorant Garamond" font-size="9" font-weight="600" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.75">MONDAY, THE TWENTIETH OF MARCH</text>
+  <text x="198" y="390" font-family="Cormorant Garamond" font-size="9" font-weight="600" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.75">AT SIX-THIRTY IN THE EVENING</text>
+  <text x="198" y="412" font-family="Cormorant Garamond" font-size="9" font-weight="600" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.75">CHUPAH AT SEVEN-THIRTY</text>
+
+  <!-- Venue & Address Block (Section 4A Override) -->
+  <text x="198" y="446" font-family="Cormorant Garamond" font-size="9" font-weight="600" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.75">ATERES ELKA</text>
+  <text x="198" y="468" font-family="Cormorant Garamond" font-size="9" font-weight="600" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.75">2905 WALNUT AVENUE</text>
+  <text x="198" y="490" font-family="Cormorant Garamond" font-size="9" font-weight="600" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.75">OWINGS MILLS, MARYLAND</text>
+</svg>

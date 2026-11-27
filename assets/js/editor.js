@@ -18,6 +18,7 @@ import { mountEventPicker } from "./event-autofill.js";
 const $ = (s) => document.querySelector(s),
     params = new URLSearchParams(location.search),
     id = params.get("id");
+const shrinkBackup = new Map();
 let invitation,
     rendered,
     wording = {},
@@ -30,6 +31,7 @@ let fieldStyles = {};
 let revealedHiddenFieldIds = new Set();
 let extraLines = [];  
 let removedFields = [];
+
 
 let zoomPreview = null;
 let zoomStage = null;
@@ -96,25 +98,83 @@ mountEventPicker({
     container: pickerSlot,
     getTargets: () =>
         rendered.fields
-            .filter((f) => !removedFields.includes(f.id))
-            .map((f) => [
-                f.id,
-                f.autofill ??
-                    f.occurrences
-                        .map((o) => o.node?.getAttribute?.("data-autofill"))
-                        .find(Boolean)
-            ])
-            .filter(([, tpl]) => tpl),
+            .filter((f) => !removedFields.includes(f.id) && !extraLines.some((e) => e.id === f.id))
+            .map((f) => ({
+                id: f.id,
+                label: f.label,
+                maxLength: f.maxLength,
+                template:
+                    f.autofill ??
+                    f.occurrences.map((o) => o.node?.getAttribute?.("data-autofill")).find(Boolean)
+            }))
+            .filter((t) => t.template),
     setField: (fieldId, value) => {
         wording[fieldId] = value;
-        const input = document.querySelector(
-            `#fieldControls [data-field="${CSS.escape(fieldId)}"]`
-        );
+        const input = document.querySelector(`#fieldControls [data-field="${CSS.escape(fieldId)}"]`);
         if (input) input.value = value;
     },
     onApplied: () => {
         updateRenderedWording(rendered, wording, fieldStyles, extraLines);
         drawPages();
+    },
+    actions: {
+        canSplit: (fieldId) => {
+            const f = rendered.fields.find((x) => x.id === fieldId);
+            return !!getLineHost(f?.occurrences[0]?.node);
+        },
+        split: async (fieldId, first, second) => {
+            const entry = createExtraLine(extraLines, fieldId, "below");
+            extraLines = [...extraLines, entry];
+            if (fieldStyles[fieldId]) fieldStyles[entry.id] = { ...fieldStyles[fieldId] };
+            wording[fieldId] = first;
+            wording[entry.id] = second;
+            await refresh();
+            buildFields();
+            return entry.id;
+        },
+        unsplit: async (fieldId, extraId) => {
+            extraLines = removeExtraLine(extraLines, extraId);
+            delete wording[extraId];
+            delete fieldStyles[extraId];
+            revealedHiddenFieldIds.delete(extraId);
+            await refresh();
+            buildFields();
+        },
+                canShrink: (fieldId) => {
+            const f = rendered.fields.find((x) => x.id === fieldId);
+            return Number.isFinite(parseFloat(f?.styleDefaults?.fontSize));
+        },
+        shrink: (fieldId, value) => {
+            const f = rendered.fields.find((x) => x.id === fieldId);
+            const base = parseFloat(f.styleDefaults.fontSize);
+            const wanted = Number(f.maxLength) / value.length;      // e.g. 40 / 59 = 0.68
+            const ratio = Math.max(0.6, Math.min(1, wanted));       // never below 60%
+
+            if (!shrinkBackup.has(fieldId)) {
+                shrinkBackup.set(fieldId, fieldStyles[fieldId]?.fontSize);   // remember any manual size
+            }
+            fieldStyles[fieldId] = {
+                ...(fieldStyles[fieldId] || {}),
+                fontSize: Math.max(6, Math.floor(base * ratio))
+            };
+
+            updateRenderedWording(rendered, wording, fieldStyles, extraLines);
+            drawPages();
+            buildFields();            // refreshes the Size box in "Advanced"
+            return wanted >= 0.6;     // false = hit the floor, may still be tight
+        },
+        unshrink: (fieldId) => {
+            const previous = shrinkBackup.get(fieldId);
+            shrinkBackup.delete(fieldId);
+            const next = { ...(fieldStyles[fieldId] || {}) };
+            if (previous == null) delete next.fontSize; else next.fontSize = previous;
+            if (Object.keys(next).length) fieldStyles[fieldId] = next;
+            else delete fieldStyles[fieldId];
+
+            updateRenderedWording(rendered, wording, fieldStyles, extraLines);
+            drawPages();
+            buildFields();
+        }
     }
 });
     
