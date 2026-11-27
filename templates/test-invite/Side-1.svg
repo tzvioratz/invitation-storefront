@@ -1,42 +1,63 @@
-<svg xmlns="http://www.w3.org/2000/svg"
-     width="5.5in"
-     height="8.5in"
-     viewBox="0 0 396 612">
+
+<svg xmlns="http://www.w3.org/2000/svg" width="5.5in" height="8.5in" viewBox="0 0 396 612">
   <metadata>
     <font-declaration
-        data-font-family="Playfair Display SC"
-        data-font-provider="google"
-        data-font-source="https://fonts.googleapis.com/css2?family=Playfair+Display+SC:wght@700"
-        data-font-weight="700"
-        data-font-style="normal" />
+      data-font-family="Cormorant Garamond"
+      data-font-provider="google"
+      data-font-source="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&amp;display=swap"
+      data-font-weight="500"
+      data-font-style="normal" />
     <font-declaration
-        data-font-family="Ballet"
-        data-font-provider="google"
-        data-font-source="https://fonts.googleapis.com/css2?family=Ballet"
-        data-font-weight="400"
-        data-font-style="normal" />
+      data-font-family="Cormorant Garamond"
+      data-font-provider="google"
+      data-font-source="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&amp;display=swap"
+      data-font-weight="600"
+      data-font-style="normal" />
+    <font-declaration
+      data-font-family="Alex Brush"
+      data-font-provider="google"
+      data-font-source="https://fonts.googleapis.com/css2?family=Alex+Brush&amp;display=swap"
+      data-font-weight="400"
+      data-font-style="normal" />
   </metadata>
+  <defs>
+    <style type="text/css"><![CDATA[
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Alex+Brush&display=swap");
+]]></style>
+  </defs>
 
-  <rect x="0" y="0" width="396" height="612" fill="#ffffff"/>
+  <rect x="0" y="0" width="396" height="612" fill="#FFFFFF" />
 
-  <!-- Host / parents / request lines -->
-  <text data-field="card1_opening" data-label="Opening Line" data-editor-hidden="true" x="198" y="78" text-anchor="middle" font-family="'Playfair Display SC', serif" font-size="8" font-weight="700" letter-spacing="0.8" fill="#111111">WITH GRATITUDE TO HASHEM YISBORACH</text>
-  <text data-field="card1_parents1" data-label="Parents - First Line" x="198" y="105" text-anchor="middle" font-family="'Playfair Display SC', serif" font-size="8" font-weight="700" letter-spacing="0.8" fill="#111111">MR. AND MRS. DOVID BRAUN</text>
-  <text data-field="card1_parents2" data-label="Parents - Second Line" x="198" y="131" text-anchor="middle" font-family="'Playfair Display SC', serif" font-size="8" font-weight="700" letter-spacing="0.8" fill="#111111">RABBI AND MRS. PINCHAS BERGER</text>
-  <text data-field="card1_requestLine" data-label="Request Line" data-editor-hidden="true" x="198" y="157" text-anchor="middle" font-family="'Playfair Display SC', serif" font-size="8" font-weight="700" letter-spacing="0.8" fill="#111111">REQUEST THE HONOUR OF YOUR PRESENCE</text>
-  <text data-field="card1_marriageLine" data-label="Marriage Line" data-editor-hidden="true" x="198" y="183" text-anchor="middle" font-family="'Playfair Display SC', serif" font-size="8" font-weight="700" letter-spacing="0.8" fill="#111111">AT THE MARRIAGE OF THEIR CHILDREN</text>
+  <!-- Top Header & Host Block -->
+  <text id="eng_gratitude" data-field="eng_gratitude" data-label="Opening Blessing" data-editor-hidden="true" x="198" y="92" font-family="Cormorant Garamond" font-size="9" font-weight="600" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.75">WITH GRATITUDE TO HASHEM YISBORACH</text>
 
-  <!-- Script names -->
-  <text x="98" y="272" font-family="Ballet, cursive" font-size="54" fill="#111111"><tspan data-field="card1_kallah" data-label="Bride's Name">Miri</tspan><tspan data-field="card1_nameConnector" data-label="Name Connector" data-editor-hidden="true" dx="6" font-size="30">and</tspan></text>
-  <text data-field="card1_chosson" data-label="Groom's Name" x="136" y="335" font-family="Ballet, cursive" font-size="54" fill="#111111">Moishe</text>
+  <text id="eng_kallah_parents" data-field="eng_kallah_parents" data-label="Kallah's Parents" x="198" y="114" font-family="Cormorant Garamond" font-size="9" font-weight="600" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.75">MR. AND MRS. DOVID BRAUN</text>
 
-  <!-- Date / time lines -->
-  <text data-field="card1_date" data-label="Wedding Date" x="198" y="405" text-anchor="middle" font-family="'Playfair Display SC', serif" font-size="8" font-weight="700" letter-spacing="0.8" fill="#111111">MONDAY, THE TWENTIETH OF MARCH</text>
-  <text xml:space="preserve" x="198" y="431" text-anchor="middle" font-family="'Playfair Display SC', serif" font-size="8" font-weight="700" letter-spacing="0.8" fill="#111111"><tspan data-field="card1_timePrefix" data-label="Time Prefix" data-editor-hidden="true">AT </tspan><tspan data-field="card1_time" data-label="Reception Time">SIX-THIRTY</tspan><tspan data-field="card1_timeSuffix" data-label="Time Suffix" data-editor-hidden="true"> IN THE EVENING</tspan></text>
-  <text xml:space="preserve" x="198" y="456" text-anchor="middle" font-family="'Playfair Display SC', serif" font-size="8" font-weight="700" letter-spacing="0.8" fill="#111111"><tspan data-field="card1_chupahPrefix" data-label="Chupah Prefix" data-editor-hidden="true">CHUPAH AT </tspan><tspan data-field="card1_chupahTime" data-label="Chupah Time">SEVEN-THIRTY</tspan></text>
+  <text id="eng_chosson_parents" data-field="eng_chosson_parents" data-label="Chosson's Parents" x="198" y="136" font-family="Cormorant Garamond" font-size="9" font-weight="600" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.75">RABBI AND MRS. PINCHAS BERGER</text>
 
-  <!-- Venue lines -->
-  <text data-field="card1_venue" data-label="Venue" x="198" y="492" text-anchor="middle" font-family="'Playfair Display SC', serif" font-size="7.5" font-weight="700" letter-spacing="0.8" fill="#111111">LAKE TERRACE</text>
-  <text data-field="card1_street" data-label="Street Address" x="198" y="519" text-anchor="middle" font-family="'Playfair Display SC', serif" font-size="7.5" font-weight="700" letter-spacing="0.8" fill="#111111">1690 OAK STREET</text>
-  <text data-field="card1_cityState" data-label="City and State" x="198" y="545" text-anchor="middle" font-family="'Playfair Display SC', serif" font-size="7.5" font-weight="700" letter-spacing="0.8" fill="#111111">LAKEWOOD, NEW JERSEY</text>
+  <text id="eng_invitation_request" data-field="eng_invitation_request" data-label="Invitation Wording" data-editor-hidden="true" x="198" y="158" font-family="Cormorant Garamond" font-size="9" font-weight="600" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.75">REQUEST THE HONOUR OF YOUR PRESENCE</text>
+
+  <text id="eng_invitation_intro" data-field="eng_invitation_intro" data-label="Marriage Introduction" data-editor-hidden="true" x="198" y="180" font-family="Cormorant Garamond" font-size="9" font-weight="600" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.75">AT THE MARRIAGE OF THEIR CHILDREN</text>
+
+  <!-- Couple Names Block -->
+  <text id="eng_kallah" data-field="eng_kallah" data-label="Kallah's Name" x="172" y="254" font-family="Alex Brush" font-size="56" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle">Miri</text>
+
+  <text id="eng_name_connector" data-field="eng_name_connector" data-label="Name Connector" data-editor-hidden="true" x="242" y="254" font-family="Alex Brush" font-size="28" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle">and</text>
+
+  <text id="eng_chosson" data-field="eng_chosson" data-label="Chosson's Name" x="200" y="306" font-family="Alex Brush" font-size="56" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle">Moishe</text>
+
+  <!-- Date & Time Block -->
+  <text x="198" y="368" font-family="Cormorant Garamond" font-size="9" font-weight="600" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.75" xml:space="preserve"><tspan id="eng_date" data-field="eng_date" data-label="Wedding Date" data-autofill="date-styled:upper">MONDAY, THE TWENTIETH OF MARCH</tspan></text>
+
+  <text x="198" y="390" font-family="Cormorant Garamond" font-size="9" font-weight="600" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.75" xml:space="preserve"><tspan id="eng_kabulas_punim_prefix" data-field="eng_kabulas_punim_prefix" data-label="Kabulas Punim Prefix" data-editor-hidden="true">AT </tspan><tspan id="eng_kabulas_punim" data-field="eng_kabulas_punim" data-label="Kabulas Punim Time" data-autofill="kabalas-en:upper">SIX-THIRTY</tspan><tspan id="eng_kabulas_punim_suffix" data-field="eng_kabulas_punim_suffix" data-label="Kabulas Punim Suffix" data-editor-hidden="true"> IN THE EVENING</tspan></text>
+
+  <text x="198" y="412" font-family="Cormorant Garamond" font-size="9" font-weight="600" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.75" xml:space="preserve"><tspan id="eng_chuppah_prefix" data-field="eng_chuppah_prefix" data-label="Chuppah Prefix" data-editor-hidden="true">CHUPAH AT </tspan><tspan id="eng_chuppah" data-field="eng_chuppah" data-label="Chuppah Time" data-autofill="chuppa-en:upper">SEVEN-THIRTY</tspan></text>
+
+  <!-- Venue & Address Block -->
+  <text id="eng_venue" data-field="eng_venue" data-label="Venue" x="198" y="446" font-family="Cormorant Garamond" font-size="9" font-weight="600" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.75">ATERES ELKA</text>
+
+  <text id="eng_address" data-field="eng_address" data-label="Street Address" x="198" y="468" font-family="Cormorant Garamond" font-size="9" font-weight="600" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.75">2905 WALNUT AVENUE</text>
+
+  <text id="eng_city_state" data-field="eng_city_state" data-label="City and State" x="198" y="490" font-family="Cormorant Garamond" font-size="9" font-weight="600" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.75">OWINGS MILLS, MARYLAND</text>
 </svg>

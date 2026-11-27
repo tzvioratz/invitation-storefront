@@ -1,98 +1,92 @@
-<svg xmlns="http://www.w3.org/2000/svg"
-     width="5.5in"
-     height="8.5in"
-     viewBox="0 0 396 612">
+
+<svg xmlns="http://www.w3.org/2000/svg" width="5.5in" height="8.5in" viewBox="0 0 396 612">
   <metadata>
     <font-declaration
-        data-font-family="Frank Ruhl Libre"
-        data-font-provider="google"
-        data-font-source="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400"
-        data-font-weight="400"
-        data-font-style="normal" />
+      data-font-family="Frank Ruhl Libre"
+      data-font-provider="google"
+      data-font-source="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&amp;display=swap"
+      data-font-weight="400"
+      data-font-style="normal" />
     <font-declaration
-        data-font-family="Frank Ruhl Libre"
-        data-font-provider="google"
-        data-font-source="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500"
-        data-font-weight="500"
-        data-font-style="normal" />
+      data-font-family="Frank Ruhl Libre"
+      data-font-provider="google"
+      data-font-source="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&amp;display=swap"
+      data-font-weight="500"
+      data-font-style="normal" />
+    <font-declaration
+      data-font-family="Frank Ruhl Libre"
+      data-font-provider="google"
+      data-font-source="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&amp;display=swap"
+      data-font-weight="700"
+      data-font-style="normal" />
+    <font-declaration
+      data-font-family="Suez One"
+      data-font-provider="google"
+      data-font-source="https://fonts.googleapis.com/css2?family=Suez+One&amp;display=swap"
+      data-font-weight="400"
+      data-font-style="normal" />
   </metadata>
+  <defs>
+    <style type="text/css"><![CDATA[
+@import url("https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Suez+One&display=swap");
+]]></style>
+  </defs>
 
-  <!-- Background -->
-  <rect x="0" y="0" width="396" height="612" fill="#ffffff"/>
+  <rect x="0" y="0" width="396" height="612" fill="#FFFFFF" />
 
-  <g font-family="'Frank Ruhl Libre', serif" fill="#1a1a1a" direction="rtl" unicode-bidi="plaintext" text-anchor="middle">
+  <!-- Top Blessing Couplet -->
+  <text id="heb_blessing" data-field="heb_blessing" data-label="Opening Blessing" data-editor-hidden="true" x="198" y="84" font-family="Frank Ruhl Libre" font-size="11" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed">בעזרת השם יתברך</text>
 
-    <!-- Opening lines -->
-    <text x="198" y="74" font-size="13" font-weight="400"
-          data-field="card1_heb_opening1" data-label="Opening Line 1" data-editor-hidden="true">בעזרת השם יתברך</text>
-    <text x="198" y="94" font-size="13" font-weight="400"
-          data-field="card1_heb_opening2" data-label="Opening Line 2" data-editor-hidden="true">נעלה את ירושלים על ראש שמחתנו</text>
+  <text id="heb_jerusalem_wording" data-field="heb_jerusalem_wording" data-label="Jerusalem Wording" data-editor-hidden="true" x="198" y="101" font-family="Frank Ruhl Libre" font-size="11" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed">נעלה את ירושלים על ראש שמחתנו</text>
 
-    <!-- Invitation wording -->
-    <text x="198" y="128" font-size="13" font-weight="400"
-          data-field="card1_heb_inviteLine1" data-label="Invitation Line 1" data-editor-hidden="true">ברוך שבח והודאה להשי״ת</text>
-    <text x="198" y="148" font-size="13" font-weight="400"
-          data-field="card1_heb_inviteLine2" data-label="Invitation Line 2" data-editor-hidden="true">מתכבדים אנו להזמין את קרובינו וידידינו</text>
-    <text x="198" y="168" font-size="13" font-weight="400"
-          data-field="card1_heb_inviteLine3" data-label="Invitation Line 3" data-editor-hidden="true">להשתתף בשמחת כלולות בננו היקר</text>
+  <!-- Invitation Opening Block -->
+  <text id="heb_invitation_thanks" data-field="heb_invitation_thanks" data-label="Opening Thanksgiving" data-editor-hidden="true" x="198" y="128" font-family="Frank Ruhl Libre" font-size="11" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed">ברוב שבח והודאה להשי"ת</text>
 
-    <!-- Groom -->
-    <text x="272" y="216" font-size="9" font-weight="400"
-          data-field="card1_heb_chossonLabel" data-label="Groom Label" data-editor-hidden="true">החתן</text>
-    <text x="200" y="224" font-size="32" font-weight="500"
-          data-field="card1_heb_chosson" data-label="Groom's Name">משה נתן</text>
-    <text x="128" y="216" font-size="9" font-weight="400"
-          data-field="card1_heb_chossonSuffix" data-label="Groom Blessing Suffix" data-editor-hidden="true">ני״ו</text>
+  <text id="heb_invitation_request" data-field="heb_invitation_request" data-label="Invitation Wording" data-editor-hidden="true" x="198" y="145" font-family="Frank Ruhl Libre" font-size="11" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed">מתכבדים אנו להזמין את קרובינו וידידינו</text>
 
-    <!-- Connector -->
-    <text x="198" y="254" font-size="10" font-weight="400"
-          data-field="card1_heb_connector" data-label="Connector" data-editor-hidden="true">עב״ג</text>
+  <text id="heb_invitation_intro" data-field="heb_invitation_intro" data-label="Marriage Introduction" data-editor-hidden="true" x="198" y="162" font-family="Frank Ruhl Libre" font-size="11" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed">להשתתף בשמחת כלולות בנינו היקרים</text>
 
-    <!-- Bride -->
-    <text x="272" y="288" font-size="9" font-weight="400"
-          data-field="card1_heb_kallahLabel" data-label="Bride Label" data-editor-hidden="true">הכלה</text>
-    <text x="200" y="296" font-size="32" font-weight="500"
-          data-field="card1_heb_kallah" data-label="Bride's Name">מירל</text>
-    <text x="128" y="288" font-size="9" font-weight="400"
-          data-field="card1_heb_kallahSuffix" data-label="Bride Blessing Suffix" data-editor-hidden="true">תחי׳</text>
+  <!-- Groom & Bride Block -->
+  <text x="198" y="210" text-anchor="middle" direction="rtl" unicode-bidi="embed" fill="#1A1A1A" xml:space="preserve"><tspan id="heb_chosson_honorific" data-field="heb_chosson_honorific" data-label="Chosson's Hebrew Honorific" data-editor-hidden="true" font-family="Frank Ruhl Libre" font-size="9.5" font-weight="400" font-style="normal">החתן </tspan><tspan id="heb_chosson" data-field="heb_chosson" data-label="Chosson's Name" data-center="true" font-family="Suez One" font-size="22" font-weight="400" font-style="normal">משה נתן</tspan><tspan id="heb_chosson_suffix" data-field="heb_chosson_suffix" data-label="Chosson's Name Suffix" data-editor-hidden="true" font-family="Frank Ruhl Libre" font-size="9.5" font-weight="400" font-style="normal"> נ"י</tspan></text>
 
-    <!-- Event details -->
-    <text x="198" y="338" font-size="13" font-weight="400"
-          data-field="card1_heb_eventIntro" data-label="Event Intro Wording" data-editor-hidden="true">שתתקיים אי״ה למזל טוב בשעה טובה ומוצלחת</text>
+  <text id="heb_couple_connector" data-field="heb_couple_connector" data-label="Couple Connector" data-editor-hidden="true" x="198" y="230" font-family="Frank Ruhl Libre" font-size="9" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed">עב"ג</text>
 
-    <text x="198" y="358" font-size="13" font-weight="400" xml:space="preserve"><tspan data-field="card1_heb_dayPrefix" data-label="Day Prefix" data-editor-hidden="true">ביום </tspan><tspan data-field="card1_heb_day" data-label="Day of Week">שני</tspan><tspan data-field="card1_heb_parshaPrefix" data-label="Parsha Prefix" data-editor-hidden="true"> לפרשת </tspan><tspan data-field="card1_heb_parsha" data-label="Parsha">ויקרא</tspan><tspan data-field="card1_heb_datePrefix" data-label="Date Prefix" data-editor-hidden="true">, אור ל</tspan><tspan data-field="card1_heb_date" data-label="Hebrew Date">כ״ח אדר תשפ״ו</tspan></text>
+  <text x="198" y="259" text-anchor="middle" direction="rtl" unicode-bidi="embed" fill="#1A1A1A" xml:space="preserve"><tspan id="heb_kallah_honorific" data-field="heb_kallah_honorific" data-label="Kallah's Hebrew Honorific" data-editor-hidden="true" font-family="Frank Ruhl Libre" font-size="9.5" font-weight="400" font-style="normal">הכלה </tspan><tspan id="heb_kallah" data-field="heb_kallah" data-label="Kallah's Name" data-center="true" font-family="Suez One" font-size="22" font-weight="400" font-style="normal">מירל</tspan><tspan id="heb_kallah_suffix" data-field="heb_kallah_suffix" data-label="Kallah's Name Suffix" data-editor-hidden="true" font-family="Frank Ruhl Libre" font-size="9.5" font-weight="400" font-style="normal"> תחי'</tspan></text>
 
-    <text x="198" y="378" font-size="13" font-weight="400" xml:space="preserve"><tspan data-field="card1_heb_receptionPrefix" data-label="Reception Prefix" data-editor-hidden="true">קבלת פנים בשעה </tspan><tspan data-field="card1_heb_receptionTime" data-label="Reception Time">שש וחצי</tspan><tspan data-field="card1_heb_receptionSuffix" data-label="Reception Suffix" data-editor-hidden="true"> בערב</tspan></text>
+  <!-- Date & Time Block -->
+  <text id="heb_event_intro" data-field="heb_event_intro" data-label="Event Introduction" data-editor-hidden="true" x="198" y="298" font-family="Frank Ruhl Libre" font-size="11" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed">שתתקיים אי"ה למזל טוב בשעה טובה ומוצלחת</text>
 
-    <text x="198" y="398" font-size="13" font-weight="400" xml:space="preserve"><tspan data-field="card1_heb_chuppahPrefix" data-label="Chuppah Prefix" data-editor-hidden="true">חופה בשעה </tspan><tspan data-field="card1_heb_chuppahTime" data-label="Chuppah Time">שבע וחצי</tspan></text>
+  <text x="198" y="315" font-family="Frank Ruhl Libre" font-size="11" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed" xml:space="preserve"><tspan id="heb_date_prefix" data-field="heb_date_prefix" data-label="Hebrew Date Prefix" data-editor-hidden="true">ביום </tspan><tspan id="heb_date_day" data-field="heb_date_day" data-label="Hebrew Weekday" data-autofill="day-he">שני</tspan><tspan id="heb_date_parsha_prefix" data-field="heb_date_parsha_prefix" data-label="Parsha Prefix" data-editor-hidden="true"> לפרשת </tspan><tspan id="heb_parsha" data-field="heb_parsha" data-label="Parsha" data-autofill="parsha-he">ויקרא</tspan><tspan id="heb_date_hdate_prefix" data-field="heb_date_hdate_prefix" data-label="Hebrew Date Connector" data-editor-hidden="true">, אור ל</tspan><tspan id="heb_date" data-field="heb_date" data-label="Hebrew Date" data-autofill="hdate-he">כ"ח אדר תשפ"ד</tspan></text>
 
-    <!-- Venue -->
-    <text x="198" y="436" font-size="13" font-weight="400" xml:space="preserve"><tspan data-field="card1_heb_venuePrefix" data-label="Venue Prefix" data-editor-hidden="true">באולם </tspan><tspan data-field="card1_heb_venue" data-label="Venue Name">ליק טערעס</tspan></text>
-    <text x="198" y="456" font-size="13" font-weight="400"
-          data-field="card1_heb_address" data-label="Venue Address">ליקווד, נוא דזערזי</text>
+  <text x="198" y="332" font-family="Frank Ruhl Libre" font-size="11" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed" xml:space="preserve"><tspan id="heb_kabulas_punim_prefix" data-field="heb_kabulas_punim_prefix" data-label="Kabulas Punim Prefix" data-editor-hidden="true">קבלת פנים בשעה </tspan><tspan id="heb_kabulas_punim" data-field="heb_kabulas_punim" data-label="Kabulas Punim Time" data-autofill="kabalas-he">שש וחצי</tspan><tspan id="heb_kabulas_punim_suffix" data-field="heb_kabulas_punim_suffix" data-label="Kabulas Punim Suffix" data-editor-hidden="true"> בערב</tspan></text>
 
-    <!-- Parents: groom's side (right) -->
-    <text x="290" y="494" font-size="10" font-weight="400"
-          data-field="card1_heb_chossonParentsLabel" data-label="Groom's Parents Label" data-editor-hidden="true">הורי החתן</text>
-    <text x="290" y="512" font-size="12" font-weight="500"
-          data-field="card1_heb_chossonParents" data-label="Groom's Parents">פנחס וחיה בערגער</text>
+  <text x="198" y="349" font-family="Frank Ruhl Libre" font-size="11" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed" xml:space="preserve"><tspan id="heb_chuppah_prefix" data-field="heb_chuppah_prefix" data-label="Chuppah Prefix" data-editor-hidden="true">החופה בשעה </tspan><tspan id="heb_chuppah" data-field="heb_chuppah" data-label="Chuppah Time" data-autofill="chuppa-he">שבע וחצי</tspan></text>
 
-    <!-- Parents: bride's side (left) -->
-    <text x="106" y="494" font-size="10" font-weight="400"
-          data-field="card1_heb_kallahParentsLabel" data-label="Bride's Parents Label" data-editor-hidden="true">הורי הכלה</text>
-    <text x="106" y="512" font-size="12" font-weight="500"
-          data-field="card1_heb_kallahParents" data-label="Bride's Parents">דוד וגיטל בראון</text>
+  <!-- Venue & Location Block -->
+  <text id="heb_venue" data-field="heb_venue" data-label="Venue" x="198" y="376" font-family="Frank Ruhl Libre" font-size="11" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed">עטרת עלקא</text>
 
-    <!-- Tiferes banim -->
-    <text x="198" y="540" font-size="10" font-weight="400"
-          data-field="card1_heb_tiferes" data-label="Tiferes Banim Wording" data-editor-hidden="true">תפארת בנים אבותם</text>
+  <text id="heb_city_state" data-field="heb_city_state" data-label="City and State" x="198" y="393" font-family="Frank Ruhl Libre" font-size="11" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed">אוויגס מילז, מרילנד</text>
 
-    <!-- Grandparents: groom's side (right) -->
-    <text x="285" y="560" font-size="10" font-weight="500"
-          data-field="card1_heb_chossonGrandparents" data-label="Groom's Grandparents" data-multiline="true"><tspan x="285" dy="0">הרב חיים מנחם וחוה בערגער</tspan><tspan x="285" dy="17">מרת יהודית רייך</tspan></text>
+  <!-- Parents Section (Two Columns) -->
+  <text id="heb_chosson_parents_heading" data-field="heb_chosson_parents_heading" data-label="Chosson's Parents Heading" data-editor-hidden="true" x="276" y="423" font-family="Frank Ruhl Libre" font-size="9.5" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed">הורי החתן</text>
 
-    <!-- Grandparents: bride's side (left) -->
-    <text x="118" y="560" font-size="10" font-weight="500"
-          data-field="card1_heb_kallahGrandparents" data-label="Bride's Grandparents" data-multiline="true"><tspan x="118" dy="0">הרב משה ולאה בראון</tspan><tspan x="118" dy="17">הרב יצחק מאיר ושרה פרידמאן</tspan></text>
-  </g>
+  <text id="heb_chosson_parents" data-field="heb_chosson_parents" data-label="Chosson's Parents" x="276" y="439" font-family="Frank Ruhl Libre" font-size="10.5" font-weight="500" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed">פנחס וחיה בערגער</text>
+
+  <text id="heb_kallah_parents_heading" data-field="heb_kallah_parents_heading" data-label="Kallah's Parents Heading" data-editor-hidden="true" x="120" y="423" font-family="Frank Ruhl Libre" font-size="9.5" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed">הורי הכלה</text>
+
+  <text id="heb_kallah_parents" data-field="heb_kallah_parents" data-label="Kallah's Parents" x="120" y="439" font-family="Frank Ruhl Libre" font-size="10.5" font-weight="500" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed">דוד וגיטל בראון</text>
+
+  <!-- Grandparents Section -->
+  <text id="heb_grandparents_heading" data-field="heb_grandparents_heading" data-label="Grandparents Heading" data-editor-hidden="true" x="198" y="468" font-family="Frank Ruhl Libre" font-size="9.5" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed">תפארת בנים אבותם</text>
+
+  <text id="heb_chosson_grandparents" data-field="heb_chosson_grandparents" data-label="Chosson's Grandparents" data-multiline="true" x="276" y="485" font-family="Frank Ruhl Libre" font-size="10" font-weight="500" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed">
+    <tspan x="276" dy="0">הרב חיים מנחם וחוה בערגער</tspan>
+    <tspan x="276" dy="15">מרת יהודית רייך</tspan>
+  </text>
+
+  <text id="heb_kallah_grandparents" data-field="heb_kallah_grandparents" data-label="Kallah's Grandparents" data-multiline="true" x="120" y="485" font-family="Frank Ruhl Libre" font-size="10" font-weight="500" font-style="normal" fill="#1A1A1A" text-anchor="middle" direction="rtl" unicode-bidi="embed">
+    <tspan x="120" dy="0">הרב משה ולאה בראון</tspan>
+    <tspan x="120" dy="15">הרב יצחק מאיר ושרה פרידמאן</tspan>
+  </text>
 </svg>
