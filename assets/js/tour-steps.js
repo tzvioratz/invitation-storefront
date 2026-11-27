@@ -34,7 +34,7 @@ export default [
   {
     target: '.large-preview-wrap',
     title: 'Live preview',
-    body: 'Your invitation updates as you type. Some edits may not look perfect here, and we will fix them before sending your proof.',
+    body: 'Your invitation updates as you type.',
   },
   {
     target: '#pageThumbs',
