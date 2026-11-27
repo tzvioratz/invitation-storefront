@@ -17,7 +17,7 @@
  * normal wording state -> order JSON -> print page. No backend/print changes.
  */
 
-export const VERSION = 'styles-v3';
+export const VERSION = 'styles-v5';
 const HEBCAL_URL = 'https://cdn.jsdelivr.net/npm/@hebcal/core@5/+esm'; // pin or vendor if you prefer
 let hebcalPromise = null;
 export function loadHebcal() {
@@ -115,7 +115,8 @@ export function englishTokens(date) {
     'year-words': yearWords,
     'date-short': `${monthEn} ${d}, ${y}`,
     'date-en-full': `${dayEn}, the ${ord} of ${monthEn}, ${yearWords}`,
-    'day-he': date.getDay() === 6 ? 'שבת קודש' : 'יום ' + HE_WEEKDAYS[date.getDay()],
+    'day-he': date.getDay() === 6 ? 'שבת קודש' : 'יום ' + HE_WEEKDAYS[date.getDay()],   // includes "יום"
+    'dayname-he': date.getDay() === 6 ? 'שבת קודש' : HE_WEEKDAYS[date.getDay()],        // without "יום"
   };
 }
 
@@ -168,31 +169,37 @@ export async function computeTokens({ date, kabalas = null, chuppa = null, night
     const { HDate, Sedra, Locale } = await loadHebcal();
     // Optional: a chuppa at/after `nightfallHour` (24h) is on the NEXT Hebrew day.
     const roll = nightfallHour != null && chuppa && chuppa.h >= nightfallHour;
-    const hd = new HDate(new Date(y, mo, d + (roll ? 1 : 0)));
-    const hy = hd.getFullYear();
-    const hMonthName = hd.getMonthName();
-    const monthHe = Locale.gettext(hMonthName, 'he-x-NoNikud');
-    const monthEnH = Locale.gettext(hMonthName, 'ashkenazi');
-    const hOrd = ordinalWords(hd.getDate());
-
-    Object.assign(tokens, {
-      'hday-he': gematriya(hd.getDate()),
-      'hmonth-he': monthHe,
-      'hyear-he': gematriya(hy % 1000),
-      'hdate-he': `${gematriya(hd.getDate())} ${monthHe} ${gematriya(hy % 1000)}`,
-      'hday-num': String(hd.getDate()),
-      'hmonth-en': monthEnH,
-      'hyear-num': String(hy),
-      'hday-ordinal-words': hOrd,
-      'hyear-words': numberWords(hy),
-      'hdate-en': `the ${hOrd} of ${monthEnH}, ${numberWords(hy)}`,
-    });
+    const mk = (dt, p) => {
+      const h = new HDate(dt);
+      const hy = h.getFullYear();
+      const name = h.getMonthName();
+      const monthHe = Locale.gettext(name, 'he-x-NoNikud');
+      const monthEnH = Locale.gettext(name, 'ashkenazi');
+      const ord = ordinalWords(h.getDate());
+      const dayHe = gematriya(h.getDate()), yearHe = gematriya(hy % 1000);
+      return {
+        [`${p}day-he`]: dayHe,
+        [`${p}month-he`]: monthHe,
+        [`${p}year-he`]: yearHe,
+        [`${p}date-he`]: `${dayHe} ${monthHe} ${yearHe}`,
+        [`${p}day-num`]: String(h.getDate()),
+        [`${p}month-en`]: monthEnH,
+        [`${p}year-num`]: String(hy),
+        [`${p}day-ordinal-words`]: ord,
+        [`${p}year-words`]: numberWords(hy),
+        [`${p}date-en`]: `the ${ord} of ${monthEnH}, ${numberWords(hy)}`,
+      };
+    };
+    // h*  = Hebrew date of the picked day (next day if `roll`)
+    // nh* = "night of" date: the Hebrew day that begins that evening (for "אור ל…" / "evening of …")
+    Object.assign(tokens, mk(new Date(y, mo, d + (roll ? 1 : 0)), 'h'), mk(new Date(y, mo, d + 1), 'nh'));
+    const hdDay = new HDate(new Date(y, mo, d)); // parsha = the Shabbos on/after the picked day itself
 
     try {
-      const sedra = new Sedra(hy, false); // false = Diaspora
-      if (!sedra.lookup(hd).chag) {        // skip when that Shabbos is a Yom Tov reading
-        const en = sedra.getString(hd, 'ashkenazi');       // "Parshas Matos-Masei"
-        const he = sedra.getString(hd, 'he-x-NoNikud');    // "פרשת מטות־מסעי"
+      const sedra = new Sedra(hdDay.getFullYear(), false); // false = Diaspora
+      if (!sedra.lookup(hdDay).chag) {        // skip when that Shabbos is a Yom Tov reading
+        const en = sedra.getString(hdDay, 'ashkenazi');       // "Parshas Matos-Masei"
+        const he = sedra.getString(hdDay, 'he-x-NoNikud');    // "פרשת מטות־מסעי"
         const strip = (s) => (/\s/.test(s) ? s.replace(/^\S+\s+/, '') : s);
         Object.assign(tokens, {
           'parsha-en': en, 'parsha-name-en': strip(en),
@@ -237,9 +244,10 @@ export function renderTemplateDetailed(tpl, tokens) {
 
 const KNOWN_TOKENS = new Set([
   'day-en', 'month-en', 'day-num', 'day-ordinal', 'month-num', 'year', 'year-short', 'date-ordinal-words',
-  'year-words', 'date-short', 'date-en-full', 'day-he', 'date-styled', 'date-styled-nodow',
-  'hday-he', 'hmonth-he', 'hyear-he', 'hdate-he', 'hday-num', 'hmonth-en', 'hyear-num',
-  'hday-ordinal-words', 'hyear-words', 'hdate-en',
+  'year-words', 'date-short', 'date-en-full', 'day-he', 'dayname-he', 'date-styled', 'date-styled-nodow',
+  ...['h', 'nh'].flatMap((p) =>
+    ['day-he', 'month-he', 'year-he', 'date-he', 'day-num', 'month-en', 'year-num', 'day-ordinal-words', 'year-words', 'date-en']
+      .map((x) => p + x)),
   'parsha-en', 'parsha-name-en', 'parsha-he', 'parsha-name-he',
   ...['kabalas', 'chuppa'].flatMap((k) => ['en', 'num', 'num-ampm', 'he'].map((x) => `${k}-${x}`)),
 ]);
@@ -481,10 +489,12 @@ export function mountEventPicker({
     // Why were some lines skipped? Usually: a time hasn't been picked yet.
     const waits = new Set();
     let unknown = false;
+    let noParsha = false;
     for (const { t, missing } of skipped) {
       for (const name of missing) {
         const w = waitingFor(name);
         if (w) waits.add(w);
+        else if (name.startsWith('parsha-')) { if (hebrewOk) noParsha = true; }
         else if (!KNOWN_TOKENS.has(name)) {
           unknown = true;
           console.warn(`event-autofill: field "${t.id}" uses unknown token "{${name}}" in data-autofill="${t.template}"`);
@@ -493,6 +503,7 @@ export function mountEventPicker({
     }
     let note = `Filled ${filled} line${filled === 1 ? '' : 's'}.`;
     if (waits.size) note += ` Pick ${[...waits].join(' and ')} to fill the rest.`;
+    if (noParsha) note += ' There is no regular parsha that week (Yom Tov), so the parsha wording was left unchanged. Please update it yourself.';
     if (!hebrewOk) note += ' The Hebrew calendar couldn’t load, so Hebrew date and parsha lines were skipped.';
     if (unknown) note += ' Some lines have an unrecognised autofill tag (see the browser console).';
     status.textContent = note;

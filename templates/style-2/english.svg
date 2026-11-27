@@ -1,48 +1,66 @@
 
 <svg xmlns="http://www.w3.org/2000/svg" width="5.5in" height="8.5in" viewBox="0 0 396 612">
-  
-  <rect x="0" y="0" width="396" height="612" fill="#ffffff" />
+  <metadata>
+    <font-declaration
+      data-font-family="Cormorant Garamond"
+      data-font-provider="google"
+      data-font-source="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&amp;display=swap"
+      data-font-weight="400"
+      data-font-style="normal" />
+    <font-declaration
+      data-font-family="Cormorant Garamond"
+      data-font-provider="google"
+      data-font-source="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&amp;display=swap"
+      data-font-weight="500"
+      data-font-style="normal" />
+    <font-declaration
+      data-font-family="Cormorant Garamond"
+      data-font-provider="google"
+      data-font-source="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&amp;display=swap"
+      data-font-weight="600"
+      data-font-style="normal" />
+    <font-declaration
+      data-font-family="Cormorant Garamond"
+      data-font-provider="google"
+      data-font-source="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&amp;display=swap"
+      data-font-weight="400"
+      data-font-style="italic" />
+  </metadata>
+  <defs>
+    <style type="text/css"><![CDATA[
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap");
+]]></style>
+  </defs>
 
-  <text x="198" y="96" font-family="Courier Prime, monospace" font-size="8.6" font-weight="400" font-style="normal" letter-spacing="0.8" fill="#1e1e1e" text-anchor="middle"
-        data-field="card1_chossonParents" data-label="Groom's Parents">RABBI AND MRS. SHLOMO KLEIN</text>
+  <rect id="card-bg-en" x="0" y="0" width="396" height="612" fill="#FFFFFF" />
 
-  <text x="198" y="116" font-family="Courier Prime, monospace" font-size="8.6" font-weight="400" font-style="normal" letter-spacing="0.8" fill="#1e1e1e" text-anchor="middle"
-        data-field="card1_kallahParents" data-label="Bride's Parents">RABBI AND MRS. CHAIM ROSENBERG</text>
+  <text id="eng_kallah_parents" data-field="eng_kallah_parents" data-label="Kallah's Parents" x="198" y="96" font-family="Cormorant Garamond, serif" font-size="9" font-weight="500" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.2">RABBI AND MRS. SHLOMO KLEIN</text>
 
-  <text x="198" y="136" font-family="Courier Prime, monospace" font-size="8.6" font-weight="400" font-style="normal" letter-spacing="0.8" fill="#1e1e1e" text-anchor="middle"
-        data-field="card1_invitationOpening" data-label="Invitation Opening" data-editor-hidden="true">REQUEST THE HONOUR OF YOUR PRESENCE</text>
+  <text id="eng_chosson_parents" data-field="eng_chosson_parents" data-label="Chosson's Parents" x="198" y="116" font-family="Cormorant Garamond, serif" font-size="9" font-weight="500" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.2">RABBI AND MRS. CHAIM ROSENBERG</text>
 
-  <text x="198" y="156" font-family="Courier Prime, monospace" font-size="8.6" font-weight="400" font-style="normal" letter-spacing="0.8" fill="#1e1e1e" text-anchor="middle"
-        data-field="card1_marriageIntroduction" data-label="Marriage Introduction" data-editor-hidden="true">AT THE MARRIAGE OF THEIR CHILDREN</text>
+  <text id="eng_request" data-field="eng_request" data-label="Opening Invitation Wording" data-editor-hidden="true" x="198" y="138" font-family="Cormorant Garamond, serif" font-size="9" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.2">REQUEST THE HONOUR OF YOUR PRESENCE</text>
 
-  <text x="198" y="228" font-family="Cormorant Garamond, Georgia, serif" font-size="22.5" font-weight="400" font-style="normal" letter-spacing="1.4" fill="#1a1a1a" text-anchor="middle"
-        data-field="card1_kallah" data-label="Bride's Name">ELISHEVA</text>
+  <text id="eng_marriage_intro" data-field="eng_marriage_intro" data-label="Marriage Introduction" data-editor-hidden="true" x="198" y="158" font-family="Cormorant Garamond, serif" font-size="9" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.2">AT THE MARRIAGE OF THEIR CHILDREN</text>
 
-  <text x="198" y="251" font-family="Courier Prime, monospace" font-size="8.4" font-weight="400" font-style="normal" letter-spacing="1.2" fill="#1e1e1e" text-anchor="middle"
-        data-field="card1_nameConnector" data-label="Name Connector" data-editor-hidden="true">AND</text>
+  <text id="eng_kallah" data-field="eng_kallah" data-label="Kallah's Name" x="198" y="218" font-family="Cormorant Garamond, serif" font-size="20" font-weight="500" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.5">ELISHEVA</text>
 
-  <text x="198" y="288" font-family="Cormorant Garamond, Georgia, serif" font-size="22.5" font-weight="400" font-style="normal" letter-spacing="1.4" fill="#1a1a1a" text-anchor="middle"
-        data-field="card1_chosson" data-label="Groom's Name">MENACHEM</text>
+  <text id="eng_connector_and" data-field="eng_connector_and" data-label="And" data-editor-hidden="true" x="198" y="242" font-family="Cormorant Garamond, serif" font-size="8.5" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.4">AND</text>
 
-  <text x="198" y="352" font-family="Courier Prime, monospace" font-size="8.6" font-weight="400" font-style="normal" letter-spacing="0.8" fill="#1e1e1e" text-anchor="middle"
-        data-field="card1_date" data-label="Wedding Date">SUNDAY, THE THIRD OF MARCH</text>
+  <text id="eng_chosson" data-field="eng_chosson" data-label="Chosson's Name" x="198" y="272" font-family="Cormorant Garamond, serif" font-size="20" font-weight="500" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.5">MENACHEM</text>
 
-  <text x="198" y="374" font-family="Courier Prime, monospace" font-size="8.6" font-weight="400" font-style="normal" letter-spacing="0.8" fill="#1e1e1e" text-anchor="middle"
-        data-field="card1_year" data-label="Wedding Year">TWO THOUSAND TWENTY-FOUR</text>
+  <text x="198" y="318" font-family="Cormorant Garamond, serif" font-size="9" font-weight="500" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.2" xml:space="preserve"><tspan id="eng_date" data-field="eng_date" data-label="Wedding Date" data-autofill="{day-en:upper}, THE {date-ordinal-words:upper} OF {month-en:upper}">SUNDAY, THE THIRD OF MARCH</tspan></text>
 
-  <text x="198" y="396" xml:space="preserve" font-family="Courier Prime, monospace" font-size="8.6" font-weight="400" font-style="normal" letter-spacing="0.8" fill="#1e1e1e" text-anchor="middle"><tspan data-field="card1_receptionPrefix" data-label="Reception Prefix" data-editor-hidden="true">RECEPTION AT </tspan><tspan data-field="card1_receptionTime" data-label="Reception Time">SIX O'CLOCK</tspan><tspan data-field="card1_receptionSuffix" data-label="Reception Suffix" data-editor-hidden="true"> IN THE EVENING</tspan></text>
+  <text id="eng_year" data-field="eng_year" data-label="Wedding Year" data-autofill="{year-words:upper}" x="198" y="338" font-family="Cormorant Garamond, serif" font-size="9" font-weight="500" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.2">TWO THOUSAND TWENTY-FOUR</text>
 
-  <text x="198" y="418" xml:space="preserve" font-family="Courier Prime, monospace" font-size="8.6" font-weight="400" font-style="normal" letter-spacing="0.8" fill="#1e1e1e" text-anchor="middle"><tspan data-field="card1_chupahPrefix" data-label="Chupah Prefix" data-editor-hidden="true">CHUPAH AT </tspan><tspan data-field="card1_chupahTime" data-label="Chupah Time">SEVEN O'CLOCK</tspan></text>
+  <text id="eng-reception" x="198" y="366" font-family="Cormorant Garamond, serif" font-size="8.5" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.1" xml:space="preserve"><tspan id="eng_reception_prefix" data-field="eng_reception_prefix" data-label="Reception Prefix" data-editor-hidden="true">RECEPTION AT </tspan><tspan id="eng_kabulas_punim" data-field="eng_kabulas_punim" data-label="Kabulas Punim Time" data-autofill="{kabalas-en:upper}">SIX O'CLOCK</tspan><tspan id="eng_reception_suffix" data-field="eng_reception_suffix" data-label="Reception Suffix" data-editor-hidden="true"> IN THE EVENING</tspan></text>
 
-  <text x="198" y="440" xml:space="preserve" font-family="Courier Prime, monospace" font-size="8.6" font-weight="400" font-style="normal" letter-spacing="0.8" fill="#1e1e1e" text-anchor="middle"><tspan data-field="card1_simchasPrefix" data-label="Simchas Chosson V'Kallah Prefix" data-editor-hidden="true">SIMCHAS CHOSSON V'KALLAH AT </tspan><tspan data-field="card1_simchasTime" data-label="Simchas Chosson V'Kallah Time">TEN O'CLOCK</tspan></text>
+  <text id="eng-chupah" x="198" y="388" font-family="Cormorant Garamond, serif" font-size="8.5" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.1" xml:space="preserve"><tspan id="eng_chuppah_prefix" data-field="eng_chuppah_prefix" data-label="Chuppah Prefix" data-editor-hidden="true">CHUPAH AT </tspan><tspan id="eng_chuppah" data-field="eng_chuppah" data-label="Chuppah Time" data-autofill="{chuppa-en:upper}">SEVEN O'CLOCK</tspan></text>
 
-  <text x="198" y="484" font-family="Courier Prime, monospace" font-size="8.6" font-weight="400" font-style="normal" letter-spacing="0.8" fill="#1e1e1e" text-anchor="middle"
-        data-field="card1_venue" data-label="Venue">ATERES AVROHOM</text>
+  <text id="eng-simchas" x="198" y="410" font-family="Cormorant Garamond, serif" font-size="8.5" font-weight="400" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.1" xml:space="preserve"><tspan id="eng_simchas_prefix" data-field="eng_simchas_prefix" data-label="Simchas Chosson V'Kallah Prefix" data-editor-hidden="true">SIMCHAS CHOSSON V'KALLAH AT </tspan><tspan id="eng_simchas_time" data-field="eng_simchas_time" data-label="Simchas Chosson V'Kallah Time">TEN O'CLOCK</tspan></text>
 
-  <text x="198" y="506" font-family="Courier Prime, monospace" font-size="8.6" font-weight="400" font-style="normal" letter-spacing="0.8" fill="#1e1e1e" text-anchor="middle"
-        data-field="card1_streetAddress" data-label="Street Address">75 ROSS STREET</text>
+  <text id="eng_venue" data-field="eng_venue" data-label="Venue" x="198" y="468" font-family="Cormorant Garamond, serif" font-size="9" font-weight="600" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.2">ATERES ELKA</text>
 
-  <text x="198" y="528" font-family="Courier Prime, monospace" font-size="8.6" font-weight="400" font-style="normal" letter-spacing="0.8" fill="#1e1e1e" text-anchor="middle"
-        data-field="card1_city" data-label="City and State">BROOKLYN, NEW YORK</text>
+  <text id="eng_address" data-field="eng_address" data-label="Street Address" x="198" y="486" font-family="Cormorant Garamond, serif" font-size="9" font-weight="500" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.2">2905 WALNUT AVENUE</text>
 
+  <text id="eng_city_state" data-field="eng_city_state" data-label="City and State" x="198" y="504" font-family="Cormorant Garamond, serif" font-size="9" font-weight="500" font-style="normal" fill="#1A1A1A" text-anchor="middle" letter-spacing="1.2">OWINGS MILLS, MARYLAND</text>
 </svg>

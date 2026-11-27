@@ -13,7 +13,10 @@ import { CONFIG } from "./config.js";
 import { getActiveAddOns, isAddOnAvailableForInvitation } from "./addons-data.js";
 import { createAdvancedControls } from "./field-advanced.js";
 import { getLineHost, createExtraLine, removeExtraLine } from "./line-manager.js";
-import { mountEventPicker } from "./event-autofill.js";
+import { mountEventPicker } from "./event-autofill.js?v5";
+import { initTour } from './tour.js';
+import steps from './tour-steps.js';
+initTour({ steps, autoStart: false });
 
 const $ = (s) => document.querySelector(s),
     params = new URLSearchParams(location.search),
