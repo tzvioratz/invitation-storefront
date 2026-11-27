@@ -177,7 +177,7 @@ export function initTour({
     reopen.type = 'button';
     reopen.className = 'tour-reopen';
     reopen.textContent = (button.label) || 'Take the tour';
-    reopen.setAttribute('aria-label', 'Reopen the guided tour');
+    reopen.setAttribute('aria-label', 'Open the guided tour');
     reopen.addEventListener('click', start);
     const mount = button.mount && document.querySelector(button.mount);
     if (mount) { reopen.classList.remove('tour-reopen'); reopen.classList.add('tour-reopen-inline'); mount.appendChild(reopen); }
