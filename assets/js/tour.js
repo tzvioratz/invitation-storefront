@@ -176,7 +176,7 @@ export function initTour({
     reopen = document.createElement('button');
     reopen.type = 'button';
     reopen.className = 'tour-reopen';
-    reopen.textContent = (button.label) || '? Take the tour';
+    reopen.textContent = (button.label) || 'Take the tour';
     reopen.setAttribute('aria-label', 'Reopen the guided tour');
     reopen.addEventListener('click', start);
     const mount = button.mount && document.querySelector(button.mount);
